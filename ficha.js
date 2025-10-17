@@ -1,0 +1,80 @@
+var ficha = { 
+    nome: "",
+    idade: 0,
+
+    ConhecimentoMagico: 0,
+    origem: [],
+    tipo: 0,
+    raça: 0,
+    peso: 62,
+    altura: 165,
+    elementos: [],
+    status: {
+        vida: 0,
+        pontosDeMagia: 0,
+        medo: 0,
+        
+        vidaMax: 0,
+        pontosDeMagiaMax: 0,
+        medoMax: 0
+    },
+    pericias: {
+        Lábia: {value: 1, min: 0, max: 10, editable: true},
+        Aparência: {value: 1, min: 0, max: 10, editable: true},
+        Intimidar: {value: 1, min: 0, max: 10, editable: true},
+        Poder: {value: 1, min: 0, max: 10, editable: true},
+        Sorte: {value: 1, min: 0, max: 10, editable: true},
+        Força: {value: 1, min: 0, max: 10, editable: true},
+        Corpo: {value: 1, min: 0, max: 10, editable: false},
+        Constituição: {value: 1, min: 0, max: 10, editable: true},
+        Destreza: {value: 1, min: 0, max: 10, editable: true},
+        Inteligência: {value: 1, min: 0, max: 10, editable: true},
+        Percepção: {value: 1, min: 0, max: 10, editable: true},
+        Estabilidade: {value: 1, min: 0, max: 10, editable: true},
+        ArmasBrancas: {value: 1, min: 0, max: 10, editable: true},
+        Pistolas: {value: 1, min: 0, max: 10, editable: true},
+        Rifles: {value: 1, min: 0, max: 10, editable: true},
+        LongoAlcance: {value: 1, min: 0, max: 10, editable: true},
+        Arremeçar: {value: 1, min: 0, max: 10, editable: true},
+        Movimento: {value: 1, min: 0, max: 10, editable: false},
+        Furtividade: {value: 1, min: 0, max: 10, editable: false},
+        Esquiva: {value: 1, min: 0, max: 10, editable: false},
+        Acrobacia: {value: 1, min: 0, max: 10, editable: true},
+        ContraAtaque: {value: 1, min: 0, max: 10, editable: false},
+        Magia: {value: 1, min: 0, max: 10, editable: true},
+        Alquimia: {value: 1, min: 0, max: 10, editable: true},
+        Ocultismo: {value: 1, min: 0, max: 10, editable: true},
+        História: {value: 1, min: 0, max: 10, editable: true},
+        Mecanica: {value: 1, min: 0, max: 10, editable: true},
+        UsarComputadores: {value: 1, min: 0, max: 10, editable: true},
+        Sobrevivência: {value: 1, min: 0, max: 10, editable: true},
+        Música: {value: 1, min: 0, max: 10, editable: true},
+        ConhecimentosGerais: {value: 1, min: 0, max: 10, editable: true},
+        Linguas: {value: 1, min: 0, max: 10, editable: true},
+        Medicina: {value: 1, min: 0, max: 10, editable: true},
+        Ciência: {value: 1, min: 0, max: 10, editable: true},
+        Aprendizado: {value: 1, min: 0, max: 10, editable: true}
+    },
+    pontos: 0,
+    habilidades: [],
+    magias: [],
+    inventario: {
+        content: [],
+        guardados: [],
+        usando: "",
+        weapon: {},
+        additionalWeight: 0
+    },
+    traumas: [],
+    biografia: {
+        familia: "",
+        gostos: "",
+        desgostos: "",
+        medos: "",
+        contatosProximos: "",
+        historia: "",
+        comportamento: ""
+    }
+
+};
+

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suspiros Da Realidade o RPG</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/logoMedo.svg" type="image/svg+xml">
+    
+</head>
+<body>
+    <main>
+        
+        <img src="img/logo.svg" alt="" class="logo">
+        <button class="btn" onclick="abrirCriadorDeFicha()">Criar Ficha</button>
+        <button class="btn" onclick="load()">Carregar</button>
+        <!--<button class="btn" onclick="irParaJogo()">Ir para o Jogo (Debug)</button>-->
+
+
+    </main>
+    <div id="cF">
+        <div>
+        </div>
+
+        <div id="IB">
+            <h3 class="title" style="color: white;">Informacoes</h3>
+            <hr>
+            <p class="text">Nome</p>
+            <input type="text" name="" id="name" class="input">
+            <p class="text">Data de Nascimento</p>
+            <input type="date" name="" id="date" class="input">
+            <p class="text">Idade</p>
+            <input type="number" name="" id="age" class="input">
+            <p class="text">Sexo</p>
+            <div> 
+                <button class="btn sex-btn" data-sex="masculino">Masculino</button>
+                <button class="btn sex-btn" data-sex="feminino">Feminino</button>
+            </div>
+            <p class="text">Altura</p>
+            <input type="number" name="" id="height" class="input">
+            <p class="text">Peso</p>
+            <input type="number" name="" id="weight" class="input">
+            
+            <button class="pBtn" id="p1">Proximo</button>
+        </div>
+        <div id="Rs">
+            <h3 class="title" style="color: white;">Raças</h3>
+            <hr>
+            <div id="Rs-box">
+                <div class="race-card">
+                    <button class="rsBtn">HUMANO</button>
+                    <div class="race-details">
+                        <div class="corner-images">
+                            <img src="img/corner.svg" class="corner-image top-left" alt="">
+                            <img src="img/corner.svg" class="corner-image top-right" alt="">
+                            <img src="img/corner.svg" class="corner-image bottom-left" alt="">
+                            <img src="img/corner.svg" class="corner-image bottom-right" alt="">
+                        </div>
+                        <h2 class="title">HUMANO</h2>
+                        <p>Versáteis e adaptáveis, os humanos são a raça mais comum, capazes de se destacar em qualquer caminho que escolherem.</p>
+                                                <div class="race-skills">
+                            <h4>Perícias de Raça:</h4>
+                            <ul>
+                                <li>+1 em quaisquer dois atributos</li>
+                                <li>Uma perícia adicional à sua escolha</li>
+                            </ul>
+                        </div>
+                        <button class="btn choose-btn" onclick="raceChose(0)">Escolher</button>
+                    </div>
+                </div>
+                <div class="race-card">
+                    <button class="rsBtn">ZOMANO</button>
+                    <div class="race-details">
+                        <div class="corner-images">
+                            <img src="img/corner.svg" class="corner-image top-left" alt="">
+                            <img src="img/corner.svg" class="corner-image top-right" alt="">
+                            <img src="img/corner.svg" class="corner-image bottom-left" alt="">
+                            <img src="img/corner.svg" class="corner-image bottom-right" alt="">
+                        </div>
+                        <h2 class="title">ZOMANO</h2>
+                        <p>Lentos mas implacáveis, os zomanos possuem uma resiliência sobrenatural e uma força que desafia a morte.</p>
+                                                <div class="race-skills">
+                            <h4>Perícias de Raça:</h4>
+                            <ul>
+                                <li>Resistência a dano físico</li>
+                                <li>Não precisa respirar</li>
+                            </ul>
+                        </div>
+                        <button class="btn choose-btn" onclick="raceChose(1)">Escolher</button>
+                    </div>
+                </div>
+                <div class="race-card">
+                    <button class="rsBtn">VAMPIRO</button>
+                    <div class="race-details">
+                        <div class="corner-images">
+                            <img src="img/corner.svg" class="corner-image top-left" alt="">
+                            <img src="img/corner.svg" class="corner-image top-right" alt="">
+                            <img src="img/corner.svg" class="corner-image bottom-left" alt="">
+                            <img src="img/corner.svg" class="corner-image bottom-right" alt="">
+                        </div>
+                        <h2 class="title">VAMPIRO</h2>
+                        <p>Seres da noite, vampiros são ágeis, charmosos e possuem habilidades sobrenaturais ligadas ao sangue e às sombras.</p>
+                        <div class="race-skills">
+                            <h4>Perícias de Raça:</h4>
+                            <ul>
+                                <li>Visão no escuro</li>
+                                <li>Habilidades de furtividade e persuasão</li>
+                            </ul>
+                        </div>
+                        <button class="btn choose-btn" onclick="raceChose(2)">Escolher</button>
+                    </div>
+                </div>
+                <div class="race-card">
+                    <button class="rsBtn">DEMÔNIO</button>
+                    <div class="race-details">
+                        <div class="corner-images">
+                            <img src="img/corner.svg" class="corner-image top-left" alt="">
+                            <img src="img/corner.svg" class="corner-image top-right" alt="">
+                            <img src="img/corner.svg" class="corner-image bottom-left" alt="">
+                            <img src="img/corner.svg" class="corner-image bottom-right" alt="">
+                        </div>
+                        <h2 class="title">DEMÔNIO</h2>
+                        <p>Nascidos do fogo e do caos, demônios são poderosos e destrutivos, com afinidade para magia negra e combate brutal.</p>
+                            <div class="race-skills">
+                            <h4>Perícias de Raça:</h4>
+                            <ul>
+                                <li>Resistência a fogo</li>
+                                <li>Afinidade com magia de fogo</li>
+                            </ul>
+                        </div>
+                        <button class="btn choose-btn" onclick="raceChose(3)">Escolher</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="Og">
+            <div id="origens"></div>
+            <button class="btn" id="origin-next-btn" onclick="originNext()" style="display: none; bottom: 5px; position: fixed; ">Próximo</button>
+        </div>
+        <div id="Mg">
+            <div id="tipo">
+                <h3 class="title">Tipo</h3>
+                <div class="types">
+                    <div class="type-card" onclick="typeChose(0)"><img src="img/alma.svg" alt=""></div>
+                    <div class="type-card" onclick="typeChose(1)"><img src="img/energia.svg" alt=""></div>
+                    <div class="type-card" onclick="typeChose(2)"><img src="img/corpo.svg" alt=""></div>
+                </div>
+                <div class="type-info">
+                    <div style="display: flex;align-items: flex-end;justify-content: space-between;flex-direction: row-reverse;">
+                        <h2 class="title" id="typeName">Tipo</h2>
+                        <p class="text" id="typeDescription">Manifestação do ser</p>
+                    </div>
+                    <hr>
+                    <p class="text sm" id="typeBonus">Seu tipo define suas formas de uso de magia, seus focos e aprimoramentos, define quem você é ussando magia</p>
+                    <button class="btn" id="typeConfirm" style="display: none;" onclick="typeConfirmF()">Escolher</button>
+                </div>
+
+            </div>
+            <div id="foco">
+                <div style="display: flex; justify-content: space-between;">
+                    <h2 class="title">Focos</h2>
+                    <div style="display: flex;flex-direction: row;align-items: center;width: 47px;">
+                        <h2 class="title" id="pts">1</h2>
+                        <short class="MagiaFicha ConhecimentoMagico" id="ptsTxt">pontos <span class="icon-svg" style="--svg-icon: url('img/conhecimentoPts.svg')"></span> </short>
+                    </div>
+
+                </div>
+                <div class="focos">
+                    <div class="foco-card C" onclick="focoChose(0)"><img src="img/alma.svg" alt=""><span id="Suporte">0</span></div>
+                    <div class="foco-card CC" onclick="focoChose(1)"><img src="img/alma.svg" alt=""><span id="Controle">0</span></div>
+                    <div class="foco-card CCC" onclick="focoChose(2)"><img src="img/alma.svg" alt=""><span id="Elemental">0</span></div>
+                    <div class="foco-card CCCC" onclick="focoChose(3)"><img src="img/alma.svg" alt=""><span id="Dinamico">1</span></div>
+
+                    <button class="focoClose" onclick="focoClose()">Continuar</button>
+                </div>
+                <div id="foco-info-box">
+                    <div class="foco-info">
+                        <div style="display: flex;align-items: flex-end;justify-content: space-between; flex-direction: row-reverse;">
+                            <h2 class="title" id="focoName"></h2> <div class="foco-btns">
+                                <button class="focosM" onclick="removeMagicPt()">-</button>
+                                <button class="focosM" onclick="putMagicPt()">+</button>
+                            </div>
+                        </div>
+                        <hr id="fH" style="display: none;">
+                        <p class="text" id="focoDescription"></p>
+                                    
+                        <p class="text sm" id="focoEx"></p>
+                    </div>
+                    <div class="typeElements">
+                        <hr>
+                        <span>
+                            <span class="typeElementsInfo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (1).svg')"></span></short> : 1 elemento Simples; 
+                            </span><br>
+                            <span class="typeElementsInfo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (2).svg')"></span></short> : 1 elemento avançado; 
+                            </span><br>
+                            <span class="typeElementsInfo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (3).svg')"></span></short> : 1 elemento simples e 1 avançado; 
+                            </span><br>
+                            <span class="typeElementsInfo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (4).svg')"></span></short> : 2 elementos simples; 
+                            </span><br>
+                            <span class="typeElementsInfo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (6).svg')"></span></short> : 2 elementos avançados;
+                            </span>
+                                
+                        </span>
+                    </div>
+                </div>
+                <button class="btn pBtn" id="foco-next-btn" style="display: none;">Próximo</button>
+            </div>
+            <div id="elementos">
+                <div class="elementsTitle">
+                    <h2 class="title">Elementos - <span class="title" id="element-points">0</span></h2>
+                    <p class="text sm" style="width: 148px; text-align: end;margin: 0 0 16px 0;">Os elementos são as forças matrizes do mundo, divididos em simples e avançados.</p>
+                </div>
+                <div class="elements">
+                    <div class="elementos-simples-titulo">
+                        <h3 class="title">Simples</h3>
+                        <hr>
+                    </div>
+                    <div class="elementos-simples">
+                        <button class="element-card" onclick="elementChose(0)"><img src="img/elemento (3).svg" alt=""></button>
+                        <button class="element-card" onclick="elementChose(1)"><img src="img/elemento (4).svg" alt=""></button>
+                        <button class="element-card" onclick="elementChose(2)"><img src="img/elemento (1).svg" alt=""></button>
+                        <button class="element-card" onclick="elementChose(3)"><img src="img/elemento (2).svg" alt=""></button>
+                        <button class="element-card" onclick="elementChose(4)"><img src="img/elemento (5).svg" alt=""></button>
+                        <button class="element-card" onclick="elementChose(5)"><img src="img/elemento (6).svg" alt=""></button>
+                        <button class="element-card" onclick="elementChose(6)"><img src="img/elemento (7).svg" alt=""></button>
+                    </div>
+                    <div class="elementos-avancados-titulo">
+                        <h3 class="title">Avançados</h3>
+                        <hr>
+                    </div>
+                    <div class="elementos-avancados">
+                        <button class="element-card" onclick="elementChose(7)"><img src="img/elemento (1).svg" alt=""></button>
+                        <button class="element-card" onclick="elementChose(8)"><img src="img/elemento (2).svg" alt=""></button>
+                        <button class="element-card" onclick="elementChose(9)"><img src="img/elemento (3).svg" alt=""></button>
+                    </div>
+                </div>
+                <div class="elementos-info-box">
+                    <div class="elementos-info">
+                        <div class="title-box">
+                            <img src="img/hr.svg" alt="">
+                            <h3 class="title" id="element-title"></h3>
+                            <img src="img/hr.svg" class="reverse" alt="">
+                        </div>
+                        <button class="btn pBtn" id="elementos-next-btn" onclick="elementNext()">Proximo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="Pr">
+            <div class="pr-block" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div class="title-box">
+                        <h3 class="pr-title title mx"></h3>
+                        <hr>
+                        <p class="text sm pr-type"></p>
+                    </div>
+                    <p class="text" id="pr-description"></p>
+                </div>
+                <div id="elementos-ficha"></div>
+                <button class="btn" id="pr-next-btn" style="display: none;" onclick="FichaEnd()">Proximo</button>
+            </div>
+
+            <div class="pr-block">
+                <div id="ptsDisplay">0</div>
+            <div id="pericias">
+              <div class="pBlock">
+                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Social</p></div>
+                  <div onclick="perShow(1, 'Lábia')" class="p-card">Lábia <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,1 )" class="pc-btn">-</button><button onclick="addPerPoint(this,1 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(2, 'Aparência')" class="p-card">Aparência <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,2 )" class="pc-btn">-</button><button onclick="addPerPoint(this,2 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(3, 'Intimidar')" class="p-card">Intimidar <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,3 )" class="pc-btn">-</button><button onclick="addPerPoint(this,3 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(4, 'Poder')" class="p-card">Poder <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,4 )" class="pc-btn">-</button><button onclick="addPerPoint(this,4 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(5, 'Sorte')" class="p-card">Sorte <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,5 )" class="pc-btn">-</button><button onclick="addPerPoint(this,5 )" class="pc-btn">+</button></div></div></div>
+              </div>
+              <div class="pBlock">
+                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Físico</p></div>
+                  <div onclick="perShow(6, 'Força')" class="p-card">Força <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,6 )" class="pc-btn">-</button><button onclick="addPerPoint(this,6 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(7, 'Corpo')" class="p-card">Corpo <div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,7 )" class="pc-btn">-</button><button onclick="addPerPoint(this,7 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(8, 'Constituição')" class="p-card">Constituição <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,8 )" class="pc-btn">-</button><button onclick="addPerPoint(this,8 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(9, 'Destreza')" class="p-card">Destreza <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,9 )" class="pc-btn">-</button><button onclick="addPerPoint(this,9 )" class="pc-btn">+</button></div></div></div>
+              </div>
+              <div class="pBlock">
+                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Intelecto</p></div>
+                  <div onclick="perShow(10, 'Inteligência')" class="p-card">Inteligência <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,10 )" class="pc-btn">-</button><button onclick="addPerPoint(this,10 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(11, 'Percepção')" class="p-card">Percepção <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,11 )" class="pc-btn">-</button><button onclick="addPerPoint(this,11 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(12, 'Estabilidade')" class="p-card">Estabilidade <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,12 )" class="pc-btn">-</button><button onclick="addPerPoint(this,12 )" class="pc-btn">+</button></div></div></div>
+              </div>
+              <div class="pBlock">
+                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Combate</p></div>
+                  <div onclick="perShow(13, 'ArmasBrancas')" class="p-card">ArmasBrancas <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,13 )" class="pc-btn">-</button><button onclick="addPerPoint(this,13 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(14, 'Pistolas')" class="p-card">Pistolas <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,14 )" class="pc-btn">-</button><button onclick="addPerPoint(this,14 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(15, 'Rifles')" class="p-card">Rifles <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,15 )" class="pc-btn">-</button><button onclick="addPerPoint(this,15 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(16, 'LongoAlcance')" class="p-card">Longo Alcance <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,16 )" class="pc-btn">-</button><button onclick="addPerPoint(this,16 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(17, 'Arremeçar')" class="p-card">Arremeçar <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,17 )" class="pc-btn">-</button><button onclick="addPerPoint(this,17 )" class="pc-btn">+</button></div></div></div>
+              </div>
+              <div class="pBlock">
+                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Habilidades</p></div>
+                  <div onclick="perShow(18, 'Movimento')" class="p-card">Movimento <div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,18 )" class="pc-btn">-</button><button onclick="addPerPoint(this,18 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(19, 'Furtividade')" class="p-card">Furtividade <div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,19 )" class="pc-btn">-</button><button onclick="addPerPoint(this,19 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(20, 'Esquiva')" class="p-card">Esquiva <div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,20 )" class="pc-btn">-</button><button onclick="addPerPoint(this,20 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(21, 'Acrobacia')" class="p-card">Acrobacia <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,21 )" class="pc-btn">-</button><button onclick="addPerPoint(this,21 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(22, 'ContraAtaque')" class="p-card">Contra-Ataque<div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,22 )" class="pc-btn">-</button><button onclick="addPerPoint(this,22 )" class="pc-btn">+</button></div></div></div>
+              </div>
+              <div class="pBlock">
+                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Magia</p></div>
+                  <div onclick="perShow(23, 'Magia')" class="p-card">Magia <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,23 )" class="pc-btn">-</button><button onclick="addPerPoint(this,23 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(24, 'Alquimia')" class="p-card">Alquimia <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,24 )" class="pc-btn">-</button><button onclick="addPerPoint(this,24 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(25, 'Ocultismo')" class="p-card">Ocultismo <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,25 )" class="pc-btn">-</button><button onclick="addPerPoint(this,25 )" class="pc-btn">+</button></div></div></div>
+              </div>
+              <div class="pBlock">
+                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Conhecimento</p></div>
+                  <div onclick="perShow(26, 'História')" class="p-card">História <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,26 )" class="pc-btn">-</button><button onclick="addPerPoint(this,26 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(27, 'Mecanica')" class="p-card">Mecânica <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,27 )" class="pc-btn">-</button><button onclick="addPerPoint(this,27 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(28, 'UsarComputadores')" class="p-card">Usar Computadores <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,28 )" class="pc-btn">-</button><button onclick="addPerPoint(this,28 )" class="pc-btn">+</button></div></div></div>                  
+                  <div onclick="perShow(29, 'Sobrevivência')" class="p-card">Sobrevivência <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,29 )" class="pc-btn">-</button><button onclick="addPerPoint(this,29 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(30, 'Música')" class="p-card">Música <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,30 )" class="pc-btn">-</button><button onclick="addPerPoint(this,30 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(31, 'ConhecimentosGerais')" class="p-card">Conhecimentos Gerais <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,31 )" class="pc-btn">-</button><button onclick="addPerPoint(this,31 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(32, 'Linguas')" class="p-card">Línguas <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,32 )" class="pc-btn">-</button><button onclick="addPerPoint(this,32 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(33, 'Medicina')" class="p-card">Medicina <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,33 )" class="pc-btn">-</button><button onclick="addPerPoint(this,33 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(34, 'Ciência')" class="p-card">Ciências <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,34 )" class="pc-btn">-</button><button onclick="addPerPoint(this,34 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(35, 'Aprendizado')" class="p-card">Aprendizado <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,35 )" class="pc-btn">-</button><button onclick="addPerPoint(this,35 )" class="pc-btn">+</button></div></div></div>
+              </div>
+          </div>
+            </div>
+        </div>
+    </div>
+    
+<div id="game">
+  <div class="panel">
+    <div class="box">
+      <p class="exit-box" onclick="panelClose()">x</p>
+
+      <!-- ================= MAGIA ================= -->
+      <div id="MagicCreate">
+        <section>
+          <p class="text">Nome</p>
+          <input type="text" id="magicName" class="input">
+
+          <p class="text">Descrição</p>
+          <textarea id="magicDescription" class="input" style="resize: none;"></textarea>
+
+          <p class="text">Rolar</p>
+          <input type="text" id="magicDice" class="input dice">
+        </section>
+
+        <button class="btn" onclick="createMagic()">Criar</button>
+      </div>
+
+      <div id="MagicInfo" style="display: none;">
+        <div>
+          <h2 class="title" id="magicInfoName" style="font-size: 50px; color: white;"></h2>
+          <p class="text" id="magicInfoDescription"></p>
+        </div>
+      </div>
+
+      <!-- ================= HABILIDADE ================= -->
+      <div id="AbilityCreate" style="display: none;">
+        <section>
+          <p class="text">Nome</p>
+          <input type="text" id="abilityName" class="input">
+
+          <p class="text">Descrição</p>
+          <textarea id="abilityDescription" class="input" style="resize: none;"></textarea>
+
+          <p class="text">Dado</p>
+          <input type="text" id="abilityDice" class="input dice">
+        </section>
+
+        <button class="btn" onclick="createAbility()">Criar</button>
+      </div>
+
+      <div id="AbilityInfo" style="display: none;">
+        <div>
+          <h2 class="title" id="abilityInfoName" style="font-size: 50px; color: white;"></h2>
+          <p class="text" id="abilityInfoDescription"></p>
+          <p class="text" id="abilityInfoDice"></p>
+        </div>
+      </div>
+
+      <!-- ================= ITEM ================= -->
+      <div id="ItemInfo" style="display: none;">
+        <div>
+          <h2 class="title" id="itemInfoName" style="font-size: 50px; color: white;"></h2>
+          <p class="text" id="itemInfoDescription"></p>
+          <p class="text" id="itemInfoDice"></p>
+        </div>
+      </div>
+
+      <div id="ItemCreate" style="display: none;">
+        <section>
+          <p class="text">Nome</p>
+          <input type="text" id="itemName" class="input">
+
+          <p class="text">Descrição</p>
+          <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
+
+          <p class="text">Peso</p>
+          <input type="number" id="itemWeight" class="input">
+
+          <p class="text">Dado</p>
+          <input type="text" id="itemDice" class="input dice">
+
+          <p class="text">Local</p>
+          <select id="itemLocal" class="input">
+            <option value="inventario">Inventário</option>
+            <option value="guardado">Guardado</option>
+          </select>
+        </section>
+
+        <button class="btn" onclick="createItem()">Criar</button>
+      </div>
+
+      <!-- ================= TRAUMA ================= -->
+      <div id="TraumaCreate" style="display: none;">
+        <section>
+          <p class="text">Nome</p>
+          <input type="text" id="traumaName" class="input">
+
+          <p class="text">Descrição</p>
+          <textarea id="traumaDescription" class="input" style="resize: none;"></textarea>
+
+          <p class="text">Dado</p>
+          <input type="text" id="traumaDice" class="input dice">
+
+          <p class="text">Tempo</p>
+          <input type="text" id="traumaTime" class="input">
+
+          <p class="text sm">Em caso de trauma permanente, coloque 'PER'</p>
+          <button class="btn" onclick="createTrauma()">Criar</button>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MULTI TASK ================= -->
+  <div id="multiTask">
+    <header>
+      <button class="mTBtn active" onclick="gameHabaSel(0, this)">Magias / Rituais</button>
+      <div class="Sline"></div>
+      <button class="mTBtn" onclick="gameHabaSel(2, this)">Traumas</button>
+      <div class="Sline"></div>
+      <button class="mTBtn" onclick="gameHabaSel(1, this)">Habilidades</button>
+      <div class="Sline"></div>
+      <button class="mTBtn" onclick="gameHabaSel(3, this)">Inventário</button>
+      <div class="Sline"></div>
+      <button class="mTBtn" onclick="gameHabaSel(4, this)">Rolagens</button>
+      <div class="Sline"></div>
+      <button class="mTBtn" onclick="gameHabaSel(5, this)">Personagem</button>
+      <div class="Sline"></div>
+      <button class="mTBtn" onclick="gameHabaSel(6, this)">Diário</button>
+      <div class="Sline"></div>
+      <button class="mTBtn" onclick="save()">Salvar</button>
+      <div class="line"></div>
+    </header>
+
+    <main>
+      <!-- ============ MAGIAS ============ -->
+      <div class="mt-content active" id="magias-content">
+        <h3 class="title" style="color: white;">Magias & Rituais</h3>
+        <div class="magias-content"></div>
+
+        <div class="central" style="justify-content: flex-end;">
+          <button class="btn" onclick="addMagic()">+</button>
+        </div>
+      </div>
+
+      <!-- ============ HABILIDADES ============ -->
+      <div class="mt-content" id="habilidades-content" style="display: none;">
+        <h3 class="title" style="color: white;">Habilidades</h3>
+        <div class="habilidades-content"></div>
+
+        <div class="central">
+          <button class="btn" onclick="addAbility()">+</button>
+        </div>
+      </div>
+
+      <!-- ============ TRAUMAS ============ -->
+      <div class="mt-content" id="traumas-content" style="display: none;">
+        <h2 class="title">Traumas</h2>
+        <div class="traumas-content"></div>
+        <button class="btn" onclick="addTrauma()">+</button>
+      </div>
+
+      <!-- ============ INVENTÁRIO ============ -->
+      <div class="mt-content" id="inventario-content" style="display: none;">
+        <div class="inv-side">
+          <div style="display: flex; height: 100%; flex-direction: column;">
+            <p class="text" style="margin-left: 1em;">Inventário</p>
+            <div id="inventory"></div>
+            <button class="btn invAddBtn" onclick="addItem()">+</button>
+          </div>
+
+          <div style="width: -webkit-fill-available; width: -webkit-fill-available; height: calc(97% - 2em - 2px); display: flex; flex-direction: column;">
+            <p class="text">Usando</p>
+            <textarea id="useInput" style="resize: none;" placeholder="Escreva aqui ..."></textarea>
+
+            <p class="text">Arma</p>
+            <div class="arma-area">
+              <p class="text pre">Adicione uma arma clicando no Inventário</p>
+              <p class="text pre">+</p>
+            </div>
+
+            <p class="text">Peso</p>
+            <div class="peso-area" onclick="editAdditionalWeight()">
+              <p class="text sm" id="pesoAddDisplay">/0</p>
+              <h2 class="title" id="pesoDisplay">0</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="inv-side d">
+          <p class="text">Guardados</p>
+          <div id="guardados"></div>
+        </div>
+      </div>
+
+      <!-- ============ ROLAGENS ============ -->
+      <div class="mt-content" id="dados-content" style="display: none;">
+          <h3 class="title" style="color: white;">Rolagem de Dado</h3>
+          <input type="text" id="diceInput" class="dice">
+          <button class="btn" id="diceBtnRoll" onclick="rollDice()">Rolar Dado</button>        
+          <p class="text">Os padrões de escrita de dados são: 'd' para dado, 'm' para modificador, 'v' para vantagem e 'd' para desvantagem. Ex: 2d20+5, 1d12-2, 1d20+v, 1d20+d.</p>
+      </div>
+
+      <!-- ============ PERSONAGEM ============ -->
+      <div class="mt-content" id="personagem-content" style="display: none;">
+          <div class="personagem-content">
+              <div class="personagem-info-basica">
+                <h3 class="title" style="color: white;">Personagem</h3>
+                <hr style="margin-bottom: 50px;">
+                <p><strong>Nome:</strong> <span id="personagem-nome"></span></p>
+                <p><strong>Idade:</strong> <span id="personagem-idade"></span></p>
+                <p><strong>Raça:</strong> <span id="personagem-raca"></span></p>
+                <p><strong>Tipo:</strong> <span id="personagem-tipo"></span></p>
+                <p><strong>Foco:</strong> <span id="personagem-foco"></span></p>
+                
+                <button class="btn" id="editarPericiasBtn">Editar pericias</button>
+                
+
+            </div>
+            <div class="personagem-biografia">
+                <label for="personagem-familia">Familia:</label>
+                <textarea id="personagem-familia" class="biografia-input" rows="2"></textarea>
+                <label for="personagem-gostos">Gostos:</label>
+                <textarea id="personagem-gostos" class="biografia-input" rows="2"></textarea>
+                <label for="personagem-desgostos">Desgostos:</label>
+                <textarea id="personagem-desgostos" class="biografia-input" rows="2"></textarea>
+                <label for="personagem-medos">Medos:</label>
+                <textarea id="personagem-medos" class="biografia-input" rows="2"></textarea>
+                <label for="personagem-contatos">Contatos Proximos:</label>
+                <textarea id="personagem-contatos" class="biografia-input" rows="2"></textarea>
+                <label for="personagem-historia">Historia:</label>
+                <textarea id="personagem-historia" class="biografia-input" rows="5"></textarea>
+                <label for="personagem-comportamento">Comportamento:</label>
+                <textarea id="personagem-comportamento" class="biografia-input" rows="3"></textarea>
+            </div>
+        </div>
+      </div>
+
+      <!-- ============ DIÁRIO ============ -->
+      <div class="mt-content" id="diario-content" style="display: none;">
+        <h3 class="title" style="color: white;">Diário</h3>
+        <div class="diario-toolbar">
+          <button onclick="formatDoc('bold')"><b>B</b></button>
+          <button onclick="formatDoc('italic')"><i>I</i></button>
+          <button onclick="formatDoc('underline')"><u>U</u></button>
+          <input type="color" id="diario-color-picker">
+          <button onclick="formatDoc('foreColor', document.getElementById('diario-color-picker').value)">Aplicar Cor</button>
+          <select onchange="formatDoc('fontSize', this.value)">
+            <option value="1">1 (8pt)</option>
+            <option value="2">2 (10pt)</option>
+            <option value="3" selected>3 (12pt)</option>
+            <option value="4">4 (14pt)</option>
+            <option value="5">5 (18pt)</option>
+            <option value="6">6 (24pt)</option>
+            <option value="7">7 (36pt)</option>
+          </select>
+        </div>
+        <div id="diario-editor" contenteditable="true" class="diario-editor"></div>
+      </div>
+    </main>
+  </div>
+
+  <div id="pericias-display-block">
+    <div id="perTop">
+        <img src="" alt="" id="playerImg">
+        <div class="barBlock">
+            <div id="hpBar" class="bar">
+                <div class="barDiv">
+                    <p id="hpValue">10</p>
+                </div>
+                <div id="hpBarFill" class="barFill"></div>
+            </div>
+            <button class="barBtn" onclick="changeStatusValue('-', 'vida')"><</button>
+            <button class="barBtn" onclick="changeStatusValue('+', 'vida')">></button>
+        </div>
+        <div class="barBlock">
+            <div id="mpBar" class="bar">
+                <div class="barDiv">
+                    <p id="mpValue"></p>
+                </div>
+                <div id="mpBarFill" class="barFill"></div>
+            </div>
+            <button class="barBtn" onclick="changeStatusValue('-', 'pontosDeMagia')"><</button>
+            <button class="barBtn" onclick="changeStatusValue('+', 'pontosDeMagia')">></button>
+        </div>
+        <div class="barBlock">
+            <div id="spBar" class="bar">
+                <div class="barDiv">
+                    <p id="spValue"></p>
+                </div>
+                <div id="spBarFill" class="barFill"></div>
+            </div>
+            <button class="barBtn" onclick="changeStatusValue('-', 'medo')"><</button>
+            <button class="barBtn" onclick="changeStatusValue('+', 'medo')">></button>
+        </div>
+    </div>
+
+    <div id="pericias-display"></div>
+  </div>
+</div>
+
+
+    <div id="tooltip" class="tooltip">
+        <div>
+            <div class="title"></div>
+            <span class="subtitle"></span>
+        </div>
+        <hr>
+        <div style="display: flex; align-items: flex-end; flex-direction: column;">
+            <p class="text"></p>
+            <p class="text sm"></p>
+        </div>
+        <div style="display: flex; align-items: start;"></div>
+    </div>
+    <div id="element-tooltip"></div>
+
+    <div id="dice-multiplier-panel" class="panel" style="display: none;">
+        <div class="box">
+            <p class="exit-box" onclick="closeDiceMultiplierPanel()">x</p>
+            <p class="text" style="color: white;">Quantos dados?</p>
+            <div id="dice-multiplier-options"></div>
+        </div>
+    </div>
+
+    <div id="additional-weight-panel" class="panel" style="display: none;">
+        <div class="box">
+            <p class="exit-box" onclick="closeAdditionalWeightPanel()">x</p>
+            <p class="text" style="color: white;">Editar Peso Adicional</p>
+            <input type="number" id="additionalWeightInput" class="input" placeholder="Novo peso">
+            <button class="btn" onclick="updateAdditionalWeight()">Salvar</button>
+        </div>
+    </div>
+
+        <div id="dice-div" onclick="a()">
+            <div>
+                <h1 id="nmb" class="title"></h1>
+                <span id="nbmType" class="text sm">--</span>
+                <p id="nmbW">Clique em qualquer lugar para voltar.</p>
+            </div>
+        </div>
+
+        <div id="periciasEditorBox" class="hidden">
+            <button class="closeBox" onclick="salvarPericiasEditadas(), salvarStatusMaxEditados()">X</button>
+            <div id="periciasEditor"></div>
+            <div id="statusMaxEditor" class="hidden"></div>
+        </div>
+    
+    <script src="ficha.js"></script>
+    <script src="script.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
