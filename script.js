@@ -1342,3 +1342,35 @@ function salvarStatusMaxEditados() {
         ficha.status[key] = parseInt(input.value) || 0;
     });
 }
+
+function enableTooltipsMobile() {
+    const tooltipElems = document.querySelectorAll('short');
+
+    tooltipElems.forEach(el => {
+        el.addEventListener('click', (e) => {
+            const tooltip = document.getElementById(el.dataset.tooltipId);
+            if (tooltip.style.display === 'block') {
+                tooltip.style.display = 'none';
+            } else {
+                tooltip.style.display = 'block';
+                // opcional: posicionar perto do click
+                const rect = el.getBoundingClientRect();
+                tooltip.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+                tooltip.style.left = (rect.left + window.scrollX) + 'px';
+            }
+        });
+    });
+
+    // Fechar tooltip ao clicar fora
+    document.addEventListener('click', (e) => {
+        tooltipElems.forEach(el => {
+            const tooltip = document.getElementById(el.dataset.tooltipId);
+            if (!el.contains(e.target) && !tooltip.contains(e.target)) {
+                tooltip.style.display = 'none';
+            }
+        });
+    });
+}
+
+// Chame ao iniciar o site
+enableTooltipsMobile();
