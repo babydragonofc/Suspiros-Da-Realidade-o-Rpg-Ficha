@@ -609,10 +609,10 @@ function originNext() {
         Mg.style.display = "flex";
 
         ficha.origem.forEach(o => {
-            ficha.pericias[origens[o].pericias[0]].value += 5
-            ficha.pericias[origens[o].pericias[1]].value += 5
-            ficha.pericias[origens[o].pericias[0]].min += 5
-            ficha.pericias[origens[o].pericias[1]].min += 5
+                origens[o].pericias.forEach(pericia => {
+                    ficha.pericias[pericia].value += 5
+                    ficha.pericias[pericia].min += 5
+                });
         });
         
     }
