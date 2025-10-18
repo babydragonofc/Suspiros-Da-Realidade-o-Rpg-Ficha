@@ -338,54 +338,56 @@ function addAbility() {
     abilityDice.value = "";
 }
 
-function createAbility() {
-    if (!abilityName.value || !abilityDescription.value) return;
+function addHabilidade(nome, descricao, dado) {
+    const abilityVar = {
+        name: nome,
+        description: descricao,
+        dice: dado
+    };
+
+    if (!ficha.habilidades.some(h => h.name === nome)) {
+        ficha.habilidades.push(abilityVar);
+    }
 
     const box = document.createElement('div');
     box.className = "ability-card";
 
-    const abilityNameValue = abilityName.value;
-    const abilityDescriptionValue = abilityDescription.value;
-    const abilityDiceValue = abilityDice.value;
-
     const abilityNameEl = document.createElement('h2');
     abilityNameEl.className = "title";
     abilityNameEl.style.color = "white";
-    abilityNameEl.textContent = abilityNameValue;
+    abilityNameEl.textContent = nome;
     box.appendChild(abilityNameEl);
 
     const abilityDescriptionEl = document.createElement('p');
     abilityDescriptionEl.className = "text";
     abilityDescriptionEl.style.color = "white";
-    abilityDescriptionEl.textContent = abilityDescriptionValue;
-    abilityDescriptionEl.style.display = "none"; // Hide description in the card
+    abilityDescriptionEl.textContent = descricao;
+    abilityDescriptionEl.style.display = "none";
     box.appendChild(abilityDescriptionEl);
 
-    if (abilityDiceValue) {
+    if (dado) {
         const rollBtn = document.createElement('button');
         rollBtn.className = 'btn';
         rollBtn.textContent = 'Rolar';
         rollBtn.onclick = (e) => {
             e.stopPropagation();
-            diceInput.value = abilityDiceValue;
+            diceInput.value = dado;
             rollDice(false);
         }
-        box.appendChild(rollBtn)
+        box.appendChild(rollBtn);
     }
 
     box.addEventListener('click', () => {
-        showAbilityInfo(abilityNameValue, abilityDescriptionValue, abilityDiceValue, box);
+        showAbilityInfo(nome, descricao, dado, box);
     });
 
     habilidadesContent.appendChild(box);
+}
 
-    const abilityVar = {
-        name: abilityNameValue,
-        description: abilityDescriptionValue,
-        dice: abilityDiceValue
-    };
+function createAbility() {
+    if (!abilityName.value || !abilityDescription.value) return;
 
-    ficha.habilidades.push(abilityVar);
+    addHabilidade(abilityName.value, abilityDescription.value, abilityDice.value);
 
     panelClose();
 }

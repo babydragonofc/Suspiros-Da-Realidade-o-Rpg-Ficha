@@ -609,12 +609,18 @@ function originNext() {
         Mg.style.display = "flex";
 
         ficha.origem.forEach(o => {
-                origens[o].pericias.forEach(pericia => {
+            origens[o].pericias.forEach(pericia => {
                     ficha.pericias[pericia].value += 5
                     ficha.pericias[pericia].min += 5
-                });
+            });
+            origens[o].habilidades.forEach(habilidade => {
+                const habilidadeData = tooltipDictionary.Habilidades[habilidade];
+                const nome = habilidade.replace(/([a-z])([A-Z])/g, '$1 $2');
+                if (habilidadeData) {
+                    addHabilidade(nome, habilidadeData.descricao, null);
+                }
+            });
         });
-        
     }
 }
 
