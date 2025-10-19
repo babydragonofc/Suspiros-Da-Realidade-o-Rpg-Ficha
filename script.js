@@ -1084,15 +1084,6 @@ function perAtu() {
     perList.ContraAtaque.value =  Math.floor((perList.Destreza.value + perList.Força.value + perList.Percepção.value) / 2 + 1);
     perList.Esquiva.value = Math.floor((perList.Percepção.value + perList.Destreza.value) /2 + 3);
     perList.Furtividade.value = Math.floor((perList.Constituição.value + perList.Destreza.value + perList.Estabilidade.value) /2 + 2);
-    
-    ficha.status.vidaMax = ficha.status.vidaMax + (ficha.pericias.Corpo.value + ficha.pericias.Constituição.value)*4
-    ficha.status.vida = ficha.status.vidaMax;
-
-    ficha.status.pontosDeMagiaMax = ficha.pericias.magia*3 + ficha.status.pontosDeMagiaMax + (ficha.status.Ocultismo/2);
-    ficha.status.pontosDeMagia = ficha.status.pontosDeMagiaMax;
-
-    ficha.status.medoMax = ficha.status.medoMax + (ficha.status.Estabilidade*2) + 10
-    ficha.status.medo = ficha.status.medoMax;
 
     for (let i = 0; i < Object.keys(ficha.pericias).length; i++) {
         const pElement = pId[i];
@@ -1148,6 +1139,14 @@ function FichaEnd() {
 
     
     displayPericias();
+    ficha.status.vidaMax = ficha.status.vidaMax + (ficha.pericias.Corpo.value + ficha.pericias.Constituição.value)*4
+    ficha.status.vida = ficha.status.vidaMax;
+
+    ficha.status.pontosDeMagiaMax = ficha.pericias.magia*3 + ficha.status.pontosDeMagiaMax + (ficha.status.Ocultismo/2);
+    ficha.status.pontosDeMagia = ficha.status.pontosDeMagiaMax;
+
+    ficha.status.medoMax = ficha.status.medoMax + (ficha.status.Estabilidade*2) + 10
+    ficha.status.medo = ficha.status.medoMax;
 }
 
 function displayPericias() {
