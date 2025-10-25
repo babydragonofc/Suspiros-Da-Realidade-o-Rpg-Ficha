@@ -47,100 +47,98 @@ const tooltipDictionary = {
         Habilidades: { descricao: "Capacidades físicas e de movimento.", pericias: ["Movimento", "Furtividade", "Esquiva", "Acrobacia", "ContraAtaque"] },
         Magia: { descricao: "Energia arcana e estudos ocultos.", pericias: ["Magia", "Alquimia", "Ocultismo"] },
         Conhecimento: { descricao: "Estudos e erudição.", pericias: ["História", "Mecanica", "Sobrevivência", "Música", "ConhecimentosGerais", "Linguas", "Medicina", "Ciência", "Aprendizado", "UsarComputadores"] } },
-Habilidades: {
-    ConhecimentoAnatômico: {
-        descricao: 'Gastando 5 de Medo e um turno, você é capaz de identificar o ponto fraco de um alvo. Todos que souberem dessa fraqueza causarão +50% de dano contra ele durante 1D3 turnos.'
+    Habilidades: {
+        ConhecimentoAnatômico: {
+            descricao: 'Gastando 5 de Medo e um turno, você é capaz de identificar o ponto fraco de um alvo. Todos que souberem dessa fraqueza causarão +50% de dano contra ele durante 1D3 turnos.'
+        },
+        UsoDeRemédios: {
+            descricao: 'Você pode gastar um kit médico completo para curar um Ferimento Grave em meia hora.'
+        },
+        ProficiênciaEmHardware: {
+            descricao: 'Você identifica falhas, vulnerabilidades e brechas em aparelhos eletrônicos com facilidade.'
+        },
+        ProficiênciaEmSoftware: {
+            descricao: 'Com uma rodada de Usar Computadores, você pode invadir sistemas avançados e obter acesso privilegiado.'
+        },
+        Reconstruir: {
+            descricao: 'Com uma rodada de Mecânica, você pode desmontar um objeto e criar outro semelhante a partir de suas peças.'
+        },
+        Enganar: {
+            descricao: 'Gastando 5 de Medo, você pode substituir qualquer teste de Perícia por uma rolagem de Lábia ou Aparência.'
+        },
+        Blefe: {
+            descricao: 'Gastando 10 de Medo, você passa automaticamente em um teste de Lábia, sem necessidade de rolagem.'
+        },
+        SacrifícioProtetor: {
+            descricao: 'Ao realizar um teste de Destreza antes que um aliado receba dano, você pode intervir e receber o dano em seu lugar.'
+        },
+        TécnicaDeCombate: {
+            descricao: 'Com uma rolagem de Força e gastando 10 de Medo, você causa o dobro de dano em um ataque físico.'
+        },
+        TiroCerto: {
+            descricao: 'Ao atacar de forma furtiva, você pode causar o dobro de dano com um tiro preciso.'
+        },
+        AbrirFogo: {
+            descricao: 'Você pode efetuar três disparos em um mesmo turno, sofrendo apenas duas desvantagens.'
+        },
+        Imobilizar: {
+            descricao: 'Gastando 5 de Medo (uma vez a cada meia hora), você pode imobilizar um alvo por 1D4 turnos.'
+        },
+        Proteger: {
+            descricao: 'Você concede +3 de armadura a um aliado atrás de você, além de deixá-lo em estado furtivo.'
+        },
+        EquipamentosDeLaboratório: {
+            descricao: 'Você recebe vantagem ao analisar pequenos objetos utilizando ferramentas e equipamentos de laboratório.'
+        },
+        MétodosExperimentais: {
+            descricao: 'Você domina procedimentos experimentais, podendo realizar testes e análises detalhadas, como remoção de tinta e rastreamento de resíduos.'
+        },
+        ReagentesMísticos: {
+            descricao: 'Você é capaz de criar reações químicas ou místicas únicas utilizando reagentes especiais.'
+        },
+        ControleDeSubstânciasQuímicas: {
+            descricao: 'Sua habilidade em misturar e manipular substâncias químicas previne acidentes e aumenta a eficácia dos resultados.'
+        },
+        LeituraCrítica: {
+            descricao: 'Gastando 5 de Medo, você obtém vantagem em testes de Inteligência e Percepção ao analisar textos, documentos ou situações complexas.'
+        },
+        ConhecimentoEspecializado: {
+            descricao: 'Você possui domínio teórico aprofundado, recebendo vantagem em testes de História e Aprendizado.'
+        },
+        ArteVisual: {
+            descricao: 'Sua arte pode influenciar emoções, transmitir mensagens complexas ou criar disfarces convincentes.'
+        },
+        MúsicaOuPerformance: {
+            descricao: 'Você é capaz de cativar, inspirar ou manipular o público através da música, atuação ou outras formas de performance.'
+        },
+        MovimentosLeves: {
+            descricao: 'Você se move com leveza e precisão, recebendo vantagem em testes de Furtividade e Esquiva.'
+        },
+        ReconhecimentoRápidoDeTerreno: {
+            descricao: 'Gastando 10 de Medo, você identifica brechas, caminhos ocultos e pontos estratégicos no ambiente ao seu redor.'
+        },
+        Ocultismo: {
+            descricao: 'Seu conhecimento sobre o oculto permite reconhecer criaturas, rituais e artefatos sobrenaturais. Gastando 20 de Medo, você recebe duas vantagens em qualquer teste de Ocultismo.'
+        },
+        LeituraDeSímbolosAntigos: {
+            descricao: 'Você é capaz de decifrar símbolos e rituais antigos que seriam incompreensíveis para a maioria das pessoas.'
+        },
+        Entrevistas: {
+            descricao: 'Gastando 5 de Medo e realizando um teste de Lábia, você pode fazer uma pergunta certeira que revela uma informação valiosa ou secreta.'
+        },
+        RedeDeContatos: {
+            descricao: 'Você conhece pessoas influentes e bem posicionadas, podendo recorrer a elas para obter informações, favores ou recursos.'
+        },
+        PreparoDeAbrigo: {
+            descricao: 'Você domina técnicas de sobrevivência, sendo capaz de encontrar ou construir abrigos seguros em ambientes hostis ou urbanos.'
+        },
+        Manual: {
+            descricao: 'Você executa tarefas práticas e manuais com precisão, sendo capaz de improvisar soluções com poucos recursos.'
+        },
+        Preparo: {
+            descricao: 'Gastando 15 de Medo, você prepara um explosivo com perfeição, garantindo o dano máximo possível.'
+        }
     },
-    UsoDeRemédios: {
-        descricao: 'Você pode gastar um kit médico completo para curar um Ferimento Grave em meia hora.'
-    },
-    ProficiênciaEmHardware: {
-        descricao: 'Você identifica falhas, vulnerabilidades e brechas em aparelhos eletrônicos com facilidade.'
-    },
-    ProficiênciaEmSoftware: {
-        descricao: 'Com uma rodada de Usar Computadores, você pode invadir sistemas avançados e obter acesso privilegiado.'
-    },
-    Reconstruir: {
-        descricao: 'Com uma rodada de Mecânica, você pode desmontar um objeto e criar outro semelhante a partir de suas peças.'
-    },
-    Enganar: {
-        descricao: 'Gastando 5 de Medo, você pode substituir qualquer teste de Perícia por uma rolagem de Lábia ou Aparência.'
-    },
-    Blefe: {
-        descricao: 'Gastando 10 de Medo, você passa automaticamente em um teste de Lábia, sem necessidade de rolagem.'
-    },
-    SacrifícioProtetor: {
-        descricao: 'Ao realizar um teste de Destreza antes que um aliado receba dano, você pode intervir e receber o dano em seu lugar.'
-    },
-    TécnicaDeCombate: {
-        descricao: 'Com uma rolagem de Força e gastando 10 de Medo, você causa o dobro de dano em um ataque físico.'
-    },
-    TiroCerto: {
-        descricao: 'Ao atacar de forma furtiva, você pode causar o dobro de dano com um tiro preciso.'
-    },
-    AbrirFogo: {
-        descricao: 'Você pode efetuar três disparos em um mesmo turno, sofrendo apenas duas desvantagens.'
-    },
-    Imobilizar: {
-        descricao: 'Gastando 5 de Medo (uma vez a cada meia hora), você pode imobilizar um alvo por 1D4 turnos.'
-    },
-    Proteger: {
-        descricao: 'Você concede +3 de armadura a um aliado atrás de você, além de deixá-lo em estado furtivo.'
-    },
-    EquipamentosDeLaboratório: {
-        descricao: 'Você recebe vantagem ao analisar pequenos objetos utilizando ferramentas e equipamentos de laboratório.'
-    },
-    MétodosExperimentais: {
-        descricao: 'Você domina procedimentos experimentais, podendo realizar testes e análises detalhadas, como remoção de tinta e rastreamento de resíduos.'
-    },
-    ReagentesMísticos: {
-        descricao: 'Você é capaz de criar reações químicas ou místicas únicas utilizando reagentes especiais.'
-    },
-    ControleDeSubstânciasQuímicas: {
-        descricao: 'Sua habilidade em misturar e manipular substâncias químicas previne acidentes e aumenta a eficácia dos resultados.'
-    },
-    LeituraCrítica: {
-        descricao: 'Gastando 5 de Medo, você obtém vantagem em testes de Inteligência e Percepção ao analisar textos, documentos ou situações complexas.'
-    },
-    ConhecimentoEspecializado: {
-        descricao: 'Você possui domínio teórico aprofundado, recebendo vantagem em testes de História e Aprendizado.'
-    },
-    ArteVisual: {
-        descricao: 'Sua arte pode influenciar emoções, transmitir mensagens complexas ou criar disfarces convincentes.'
-    },
-    MúsicaOuPerformance: {
-        descricao: 'Você é capaz de cativar, inspirar ou manipular o público através da música, atuação ou outras formas de performance.'
-    },
-    MovimentosLeves: {
-        descricao: 'Você se move com leveza e precisão, recebendo vantagem em testes de Furtividade e Esquiva.'
-    },
-    ReconhecimentoRápidoDeTerreno: {
-        descricao: 'Gastando 10 de Medo, você identifica brechas, caminhos ocultos e pontos estratégicos no ambiente ao seu redor.'
-    },
-    Ocultismo: {
-        descricao: 'Seu conhecimento sobre o oculto permite reconhecer criaturas, rituais e artefatos sobrenaturais. Gastando 20 de Medo, você recebe duas vantagens em qualquer teste de Ocultismo.'
-    },
-    LeituraDeSímbolosAntigos: {
-        descricao: 'Você é capaz de decifrar símbolos e rituais antigos que seriam incompreensíveis para a maioria das pessoas.'
-    },
-    Entrevistas: {
-        descricao: 'Gastando 5 de Medo e realizando um teste de Lábia, você pode fazer uma pergunta certeira que revela uma informação valiosa ou secreta.'
-    },
-    RedeDeContatos: {
-        descricao: 'Você conhece pessoas influentes e bem posicionadas, podendo recorrer a elas para obter informações, favores ou recursos.'
-    },
-    PreparoDeAbrigo: {
-        descricao: 'Você domina técnicas de sobrevivência, sendo capaz de encontrar ou construir abrigos seguros em ambientes hostis ou urbanos.'
-    },
-    Manual: {
-        descricao: 'Você executa tarefas práticas e manuais com precisão, sendo capaz de improvisar soluções com poucos recursos.'
-    },
-    Preparo: {
-        descricao: 'Gastando 15 de Medo, você prepara um explosivo com perfeição, garantindo o dano máximo possível.'
-    }
-},
-
-    
     Origem: {
         Medico: { descricao: "Você era um profissional da saúde como um enfermeiro, farmacêutico, médico, psicólogo ou socorrista, treinado no atendimento e cuidado de pessoas. " },
         TI: { descricao: "Programador, engenheiro de software ou simples-mente “o cara da T.I.”, você tem treinamento e ex-periência para lidar com sistemas informatizados." },
@@ -425,6 +423,11 @@ function abrirPagina2() {
     IB.style.display = "none";
     Rs.style.display = "flex";
     RsBox.style.display = "grid";
+
+    ficha.altura = parseFloat(heightInput.value) || 0;
+    ficha.peso = parseFloat(weightInput.value) || 0;
+    ficha.sexo = selectedSex;
+    ficha.dataNascimento = dateInput.value;
 }
 
 // ====================== RAÇAS ======================
@@ -484,6 +487,7 @@ function raceChose(rs) {
     raças[rs].per.forEach(e => {
         ficha.pericias[e.per].value = e.quant
         ficha.pericias[e.per].min = e.quant
+        ficha.pericias[e.per].max = 20
         
     });
 }
@@ -973,12 +977,15 @@ function elementNext() {
 
     if (ficha.elementos.length = 0) return;
 
+
     
     foco.style.display = "none";
     Mg.style.display = "none";
     Pr.style.display = "flex";
     console.log(ficha)
-    perAtu()
+    setTimeout(() => {
+        perAtu()
+    }, 1000);
 }
 
 //
@@ -1063,18 +1070,20 @@ function calcularPericiaCorpo() {
     // altura : 177; peso: 76// alt: 13; peso: 14 ; 27 ; 
     const pesoBase = 62;
     const alturaBase = 165;
-    let corpoSkill = 1; // Base skill
 
     const pesoExtra = ficha.peso - pesoBase;
     const alturaExtra = ficha.altura - alturaBase;
 
     const corpoBase = pesoExtra + alturaExtra;
 
-    ficha.pericias.Corpo.value = corpoBase / 3
+    // Garante que o valor da perícia não seja negativo e arredonda o valor.
+    // O divisor foi ajustado para um valor intermediário.
+    ficha.pericias.Corpo.value = Math.max(1, Math.floor(corpoBase / 4));
 }
 
 function perAtu() {
 
+    console.log(ficha)
     document.getElementById("ptsDisplay").innerHTML = ficha.pontos
 
     const perList = ficha.pericias;
@@ -1121,7 +1130,6 @@ function perShow(id, skillName) {
     if(prCategoryEl) prCategoryEl.innerHTML = categoryName;
     if(prDescriptionEl) prDescriptionEl.innerHTML = description;
 
-    console.log(skillName, categoryName, description)
 }
 
 function getValueByIndex(obj, index) {
@@ -1139,14 +1147,18 @@ function FichaEnd() {
 
     
     displayPericias();
-    ficha.status.vidaMax = ficha.status.vidaMax + (ficha.pericias.Corpo.value + ficha.pericias.Constituição.value)*4
+    ficha.status.vidaMax = ficha.status.vidaMax + (ficha.pericias.Corpo.value + ficha.pericias.Constituição.value)*3 + 5
     ficha.status.vida = ficha.status.vidaMax;
 
-    ficha.status.pontosDeMagiaMax = ficha.pericias.magia*3 + ficha.status.pontosDeMagiaMax + (ficha.status.Ocultismo/2);
+    ficha.status.pontosDeMagiaMax = 8 + ficha.pericias.Magia.value*3 + ficha.status.pontosDeMagiaMax + Math.ceil(ficha.pericias.Ocultismo.value);
     ficha.status.pontosDeMagia = ficha.status.pontosDeMagiaMax;
+    console.log(ficha.status.pontosDeMagiaMax)
 
-    ficha.status.medoMax = ficha.status.medoMax + (ficha.status.Estabilidade*2) + 10
+    ficha.status.medoMax = ficha.status.medoMax + (ficha.pericias.Estabilidade.value*5) + 30
     ficha.status.medo = ficha.status.medoMax;
+    console.log(ficha.status.medoMax)
+
+
 }
 
 function displayPericias() {
@@ -1209,6 +1221,8 @@ function displayPericias() {
 
         periciasContainer.appendChild(pBlock);
     }
+
+    statusAtu()
 }
 
 function irParaJogo() {
@@ -1370,7 +1384,7 @@ function enableTooltipsMobile() {
     document.addEventListener('click', (e) => {
         tooltipElems.forEach(el => {
             const tooltip = document.getElementById(el.dataset.tooltipId);
-            if (!el.contains(e.target) && !tooltip.contains(e.target)) {
+            if (tooltip && !el.contains(e.target) && !tooltip.contains(e.target)) {
                 tooltip.style.display = 'none';
             }
         });
@@ -1379,3 +1393,46 @@ function enableTooltipsMobile() {
 
 // Chame ao iniciar o site
 enableTooltipsMobile();
+
+const mobileMTBtn = document.getElementById('MobileMTBtn');
+const mtMenu = document.getElementById('mt-menu');
+
+if (mobileMTBtn) {
+    mobileMTBtn.addEventListener('click', () => {
+        mobileMTBtn.classList.toggle('active');
+        const menu = document.getElementById('mt-menu');
+        if (mobileMTBtn.classList.contains('active')) {
+            menu.style.display = 'flex';
+        } else {
+            menu.style.display = 'none';
+        }
+    });
+}
+
+// Close the menu if clicking outside of it on mobile
+window.addEventListener('click', function(e) {
+    if (window.innerWidth <= 768) {
+        const mtMenu = document.getElementById('mt-menu');
+        const mobileMTBtn = document.getElementById('MobileMTBtn');
+        if (mtMenu && mobileMTBtn && !mobileMTBtn.contains(e.target) && !mtMenu.contains(e.target)) {
+            mobileMTBtn.classList.remove('active');
+            mtMenu.style.display = 'none';
+        }
+    }
+});
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        if (mtMenu) {
+            mtMenu.removeAttribute('style');
+        }
+        if (mobileMTBtn) {
+            mobileMTBtn.classList.remove('active');
+        }
+    }
+
+    if(window.innerWidth > 400) {
+        document.getElementById("pericias-display-block").style.display = "block"
+    
+    }
+});

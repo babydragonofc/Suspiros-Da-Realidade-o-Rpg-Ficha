@@ -14,6 +14,9 @@
         <img src="img/logo.svg" alt="" class="logo">
         <button class="btn" onclick="abrirCriadorDeFicha()">Criar Ficha</button>
         <button class="btn" onclick="load()">Carregar</button>
+        
+        <input type="file" id="arquivoJSON">
+
         <!--<button class="btn" onclick="irParaJogo()">Ir para o Jogo (Debug)</button>-->
 
 
@@ -32,7 +35,7 @@
             <p class="text">Idade</p>
             <input type="number" name="" id="age" class="input">
             <p class="text">Sexo</p>
-            <div> 
+            <div id="sex-div"> 
                 <button class="btn sex-btn" data-sex="masculino">Masculino</button>
                 <button class="btn sex-btn" data-sex="feminino">Feminino</button>
             </div>
@@ -157,7 +160,7 @@
 
             </div>
             <div id="foco">
-                <div style="display: flex; justify-content: space-between;">
+                <div style="display: flex; justify-content: space-between;" id="focoTop">
                     <h2 class="title">Focos</h2>
                     <div style="display: flex;flex-direction: row;align-items: center;width: 47px;">
                         <h2 class="title" id="pts">1</h2>
@@ -267,6 +270,7 @@
 
             <div class="pr-block">
                 <div id="ptsDisplay">0</div>
+<div id="pericias-tabs-container" style="display: none;"><div id="pericias-tabs"></div></div>
             <div id="pericias">
               <div class="pBlock">
                   <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Social</p></div>
@@ -315,10 +319,10 @@
                   <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Conhecimento</p></div>
                   <div onclick="perShow(26, 'História')" class="p-card">História <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,26 )" class="pc-btn">-</button><button onclick="addPerPoint(this,26 )" class="pc-btn">+</button></div></div></div>
                   <div onclick="perShow(27, 'Mecanica')" class="p-card">Mecânica <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,27 )" class="pc-btn">-</button><button onclick="addPerPoint(this,27 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(28, 'UsarComputadores')" class="p-card">Usar Computadores <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,28 )" class="pc-btn">-</button><button onclick="addPerPoint(this,28 )" class="pc-btn">+</button></div></div></div>                  
+                  <div onclick="perShow(28, 'UsarComputadores')" class="p-card">Usar Comp. <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,28 )" class="pc-btn">-</button><button onclick="addPerPoint(this,28 )" class="pc-btn">+</button></div></div></div>                  
                   <div onclick="perShow(29, 'Sobrevivência')" class="p-card">Sobrevivência <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,29 )" class="pc-btn">-</button><button onclick="addPerPoint(this,29 )" class="pc-btn">+</button></div></div></div>
                   <div onclick="perShow(30, 'Música')" class="p-card">Música <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,30 )" class="pc-btn">-</button><button onclick="addPerPoint(this,30 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(31, 'ConhecimentosGerais')" class="p-card">Conhecimentos Gerais <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,31 )" class="pc-btn">-</button><button onclick="addPerPoint(this,31 )" class="pc-btn">+</button></div></div></div>
+                  <div onclick="perShow(31, 'ConhecimentosGerais')" class="p-card">Conhe. Gerais <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,31 )" class="pc-btn">-</button><button onclick="addPerPoint(this,31 )" class="pc-btn">+</button></div></div></div>
                   <div onclick="perShow(32, 'Linguas')" class="p-card">Línguas <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,32 )" class="pc-btn">-</button><button onclick="addPerPoint(this,32 )" class="pc-btn">+</button></div></div></div>
                   <div onclick="perShow(33, 'Medicina')" class="p-card">Medicina <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,33 )" class="pc-btn">-</button><button onclick="addPerPoint(this,33 )" class="pc-btn">+</button></div></div></div>
                   <div onclick="perShow(34, 'Ciência')" class="p-card">Ciências <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,34 )" class="pc-btn">-</button><button onclick="addPerPoint(this,34 )" class="pc-btn">+</button></div></div></div>
@@ -330,6 +334,8 @@
     </div>
     
 <div id="game">
+            <button id="enterPer" onclick="enterPer()">Abrir Pericias e Status</button>
+
   <div class="panel">
     <div class="box">
       <p class="exit-box" onclick="panelClose()">x</p>
@@ -439,25 +445,33 @@
   <!-- ================= MULTI TASK ================= -->
   <div id="multiTask">
     <header>
-      <button class="mTBtn active" onclick="gameHabaSel(0, this)">Magias / Rituais</button>
-      <div class="Sline"></div>
-      <button class="mTBtn" onclick="gameHabaSel(2, this)">Traumas</button>
-      <div class="Sline"></div>
-      <button class="mTBtn" onclick="gameHabaSel(1, this)">Habilidades</button>
-      <div class="Sline"></div>
-      <button class="mTBtn" onclick="gameHabaSel(3, this)">Inventário</button>
-      <div class="Sline"></div>
-      <button class="mTBtn" onclick="gameHabaSel(4, this)">Rolagens</button>
-      <div class="Sline"></div>
-      <button class="mTBtn" onclick="gameHabaSel(5, this)">Personagem</button>
-      <div class="Sline"></div>
-      <button class="mTBtn" onclick="gameHabaSel(6, this)">Diário</button>
-      <div class="Sline"></div>
-      <button class="mTBtn" onclick="save()">Salvar</button>
-      <div class="line"></div>
+      <button id="MobileMTBtn">
+        Rolagens
+        <img src="img/menu.svg" alt="" id="mMTImage">
+      </button>
+      <div id="mt-menu">
+        <button class="mTBtn active" onclick="gameHabaSel(0, this)" style="font-size: 10px; overflow: clip;">Magias / Rituais</button>
+        <div class="Sline"></div>
+        <button class="mTBtn" onclick="gameHabaSel(2, this)">Traumas</button>
+        <div class="Sline"></div>
+        <button class="mTBtn" onclick="gameHabaSel(1, this)">Habilidades</button>
+        <div class="Sline"></div>
+        <button class="mTBtn" onclick="gameHabaSel(3, this)">Inventário</button>
+        <div class="Sline"></div>
+        <button class="mTBtn" onclick="gameHabaSel(4, this)">Rolagens</button>
+        <div class="Sline"></div>
+        <button class="mTBtn" onclick="gameHabaSel(5, this)">Personagem</button>
+        <div class="Sline"></div>
+        <button class="mTBtn" onclick="gameHabaSel(6, this)">Diário</button>
+        <div class="Sline"></div>
+        <button class="mTBtn" onclick="save()">Salvar</button>
+        <div class="Sline"></div>
+        <button class="mTBtn" onclick="baixarObjetoComoJSON(ficha, 'ficha_save')">Exportar</button>
+        <div class="line"></div>
+      </div>
     </header>
 
-    <main>
+    <main style="height: 100%;">
       <!-- ============ MAGIAS ============ -->
       <div class="mt-content active" id="magias-content">
         <h3 class="title" style="color: white;">Magias & Rituais</h3>
@@ -586,6 +600,7 @@
   </div>
 
   <div id="pericias-display-block">
+    <button class="close-btn-per" onclick="closePer()">x</button>
     <div id="perTop">
         <img src="" alt="" id="playerImg">
         <div class="barBlock">
@@ -669,9 +684,12 @@
             <div id="periciasEditor"></div>
             <div id="statusMaxEditor" class="hidden"></div>
         </div>
+
     
     <script src="ficha.js"></script>
     <script src="script.js"></script>
     <script src="game.js"></script>
+</body>
+</html>
 </body>
 </html>

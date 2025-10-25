@@ -37,6 +37,7 @@ main {
 
 .logo {
     filter: brightness(0) invert(1);
+    width: 90%;
 }
 
 .btn {
@@ -536,6 +537,7 @@ hr.small {
 #foco {
     display: none;
     flex-direction: column;
+    height: 100dvh;
 }
 
 .focos {
@@ -545,23 +547,14 @@ hr.small {
     position: relative;
     width: 400px;
     height: 400px;
-    background-size: cover;
+    background-size: contain;
     margin: 0 auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(img/magic.svg);
 }
 
-.focos::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url(img/magic.svg);
-    background-size: cover;
-  transform: rotate(0deg); /* Rotates only the background image */
-  transform-origin: center center; /* Sets the rotation origin */
-  z-index: -1; /* Places the background behind the content */
-}
+
 
 .foco-card {
     position: absolute;
@@ -908,6 +901,10 @@ img.reverse {
     color: white;
 }
 
+.p-card span {
+    max-width: 10px;
+}
+
 .p-card .nbr {
     display: flex;
     align-items: center;
@@ -974,7 +971,7 @@ img.reverse {
 
 
 #pericias-display-block {
-        width: 100%;
+    width: 258px;
     height: 100%;
     overflow-y: auto;
     padding: 10px;
@@ -982,8 +979,9 @@ img.reverse {
     background-color: #111;
     border: 1px solid #555;
 }
-#pericias-display {
 
+#pericias-display-block::-webkit-scrollbar {
+    display: none;
 }
 
 #pericias-display .title {
@@ -1029,12 +1027,14 @@ img.reverse {
 }
 
 #multiTask {
-    width: 77%;
+    width: calc(100% - 258px);
+    min-width: calc(100% - 258px);
     height: 97%;
     display: flex;
     flex-direction: column;
     border: #fff 1px solid;
     margin: 10px;
+
 }
 
 #multiTask header {
@@ -1061,10 +1061,12 @@ img.reverse {
 
 .mTBtn {
     width: 200px;
+    height: 100%;
     background-color: transparent;
     border: solid white 1px;
     border-top: none;
     color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
 }
 
 
@@ -1222,6 +1224,10 @@ img.reverse {
     color: white;
 }
 
+.delete-btn:hover {
+    background-color: rgb(160, 17, 17);
+}
+
 #MagicInfo, #AbilityInfo, #ItemInfo {
     display: none;
 }
@@ -1242,7 +1248,6 @@ img.reverse {
 
 #inventario-content .inv-side:first-child {
     display: flex;
-
 }
 
 #inventory {
@@ -1376,7 +1381,7 @@ img.reverse {
     display: flex;
     flex-direction: column;
     gap: 10px; /* Add gap between items */
-        height: calc(91% - 2em - 2px);
+    height: calc(91% - 2em - 2px);
     width: 250px;
     border: 1px solid #555;
     overflow-y: auto;
@@ -1413,10 +1418,6 @@ img.reverse {
 
 #additional-weight-panel .box p {
     margin-bottom: 50px;
-}
-
-#TraumaCreate {
-    
 }
 
 #traumas-content {
@@ -1712,6 +1713,104 @@ img.reverse {
     }
 }
 
+
+#MobileMTBtn {
+    position: relative;
+    display: none;
+    width: 200px;
+    background-color: transparent;
+    border: solid white 1px;
+    border-top: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+
+#mMTImage{
+    position: absolute;
+    top: 3px;
+    transform: rotate(180deg);
+}
+
+#MobileMTBtn.active {
+    transform: rotate(0deg);
+}
+
+.close-btn-per {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    width: 20px;
+    background-color: transparent;
+    border: 1px solid #555;
+    border-radius: 5px;
+    color: #555;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.close-btn-per:hover {
+    color: #333;
+    border-color: #333;
+}
+
+
+#enterPer {
+    display: none;
+    background-color: #111;
+    border:solid white 1px;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 1em;
+    color: white;
+    position: fixed;
+    bottom: 0;
+    z-index: 1000000;
+    cursor: pointer;
+}
+
+@media (max-width: 400px) {
+    #foco {
+        width: 90dvw;
+    }
+
+    .foco-info {
+        width: 100%;
+    }
+
+    .focos {
+        width: 90dvw;
+        height: 90dvw;
+    }
+
+    #foco-info-box {
+        position: absolute;
+        bottom: 0;
+        width: 90dvw;
+    }
+
+    #pericias-display-block {
+        position: absolute;
+        width: 100%;
+        height: 100dvh;
+        top: 0;
+        left: 0;
+        z-index: 10000000;
+    }
+
+    .close-btn-per {
+        display: flex;
+    }
+
+    #multiTask {
+        width: 100%;
+    }
+
+    #enterPer {
+        display: block;
+    }
+}
+
 /* Responsividade geral */
 @media (max-width: 768px) {
     body, main {
@@ -1732,12 +1831,224 @@ img.reverse {
     }
 
     .btn, .input {
-        padding: 8px 20px;
         font-size: 14px;
     }
 
-    .race-card, .origin-card, .type-card, .element-card {
+    .origin-card, .type-card, .element-card {
         width: 80%;
         max-width: 350px;
     }
+
+    #sex-div .btn {
+        padding: 0 20px;
+    }
+    #Rs-div {
+        justify-content: center;
+    }
+
+    .race-card {
+        width: 80%;
+        height: 80%;
+        min-width: 80%;
+        min-height: 80%;
+    }
+
+    .race-card .rsBtn {
+        font-size: 3dvw;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .race-details {
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 10px 10px 10px 25px;
+    }
+
+    .race-details::-webkit-scrollbar-track{
+        background-color: transparent;
+    }
+
+    
+.race-details {
+  --sb-track-color: transparent;
+  --sb-thumb-color: #ffffff6b;
+  --sb-size: 14px;
+}
+
+.race-details::-webkit-scrollbar {
+  width: var(--sb-size)
+}
+
+.race-details::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 3px;
+}
+
+.race-details::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 3px;
+  
+}
+
+@supports not selector(::-webkit-scrollbar) {
+ .race-details {
+    scrollbar-color: 
+    var(--sb-thumb-color)
+    var(--sb-track-color);
+  }
+}
+
+.type-info {
+    width: 80dvw;
+}
+
+.type-card {
+    width: 25dvw;
+    height: 25dvw;
+    max-width: 350px;
+}
+
+#typeDescription {
+    margin-bottom: 10px;
+}
+
+.types {
+    width: 80dvw;
+}
+
+    #MobileMTBtn {
+        display: block;
+        width: 100%;
+    }
+
+}
+
+#mt-menu {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    #multiTask header {
+        position: relative;
+    }
+
+    #mt-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 30px;
+        left: 0;
+        width: 100%;
+        background-color: #111;
+        border: 1px solid #555;
+        z-index: 100;
+        align-items: stretch;
+    }
+
+    #MobileMTBtn.active + #mt-menu {
+        display: flex;
+    }
+
+    #mt-menu .mTBtn {
+        display: block;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #555;
+        margin: 0;
+        text-align: left;
+        padding: 10px;
+    }
+    
+    #mt-menu .mTBtn:last-child {
+        border-bottom: none;
+    }
+
+    #mt-menu .Sline, #mt-menu .line {
+        display: none;
+    }
+
+    #inventario-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #inventario-content .inv-side:first-child {
+        flex-direction: column;
+        justify-content: flex-start;
+        height: auto;
+    }
+
+    #inventario-content .inv-side {
+        width: auto;
+    }
+
+    #inventory {
+        width: auto;
+        margin: 0 0 1em;
+        height: 400px;
+    }
+
+    #guardados {
+    
+        height: 400px;
+        margin: 0 0 2em 1em;
+    }
+
+    .habilidades-content {
+        grid-template-columns: auto;
+    }
+
+    .ability-card .title {
+        font-size: 329%;
+    }
+
+    .btn-container {
+        scale: 0.89;
+    }
+
+    #dados-content .title {
+        margin-top: 0px;
+    } 
+
+    #dados-content .text {
+        text-align: center;
+        font-size: 12px;
+        color: #9f9f9f;
+    }
+    
+    #Pr {
+        flex-direction: column;
+        height: 90dvh;
+        overflow: hidden;
+    }
+
+    .pr-block {
+        width: 100%;
+    }
+
+
+}
+
+#arquivoJSON {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 120px;
+    background-color: #222;
+    color: white;
+
+}
+
+#arquivoJSON  {
+    background-color: transparent;
+    border: none;
+
 }

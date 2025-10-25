@@ -206,6 +206,7 @@ function gameHabaSel(id, btn) {
         selectedContent.style.display = 'flex';
     }
 
+    console.log(id, selectedContent)
     if (id === 5) { // Personagem tab
         renderPersonagem();
     }
@@ -224,7 +225,7 @@ function addMagic() {
     magicDice.value = ""
 }
 
-function createMagic() {
+function createMagic(load = false) {
     const diceString = magicDice.value;
     const multiplierRegex = /^(\d+)\*d(\d+)$/i;
     const diceRegex = /^((\d+d\d+)|(\d+))(\s*\+\s*((\d+d\d+)|(\d+)))*$/i;
@@ -282,7 +283,9 @@ function createMagic() {
         dice: magicDiceValue
     }
 
-    ficha.magias.push(magicVar)
+    if (!ficha.magias.some(m => m.name === magicNameValue) && !load) {
+        ficha.magias.push(magicVar)
+    }
 
     panelClose()
     
@@ -338,14 +341,14 @@ function addAbility() {
     abilityDice.value = "";
 }
 
-function addHabilidade(nome, descricao, dado) {
+function addHabilidade(nome, descricao, dado, load = false) {
     const abilityVar = {
         name: nome,
         description: descricao,
         dice: dado
     };
 
-    if (!ficha.habilidades.some(h => h.name === nome)) {
+    if (!ficha.habilidades.some(h => h.name === nome) && !load) {
         ficha.habilidades.push(abilityVar);
     }
 
@@ -659,13 +662,15 @@ function updateWeaponArea() {
         weaponName.textContent = weapon.name;
 
         const weaponDice = document.createElement('p');
-        weaponDice.className = 'text sm';
+        weaponDice.className = 'text sm'
         weaponDice.textContent = `Dano: ${weapon.dice}`;
         
         const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'btn-container';
         buttonContainer.style.display = 'flex';
         buttonContainer.style.gap = '10px';
         buttonContainer.style.marginTop = '10px';
+
 
         const rollBtn = document.createElement('button');
         rollBtn.className = 'btn';
@@ -789,7 +794,7 @@ function createTrauma() {
 }
 
 function renderTraumas() {
-    const traumaContainer = document.getElementById('traumas-content');
+    const traumaContainer = document.getElementsByClassName('traumas-content')[0];
     traumaContainer.innerHTML = '';
 
     ficha.traumas.forEach(trauma => {
@@ -838,9 +843,7 @@ var statusList = {
 function changeStatusValue(type, status) {
 
     value = type == "+"? 1 : -1
-    
-    statusList[status].text.innerHTML = ficha.status[status] + value + "/" + ficha.status[status + "Max"]
-    
+        
     ficha.status[status] += value
 
     statusAtu()
@@ -856,6 +859,10 @@ function statusAtu() {
     statusList["pontosDeMagia"].fill.style.width = ficha.status.pontosDeMagia >= ficha.status.pontosDeMagiaMax? "100%" :mpPer + "%"
     statusList["medo"].fill.style.width = ficha.status.medo >= ficha.status.medoMax? "100%" :spPer + "%"
 
+    statusList["vida"].text.innerHTML = ficha.status.vida + "/" + ficha.status.vidaMax;
+    statusList["pontosDeMagia"].text.innerHTML = ficha.status.pontosDeMagia + "/" + ficha.status.pontosDeMagiaMax;
+    statusList["medo"].text.innerHTML = ficha.status.medo + "/" + ficha.status.medoMax;
+
     console.log(statusList["vida"].fill.style.width, vidaPer)
 }
 
@@ -863,15 +870,72 @@ function formatDoc(command, value = null) {
     document.execCommand(command, false, value);
 }
 
-statusAtu()
-
 function save() {
+    if (localStorage.getItem('hasFichaSave')) {
+
+        var r=confirm("Ja Existe um save! nome : " + JSON.parse(localStorage.getItem('ficha')).name + " Save criado às " + new Date(JSON.parse(localStorage.getItem('hour'))).toLocaleTimeString() + " ; Deseja Sobrescrever?");
+
+        if (r==true)
+        {
+            localStorage.setItem('ficha', JSON.stringify(ficha));
+            const hour = new Date();
+            localStorage.setItem('hour', JSON.stringify(hour));
+            localStorage.setItem('hasFichaSave', true)
+            alert("Ficha salva!")
+            return;
+        }
+        else
+        {
+            alert('Ficha não salva!')
+            return;
+        }
+
+    }
+
     localStorage.setItem('ficha', JSON.stringify(ficha));
+    const hour = new Date();
+    localStorage.setItem('hour', JSON.stringify(hour));
+    localStorage.setItem('hasFichaSave', true)
     alert("Ficha salva!")
+    return;
+    
 }
 
 function load() {
 
+    if (!localStorage.getItem('hasFichaSave')) {
+        alert("Nenhum save encontrado!");
+        return;
+    }
+
     ficha = JSON.parse(localStorage.getItem('ficha')) || ficha;
     irParaJogo()
+    renderTraumas()
+    updateTotalWeight()
+    updateWeaponArea()
+    renderGuardados()
+    renderInventory()
+
+    ficha.habilidades.forEach(h => {
+        addHabilidade(h.name, h.description, h.dice, true)
+    });
+
+    ficha.magias.forEach(m => {
+        magicName.value = m.name;
+        magicDescription.value = m.description;
+        magicDice.value = m.dice;
+        createMagic(true)
+    });
+
+}
+
+function closePer() {
+    const periciasContainer = document.getElementById('pericias-display-block');
+    periciasContainer.style.display = 'none';
+
+}
+
+function enterPer() {
+    const periciasContainer = document.getElementById("pericias-display-block")
+    periciasContainer.style.display = "block"
 }
