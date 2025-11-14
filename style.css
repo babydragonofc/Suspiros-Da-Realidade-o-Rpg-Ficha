@@ -1473,7 +1473,7 @@ img.reverse {
     opacity: 0;
     pointer-events: none;
     transition: 0.5s opacity ease-in-out;
-    z-index: 1000;
+    z-index: 999999999;
     background-color: #0000006c;
 }
 
@@ -1994,6 +1994,29 @@ img.reverse {
 }
 
 @media (max-width: 768px) {
+
+    .bar {
+        width: 236px;
+        height: 97px;
+        background-color: #222;
+        position: relative;
+    }
+
+    .barBtn {
+        background-color: #222;
+        border: none;
+        color: white;
+        margin-left: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+    }
+
+    .barBlock {
+        justify-content: space-between;
+    }
+
     #multiTask header {
         position: relative;
     }
