@@ -14,6 +14,7 @@
         <img src="img/logo.svg" alt="" class="logo">
         <button class="btn" onclick="abrirCriadorDeFicha()">Criar Ficha</button>
         <button class="btn" onclick="load()">Carregar</button>
+        <button class="btn" onclick="openDiceRoller()">Rolar Dados</button>
         
         <input type="file" id="arquivoJSON">
 
@@ -21,6 +22,28 @@
 
 
     </main>
+
+    <div id="diceRollerArea" class="panel" style="display: none;">
+        <div class="box">
+            <p class="exit-box" onclick="closeDiceRoller()">x</p>
+            <h3 class="title" style="color: white;">Rolagem de Perícia</h3>
+            <div class="dice-roller-content">
+                <p class="text">Valor da Perícia</p>
+                <input type="number" id="periciaValue" class="input" min="1" max="20">
+                
+                <button class="btn" id="rollPericiaBtn">Rolar Dado</button>
+                
+                <hr style="margin: 20px 0;">
+                
+                <p class="text">Valor Pré-definido</p>
+                <input type="number" id="presetRollValue" class="input" min="1" max="20">
+                <button class="btn" id="presetRollBtn">Verificar Sucesso</button>
+                
+                <div id="rollResult" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="cF">
         <div>
         </div>
@@ -334,87 +357,79 @@
     </div>
     
 <div id="game">
-            <button id="enterPer" onclick="enterPer()">Abrir Pericias e Status</button>
+    <button id="enterPer" onclick="enterPer()">Abrir Pericias e Status</button>
 
-  <div class="panel">
+  <div class="panel" id="main-panel">
     <div class="box">
       <p class="exit-box" onclick="panelClose()">x</p>
 
       <!-- ================= MAGIA ================= -->
       <div id="MagicCreate">
-        <section>
-          <p class="text">Nome</p>
-          <input type="text" id="magicName" class="input">
-
-          <p class="text">Descrição</p>
-          <textarea id="magicDescription" class="input" style="resize: none;"></textarea>
-
-          <p class="text">Rolar</p>
-          <input type="text" id="magicDice" class="input dice">
-        </section>
-
-        <button class="btn" onclick="createMagic()">Criar</button>
-      </div>
-
-      <div id="MagicInfo" style="display: none;">
-        <div>
-          <h2 class="title" id="magicInfoName" style="font-size: 50px; color: white;"></h2>
-          <p class="text" id="magicInfoDescription"></p>
         </div>
-      </div>
 
       <!-- ================= HABILIDADE ================= -->
       <div id="AbilityCreate" style="display: none;">
-        <section>
-          <p class="text">Nome</p>
-          <input type="text" id="abilityName" class="input">
-
-          <p class="text">Descrição</p>
-          <textarea id="abilityDescription" class="input" style="resize: none;"></textarea>
-
-          <p class="text">Dado</p>
-          <input type="text" id="abilityDice" class="input dice">
-        </section>
-
-        <button class="btn" onclick="createAbility()">Criar</button>
       </div>
-
-      <div id="AbilityInfo" style="display: none;">
-        <div>
-          <h2 class="title" id="abilityInfoName" style="font-size: 50px; color: white;"></h2>
-          <p class="text" id="abilityInfoDescription"></p>
-          <p class="text" id="abilityInfoDice"></p>
-        </div>
-      </div>
-
       <!-- ================= ITEM ================= -->
-      <div id="ItemInfo" style="display: none;">
-        <div>
-          <h2 class="title" id="itemInfoName" style="font-size: 50px; color: white;"></h2>
-          <p class="text" id="itemInfoDescription"></p>
-          <p class="text" id="itemInfoDice"></p>
-        </div>
-      </div>
-
       <div id="ItemCreate" style="display: none;">
-        <section>
-          <p class="text">Nome</p>
-          <input type="text" id="itemName" class="input">
+        <section class="item-creation-grid">
+          <div>
+            <p class="text">Categoria</p>
+            <select id="itemCategory" class="input">
+              <option value="comum">Comum</option>
+              <option value="arma">Arma</option>
+              <option value="municao">Munição</option>
+            </select>
+          </div>
 
-          <p class="text">Descrição</p>
-          <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
+          <div>
+            <p class="text">Nome</p>
+            <input type="text" id="itemName" class="input">
+          </div>
 
-          <p class="text">Peso</p>
-          <input type="number" id="itemWeight" class="input">
+          <div class="full-width">
+            <p class="text">Descrição</p>
+            <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
+          </div>
 
-          <p class="text">Dado</p>
-          <input type="text" id="itemDice" class="input dice">
+          <div>
+            <p class="text">Peso</p>
+            <input type="number" id="itemWeight" class="input">
+          </div>
 
-          <p class="text">Local</p>
-          <select id="itemLocal" class="input">
-            <option value="inventario">Inventário</option>
-            <option value="guardado">Guardado</option>
-          </select>
+          <div>
+            <p class="text">Dado</p>
+            <input type="text" id="itemDice" class="input dice">
+          </div>
+
+          <div>
+            <p class="text">Local</p>
+            <select id="itemLocal" class="input">
+              <option value="inventario">Inventário</option>
+              <option value="guardado">Guardado</option>
+            </select>
+          </div>
+
+          <a id="weapon-options" class="hidden">
+            <p class="text">Tipo de Arma</p>
+            <select id="itemType" class="input">
+              <option value="fisica">Física</option>
+              <option value="branca">Branca</option>
+              <option value="pistola">Pistola</option>
+              <option value="rifle">Rifle</option>
+              <option value="longo_alcance">Longo Alcance</option>
+            </select>
+            <p class="text">Munição</p>
+            <input type="number" id="itemAmmunition" class="input">
+        </a>
+
+          <a id="munition-options" class="hidden">
+            <p class="text">Tipo de Munição</p>
+            <select id="munitionType" class="input">
+              <option value="bala">Bala Solta</option>
+              <option value="cartucho">Cartucho</option>
+            </select>
+          </a>
         </section>
 
         <button class="btn" onclick="createItem()">Criar</button>
@@ -637,8 +652,8 @@
 
     <div id="pericias-display"></div>
   </div>
-</div>
-
+    </div>
+  </div>
 
     <div id="tooltip" class="tooltip">
         <div>
@@ -671,20 +686,26 @@
         </div>
     </div>
 
-        <div id="dice-div" onclick="a()">
+    <div id="dice-div" onclick="a()">
             <div>
                 <h1 id="nmb" class="title"></h1>
                 <span id="nbmType" class="text sm">--</span>
                 <p id="nmbW">Clique em qualquer lugar para voltar.</p>
             </div>
-        </div>
+    </div>
 
-        <div id="periciasEditorBox" class="hidden">
+    <div id="periciasEditorBox" class="hidden">
             <button class="closeBox" onclick="salvarPericiasEditadas(), salvarStatusMaxEditados()">X</button>
             <div id="periciasEditor"></div>
             <div id="statusMaxEditor" class="hidden"></div>
-        </div>
+    </div>
 
+    <div id="update-notification" style="display: none;">
+        <p>Seu save foi atualizado para a versão mais recente. Por favor, exporte-o novamente para garantir a compatibilidade.</p>
+        <button onclick="document.getElementById('update-notification').style.display = 'none'">Fechar</button>
+    </div>
+
+</div>
     
     <script src="ficha.js"></script>
     <script src="script.js"></script>

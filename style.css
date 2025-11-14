@@ -1123,7 +1123,6 @@ img.reverse {
 }
 
 .panel .box {
-
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1131,9 +1130,13 @@ img.reverse {
     justify-content: center;
     background-color: #111;
     border: 1px solid #555;
-    min-width: 200px;
-    height: 500px;
-
+    width: 80%;
+    max-width: 800px;
+    height: auto;
+    min-height: 400px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease-in-out;
 }
 
 .exit-box {
@@ -1278,6 +1281,22 @@ img.reverse {
     background-color: #333;
 }
 
+.item-content {
+    justify-content: space-between;
+}
+
+.item-content button {
+    background-color: #444;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.item-content button:hover {
+    background-color: #333;
+}
+
 .item-action-menu {
     position: absolute;
     display: none;
@@ -1317,6 +1336,7 @@ img.reverse {
 }
 
 .arma-area {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1502,7 +1522,7 @@ img.reverse {
 
 .bar {
     width: -webkit-fill-available;
-    height: 20px;
+    height: 62px;
     background-color: #222;
     position: relative;
 }
@@ -1516,6 +1536,12 @@ img.reverse {
     justify-content: flex-end;
     color: white;
     
+}
+
+.barDiv p{
+    z-index: 10;
+    position: absolute;
+    bottom: -10px;
 }
 
 .barFill {
@@ -1549,19 +1575,55 @@ img.reverse {
 }
 
 #hpBarFill { 
-    background-color: rgb(190, 0, 0);
+    background-color: #E01B24;
     width: 10%;
 }
 
 #mpBarFill {
-    background-color: rgb(91, 192, 255);
+    background-color: #1C71D8;
     width: 20%;
 }
 
 #spBarFill {
-    background-color: #46005d;
+    background-color: #ffffff;
     width: 30%;
 }
+
+#hpBar::after {
+    content: '';
+    height: 100%;
+    width: 100%;
+    background-image: url(img/vida.png);
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-size: cover;
+}
+
+#spBar::after {
+    content: '';
+    height: 100%;
+    width: 100%;
+    background-image: url(img/medo.png);
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-size: cover;
+}
+
+#mpBar::after {
+    content: '';
+    height: 100%;
+    width: 100%;
+    background-image: url(img/magia.png);
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-size: cover;
+}
+
+
+
 
 .diario-toolbar {
   margin-bottom: 10px;
@@ -1702,9 +1764,7 @@ img.reverse {
 
 }
 
-.hidden {
-    display: none;
-}
+
 
 /* Mobile: troca hover por click */
 @media (hover: none) and (pointer: coarse) {
@@ -2000,6 +2060,41 @@ img.reverse {
         margin: 0 0 2em 1em;
     }
 
+#diceRollerArea .box {
+    height: auto;
+    padding: 20px;
+    gap: 15px;
+}
+
+.dice-roller-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+}
+
+.dice-roller-content .input {
+    width: 80%;
+    text-align: center;
+}
+
+.dice-roller-content .btn {
+    width: 90%;
+}
+
+#rollResult {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #555;
+    background-color: #222;
+    border-radius: 5px;
+    width: 90%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+
     .habilidades-content {
         grid-template-columns: auto;
     }
@@ -2010,6 +2105,17 @@ img.reverse {
 
     .btn-container {
         scale: 0.89;
+    }
+
+    .arma-area .btn-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-direction: column;
+    position: absolute;
+    scale: 0.5;
+    right: -24px;
+    top: -17px;
     }
 
     #dados-content .title {
@@ -2051,4 +2157,100 @@ img.reverse {
     background-color: transparent;
     border: none;
 
+}
+
+#update-notification {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #222;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#update-notification p {
+    margin: 0;
+}
+
+#update-notification button {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.item-creation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1em;
+    padding: 1em;
+    border: 1px solid #555;
+    background-color: #222;
+    color: white;
+    border-radius: 8px;
+}
+
+.item-creation-grid .full-width {
+    grid-column: 1 / -1; /* Span across all columns */
+}
+
+.item-creation-grid label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.item-creation-grid input[type="text"],
+.item-creation-grid input[type="number"],
+.item-creation-grid textarea,
+.item-creation-grid select {
+    width: 100%;
+    padding: 0.5em;
+    margin-bottom: 1em;
+    border: 1px solid #555;
+    background-color: #333;
+    color: white;
+    border-radius: 4px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.item-creation-grid textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.item-creation-grid button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.7em 1.5em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.item-creation-grid button:hover {
+    background-color: #45a049;
+}
+
+.item-creation-grid .button-group {
+    display: flex;
+    gap: 1em;
+    justify-content: flex-end;
+    grid-column: 1 / -1;
+}
+
+
+
+.hidden {
+    display: none;
 }

@@ -78,6 +78,40 @@ var ficha = {
 
 };
 
+const defaultFicha = JSON.parse(JSON.stringify(ficha));
+let saveUpdated = false;
+
+function mergeFicha(loadedFicha) {
+    saveUpdated = false;
+    const mergedFicha = JSON.parse(JSON.stringify(defaultFicha));
+
+    function recursiveMerge(target, source) {
+        for (const key in source) {
+            if (source.hasOwnProperty(key)) {
+                if (target.hasOwnProperty(key)) {
+                    if (typeof source[key] === 'object' && source[key] !== null && !Array.isArray(source[key])) {
+                        recursiveMerge(target[key], source[key]);
+                    } else {
+                        target[key] = source[key];
+                    }
+                } else {
+                    target[key] = source[key];
+                    saveUpdated = true;
+                }
+            }
+        }
+
+        for (const key in target) {
+            if (target.hasOwnProperty(key) && !source.hasOwnProperty(key)) {
+                saveUpdated = true;
+            }
+        }
+    }
+
+    recursiveMerge(mergedFicha, loadedFicha);
+    return mergedFicha;
+}
+
 /**
  * Baixa um objeto JavaScript como um arquivo JSON e permite que ele seja carregado.
  *
@@ -148,7 +182,14 @@ if (inputArquivo) {
       carregarObjetoJSON(arquivo)
         .then((dadosCarregados) => {
           console.log('Dados carregados:', dadosCarregados);
-          ficha = dadosCarregados;
+          ficha = mergeFicha(dadosCarregados);
+
+            if (saveUpdated) {
+                const notification = document.getElementById('update-notification');
+                if (notification) {
+                    notification.style.display = 'block';
+                }
+            }
 
             irParaJogo()
             renderTraumas()

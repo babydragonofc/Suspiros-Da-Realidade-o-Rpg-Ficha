@@ -169,26 +169,51 @@ function closeDiceMultiplierPanel() {
 }
 
 
-function panelOpen(id) {
-    document.getElementsByClassName("panel")[0].style.display = "flex";
-    const box = document.querySelector(".panel .box");
+function panelOpen(id, title, content) {
+    const mainPanel = document.getElementById("main-panel");
+    mainPanel.style.display = "flex";
+    const box = mainPanel.querySelector(".box");
+
+    // Clear previous content
+    const dynamicContent = box.querySelector("#dynamic-content");
+    if (dynamicContent) {
+        dynamicContent.remove();
+    }
+
     const divs = box.querySelectorAll("div[id]");
     divs.forEach(div => {
         div.style.display = "none";
     });
-    document.querySelector(".panel .box #" + id).style.display = "flex";
+
+    const targetDiv = box.querySelector("#" + id);
+    if (targetDiv) {
+        targetDiv.style.display = "flex";
+    } else if (title && content) {
+        const newContentDiv = document.createElement("div");
+        newContentDiv.id = "dynamic-content";
+        newContentDiv.style.display = "flex";
+        newContentDiv.innerHTML = `
+            <div>
+                <h2 class="title" style="font-size: 50px; color: white;">${title}</h2>
+                <p class="text">${content}</p>
+            </div>
+        `;
+        box.appendChild(newContentDiv);
+    }
 }
 
 function panelClose() {
-    document.getElementsByClassName("panel")[0].style.display = "none";
-    const itemCreate = document.getElementById('ItemCreate');
-    if(itemCreate) itemCreate.style.display = "none";
-    
-    const magicCreate = document.querySelector(".panel .box #MagicCreate");
-    if(magicCreate) magicCreate.style.display = "none";
+    document.getElementById("main-panel").style.display = "none";
+    const box = document.querySelector("#main-panel .box");
+    const divs = box.querySelectorAll("div[id]");
+    divs.forEach(div => {
+        div.style.display = "none";
+    });
 
-    const magicInfo = document.querySelector(".panel .box #MagicInfo");
-    if(magicInfo) magicInfo.style.display = "none";
+    const dynamicContent = box.querySelector("#dynamic-content");
+    if (dynamicContent) {
+        dynamicContent.remove();
+    }
 }
 
 function gameHabaSel(id, btn) {
@@ -287,18 +312,20 @@ function createMagic(load = false) {
         ficha.magias.push(magicVar)
     }
 
-    panelClose()
+    if (!load) {
+        panelClose()
+    }
     
 }
 
 function showMagicInfo(name, description, dice, cardElement) {
-    document.getElementById('magicInfoName').textContent = name;
-    document.getElementById('magicInfoDescription').textContent = description;
+    const content = `
+        <p class="text">${description}</p>
+    `;
+    panelOpen(null, name, content);
 
-    const magicInfo = document.getElementById('MagicInfo');
-    const existingBtns = magicInfo.querySelectorAll('.btn');
-    existingBtns.forEach(btn => btn.remove());
-
+    const magicInfo = document.querySelector("#main-panel .box #dynamic-content");
+    if (!magicInfo) return;
 
     if (dice) {
         const rollBtn = document.createElement('button');
@@ -324,8 +351,6 @@ function showMagicInfo(name, description, dice, cardElement) {
         panelClose();
     };
     magicInfo.appendChild(deleteBtn);
-
-    panelOpen('MagicInfo');
 }
 
 const habilidadesContent = document.getElementsByClassName('habilidades-content')[0];
@@ -396,13 +421,14 @@ function createAbility() {
 }
 
 function showAbilityInfo(name, description, dice, cardElement) {
-    document.getElementById('abilityInfoName').textContent = name;
-    document.getElementById('abilityInfoDescription').textContent = description;
-    document.getElementById('abilityInfoDice').textContent = dice ? `Dado: ${dice}` : "";
+    const content = `
+        <p class="text">${description}</p>
+        <p class="text">${dice ? `Dado: ${dice}` : ""}</p>
+    `;
+    panelOpen(null, name, content);
 
-    const abilityInfo = document.getElementById('AbilityInfo');
-    const existingBtns = abilityInfo.querySelectorAll('.btn');
-    existingBtns.forEach(btn => btn.remove());
+    const abilityInfo = document.querySelector("#main-panel .box #dynamic-content");
+    if (!abilityInfo) return;
 
     if (dice) {
         const rollBtn = document.createElement('button');
@@ -428,8 +454,6 @@ function showAbilityInfo(name, description, dice, cardElement) {
         panelClose();
     };
     abilityInfo.appendChild(deleteBtn);
-
-    panelOpen('AbilityInfo');
 }
 
 // ====================== INVENTORY ======================
@@ -456,6 +480,7 @@ function createItem() {
     const weight = itemWeightInput.value;
     const dice = itemDiceInput.value;
     const local = itemLocalInput.value;
+    const category = document.getElementById('itemCategory').value;
 
     if (!name) {
         alert("O nome do item é obrigatório.");
@@ -470,6 +495,16 @@ function createItem() {
         dice: dice
     };
 
+    if (category === 'arma') {
+        newItem.isWeapon = true;
+        newItem.weaponType = document.getElementById('itemType').value;
+        newItem.ammunition = parseInt(document.getElementById('itemAmmunition').value) || 0;
+        newItem.maxAmmunition = parseInt(document.getElementById('itemAmmunition').value) || 0;
+    } else if (category === 'municao') {
+        newItem.isMunition = true;
+        newItem.munitionType = document.getElementById('munitionType').value;
+    }
+
     if (local === 'inventario') {
         ficha.inventario.content.push(newItem);
         renderInventory();
@@ -482,21 +517,94 @@ function createItem() {
     panelClose();
 }
 
+function initializeItemCategoryDisplay() {
+    const itemCategory = document.getElementById('itemCategory');
+    const weaponOptions = document.getElementById('weapon-options');
+    const munitionOptions = document.getElementById('munition-options');
+
+    console.log('initializeItemCategoryDisplay called');
+    console.log('itemCategory element:', itemCategory);
+    console.log('weaponOptions element:', weaponOptions);
+    console.log('munitionOptions element:', munitionOptions);
+
+    if (!itemCategory || !weaponOptions || !munitionOptions) {
+        console.error('One or more item category elements not found.');
+        return;
+    }
+
+    const category = itemCategory.value;
+    console.log('Selected item category:', category);
+
+    // Ensure both are hidden first
+    weaponOptions.classList.add('hidden');
+    munitionOptions.classList.add('hidden');
+    console.log('After hiding all: weaponOptions hidden:', weaponOptions.classList.contains('hidden'), 'munitionOptions hidden:', munitionOptions.classList.contains('hidden'));
+
+
+    if (category === 'arma') {
+        weaponOptions.classList.remove('hidden');
+        console.log('Category is arma: weaponOptions hidden:', weaponOptions.classList.contains('hidden'));
+    } else if (category === 'municao') {
+        munitionOptions.classList.remove('hidden');
+        console.log('Category is municao: munitionOptions hidden:', munitionOptions.classList.contains('hidden'));
+    }
+}
+
+document.getElementById('itemCategory').addEventListener('change', initializeItemCategoryDisplay);
+
+// Call the function once on page load to set the initial state
+
+
 function renderInventory() {
     inventoryContainer.innerHTML = '';
     ficha.inventario.content.forEach(item => {
         const itemCard = document.createElement('div');
         itemCard.className = 'item-card';
-        itemCard.textContent = item.name;
         itemCard.dataset.itemId = item.id;
+
+        const itemHeader = document.createElement('div');
+        itemHeader.className = 'item-header';
+        let itemText = item.name;
+        if (item.isWeapon) {
+            itemText += ` (${item.ammunition}/${item.maxAmmunition})`;
+        }
+        itemHeader.textContent = itemText;
+        itemCard.appendChild(itemHeader);
+
+        const itemContent = document.createElement('div');
+        itemContent.className = 'item-content';
+        itemContent.style.display = 'none';
+
+        const infoButton = document.createElement('button');
+        infoButton.textContent = 'Info';
+        infoButton.onclick = () => showItemInfo(item.id, 'inventario');
+        itemContent.appendChild(infoButton);
+
+        const useButton = document.createElement('button');
+        useButton.textContent = 'Usar';
+        useButton.onclick = () => useItem(item.id);
+        itemContent.appendChild(useButton);
+
+        const guardarButton = document.createElement('button');
+        guardarButton.textContent = 'Guardar';
+        guardarButton.onclick = () => moveItem(item.id, 'inventario');
+        itemContent.appendChild(guardarButton);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Excluir';
+        deleteButton.onclick = () => deleteItem(item.id, 'inventario');
+        itemContent.appendChild(deleteButton);
+
+        itemCard.appendChild(itemContent);
+
+        itemHeader.addEventListener('click', () => {
+            const isVisible = itemContent.style.display === 'flex';
+            itemContent.style.display = isVisible ? 'none' : 'flex';
+        });
 
         if (ficha.inventario.weapon && ficha.inventario.weapon.id === item.id) {
             itemCard.classList.add('equipped');
         }
-
-        itemCard.addEventListener('click', (event) => {
-            showItemActions(item.id, event, 'inventario');
-        });
 
         inventoryContainer.appendChild(itemCard);
     });
@@ -507,11 +615,37 @@ function renderGuardados() {
     ficha.inventario.guardados.forEach(item => {
         const itemCard = document.createElement('div');
         itemCard.className = 'item-card';
-        itemCard.textContent = item.name;
         itemCard.dataset.itemId = item.id;
 
-        itemCard.addEventListener('click', (event) => {
-            showItemActions(item.id, event, 'guardado');
+        const itemHeader = document.createElement('div');
+        itemHeader.className = 'item-header';
+        itemHeader.textContent = item.name;
+        itemCard.appendChild(itemHeader);
+
+        const itemContent = document.createElement('div');
+        itemContent.className = 'item-content';
+        itemContent.style.display = 'none';
+
+        const infoButton = document.createElement('button');
+        infoButton.textContent = 'Info';
+        infoButton.onclick = () => showItemInfo(item.id, 'guardado');
+        itemContent.appendChild(infoButton);
+
+        const moveButton = document.createElement('button');
+        moveButton.textContent = 'Mover para Inventário';
+        moveButton.onclick = () => moveItem(item.id, 'guardado');
+        itemContent.appendChild(moveButton);
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Excluir';
+        deleteButton.onclick = () => deleteItem(item.id, 'guardado');
+        itemContent.appendChild(deleteButton);
+
+        itemCard.appendChild(itemContent);
+
+        itemHeader.addEventListener('click', () => {
+            const isVisible = itemContent.style.display === 'flex';
+            itemContent.style.display = isVisible ? 'none' : 'flex';
         });
 
         guardadosContainer.appendChild(itemCard);
@@ -620,7 +754,9 @@ function useItem(itemId) {
     const item = ficha.inventario.content.find(item => item.id === itemId);
     if (!item) return;
 
-    if (item.dice) {
+    if (item.isMunition) {
+        reloadWeapon(item.id);
+    } else if (item.dice) {
         ficha.inventario.weapon = item;
         updateWeaponArea();
         renderInventory();
@@ -644,10 +780,11 @@ function showItemInfo(itemId, location) {
 
     if (!item) return;
 
-    panelOpen('ItemInfo');
-    document.getElementById('itemInfoName').textContent = item.name;
-    document.getElementById('itemInfoDescription').textContent = item.description;
-    document.getElementById('itemInfoDice').textContent = item.dice ? `Dado: ${item.dice}` : "";
+    const content = `
+        <p class="text">${item.description}</p>
+        <p class="text">${item.dice ? `Dado: ${item.dice}` : ""}</p>
+    `;
+    panelOpen(null, item.name, content);
 }
 
 function updateWeaponArea() {
@@ -664,6 +801,12 @@ function updateWeaponArea() {
         const weaponDice = document.createElement('p');
         weaponDice.className = 'text sm'
         weaponDice.textContent = `Dano: ${weapon.dice}`;
+
+        const weaponAmmo = document.createElement('p');
+        weaponAmmo.className = 'text sm';
+        if (weapon.isWeapon) {
+            weaponAmmo.textContent = `Munição: ${weapon.ammunition}/${weapon.maxAmmunition}`;
+        }
         
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'btn-container';
@@ -680,16 +823,33 @@ function updateWeaponArea() {
             rollDice(false);
         };
 
+        const useBtn = document.createElement('button');
+        useBtn.className = 'btn';
+        useBtn.textContent = 'Usar';
+        useBtn.onclick = () => useWeapon();
+
+        const reloadBtn = document.createElement('button');
+        reloadBtn.className = 'btn';
+        reloadBtn.textContent = 'Recarregar';
+        reloadBtn.onclick = () => reloadWeapon();
+
         const removeBtn = document.createElement('button');
         removeBtn.className = 'btn delete-btn';
         removeBtn.textContent = 'Remover';
         removeBtn.onclick = () => unequipWeapon();
 
         buttonContainer.appendChild(rollBtn);
+        if (weapon.isWeapon) {
+            buttonContainer.appendChild(useBtn);
+            buttonContainer.appendChild(reloadBtn);
+        }
         buttonContainer.appendChild(removeBtn);
 
         weaponArea.appendChild(weaponName);
         weaponArea.appendChild(weaponDice);
+        if (weapon.isWeapon) {
+            weaponArea.appendChild(weaponAmmo);
+        }
         weaponArea.appendChild(buttonContainer);
     } else {
         const placeholder1 = document.createElement('p');
@@ -703,6 +863,65 @@ function updateWeaponArea() {
         weaponArea.appendChild(placeholder1);
         weaponArea.appendChild(placeholder2);
     }
+}
+
+function useWeapon() {
+    const weapon = ficha.inventario.weapon;
+    if (weapon && weapon.isWeapon && weapon.ammunition > 0) {
+        weapon.ammunition--;
+        updateWeaponArea();
+        renderInventory();
+    }
+}
+
+function reloadWeapon(munitionId) {
+    const weapon = ficha.inventario.weapon;
+    if (!weapon || !weapon.isWeapon) {
+        alert("Nenhuma arma equipada.");
+        return;
+    }
+
+    if (weapon.ammunition === weapon.maxAmmunition) {
+        alert("A munição já está cheia.");
+        return;
+    }
+
+    let munition;
+    let munitionIndex;
+
+    if (munitionId) {
+        munitionIndex = ficha.inventario.content.findIndex(item => item.id === munitionId && item.isMunition);
+        if (munitionIndex !== -1) {
+            munition = ficha.inventario.content[munitionIndex];
+        }
+    } else {
+        // Find first available munition
+        munitionIndex = ficha.inventario.content.findIndex(item => item.isMunition);
+        if (munitionIndex !== -1) {
+            munition = ficha.inventario.content[munitionIndex];
+        }
+    }
+
+    if (!munition) {
+        alert("Nenhuma munição encontrada no inventário.");
+        return;
+    }
+
+    if (munition.munitionType === 'cartucho') {
+        if (weapon.ammunition === 0) {
+            weapon.ammunition = weapon.maxAmmunition;
+            ficha.inventario.content.splice(munitionIndex, 1);
+        } else {
+            alert("Cartuchos só podem ser usados quando a munição da arma estiver zerada.");
+            return;
+        }
+    } else if (munition.munitionType === 'bala') {
+        weapon.ammunition++;
+        ficha.inventario.content.splice(munitionIndex, 1);
+    }
+
+    updateWeaponArea();
+    renderInventory();
 }
 
 function unequipWeapon() {
@@ -908,25 +1127,63 @@ function load() {
         return;
     }
 
-    ficha = JSON.parse(localStorage.getItem('ficha')) || ficha;
-    irParaJogo()
+    let loadedFicha;
+    try {
+        loadedFicha = JSON.parse(localStorage.getItem('ficha'));
+    } catch (e) {
+        alert("Erro ao carregar o save. O arquivo pode estar corrompido.");
+        console.error("Erro ao parsear JSON do localStorage:", e);
+        return;
+    }
+
+    if (!loadedFicha) {
+        alert("Save corrompido ou vazio.");
+        return;
+    }
+
+    ficha = mergeFicha(loadedFicha);
+
+    if (saveUpdated) {
+        const notification = document.getElementById('update-notification');
+        if (notification) {
+            notification.style.display = 'block';
+        }
+    }
+
+    const main = document.querySelector("main");
+    const cF = document.getElementById("cF");
+    const game = document.getElementById("game");
+
+    if (main) main.style.display = "none";
+    if (cF) cF.style.display = "none";
+    if (game) game.style.display = "flex";
+
+
+    displayPericias();
     renderTraumas()
     updateTotalWeight()
     updateWeaponArea()
     renderGuardados()
     renderInventory()
 
-    ficha.habilidades.forEach(h => {
-        addHabilidade(h.name, h.description, h.dice, true)
-    });
+    habilidadesContent.innerHTML = '';
+    magiasContent.innerHTML = '';
 
-    ficha.magias.forEach(m => {
-        magicName.value = m.name;
-        magicDescription.value = m.description;
-        magicDice.value = m.dice;
-        createMagic(true)
-    });
+    if (ficha.habilidades && Array.isArray(ficha.habilidades)) {
+        ficha.habilidades.forEach(h => {
+            addHabilidade(h.name, h.description, h.dice, true)
+        });
+    }
 
+    if (ficha.magias && Array.isArray(ficha.magias)) {
+        ficha.magias.forEach(m => {
+            magicName.value = m.name;
+            magicDescription.value = m.description;
+            magicDice.value = m.dice;
+            createMagic(true)
+        });
+    }
+    statusAtu()
 }
 
 function closePer() {
