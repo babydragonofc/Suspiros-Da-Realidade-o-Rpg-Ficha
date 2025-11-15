@@ -1363,8 +1363,10 @@ img.reverse {
 #ItemCreate section {
     display: flex;
     flex-direction: column;
-
+    overflow: auto;
 }
+
+#ItemCreate section::-webkit-scrollbar
 
 #dice-multiplier-options {
     gap: 5px;
@@ -2130,16 +2132,7 @@ img.reverse {
         scale: 0.89;
     }
 
-    .arma-area .btn-container {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    flex-direction: column;
-    position: absolute;
-    scale: 0.5;
-    right: -24px;
-    top: -17px;
-    }
+
 
     #dados-content .title {
         margin-top: 0px;
@@ -2276,4 +2269,31 @@ img.reverse {
 
 .hidden {
     display: none;
+}
+
+    .arma-area .btn-container {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-direction: column;
+        position: absolute;
+        scale: 0.5;
+        right: -24px;
+        top: -17px;
+        
+    }
+
+.item-content {
+    display: flex;
+    scale: 0.6;
+    position: relative;
+    left: -34px;
+}
+
+.magic-card.favorited,
+.ability-card.favorited,
+.item-card.favorited,
+.trauma-card.favorited {
+    border: 2px solid gold; /* Or any other visual indicator */
+    background-color: #333;
 }

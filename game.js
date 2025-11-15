@@ -239,6 +239,55 @@ function gameHabaSel(id, btn) {
 
 const magiasContent = document.getElementsByClassName('magias-content')[0];
 
+function renderMagias() {
+    magiasContent.innerHTML = ''; // Clear existing cards
+
+    // Sort magias: favorites first
+    const sortedMagias = [...ficha.magias].sort((a, b) => {
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return 0;
+    });
+
+    sortedMagias.forEach(magic => {
+        const box = document.createElement('div');
+        box.className = "magic-card";
+        if (magic.isFavorite) {
+            box.classList.add('favorited'); // Add a class for styling favorited items
+        }
+
+        const magicNameEl = document.createElement('h2');
+        magicNameEl.className = "title";
+        magicNameEl.style.color = "white";
+        magicNameEl.textContent = magic.name;
+        box.appendChild(magicNameEl);
+
+        // Add favorite star icon
+        const favoriteStar = document.createElement('span');
+        favoriteStar.className = 'favorite-star';
+        favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        box.appendChild(favoriteStar);
+
+        if (magic.dice) {
+            const rollBtn = document.createElement('button');
+            rollBtn.className = 'btn';
+            rollBtn.textContent = 'Rolar';
+            rollBtn.onclick = (e) => {
+                e.stopPropagation();
+                diceInput.value = magic.dice;
+                rollDice(false);
+            }
+            box.appendChild(rollBtn);
+        }
+
+        box.addEventListener('click', () => {
+            showMagicInfo(magic); // Pass the entire magic object
+        });
+
+        magiasContent.appendChild(box);
+    });
+}
+
 const magicName = document.getElementById('magicName')
 const magicDescription = document.getElementById('magicDescription')
 const magicDice = document.getElementById('magicDice')
@@ -264,96 +313,150 @@ function createMagic(load = false) {
 
     if (!magicName.value || !magicDescription.value) return;
 
-    const box = document.createElement('div');
-    box.className = "magic-card"
-
-    const magicNameValue = magicName.value;
-    const magicDescriptionValue = magicDescription.value;
-    const magicDiceValue = magicDice.value;
-
-    const magicNameEl = document.createElement('h2');
-    magicNameEl.className = "title"
-    magicNameEl.style.color = "white"
-    magicNameEl.textContent = magicNameValue
-    box.appendChild(magicNameEl)
-
-    const magicDescriptionEl = document.createElement('p');
-    magicDescriptionEl.className = "text"
-    magicDescriptionEl.style.color = "white"
-    magicDescriptionEl.textContent = magicDescriptionValue
-    magicDescriptionEl.style.display = "none"; // Hide description in the card
-    box.appendChild(magicDescriptionEl)
-
-    if (magicDiceValue) {
-        const rollBtn = document.createElement('button');
-        rollBtn.className = 'btn';
-        rollBtn.textContent = 'Rolar';
-        rollBtn.onclick = (e) => {
-            e.stopPropagation();
-            diceInput.value = magicDiceValue;
-            rollDice(false);
-        }
-        box.appendChild(rollBtn)
-    }
-
-    box.addEventListener('click', () => {
-        showMagicInfo(magicNameValue, magicDescriptionValue, magicDiceValue, box);
-    });
-
-    magiasContent.appendChild(box)
-
     const magicVar = {
-        name: magicNameValue,
-        description: magicDescriptionValue,
-        dice: magicDiceValue
+        name: magicName.value,
+        description: magicDescription.value,
+        dice: magicDice.value,
+        isFavorite: false
+    };
+
+    if (!ficha.magias.some(m => m.name === magicVar.name) && !load) {
+        ficha.magias.push(magicVar);
     }
 
-    if (!ficha.magias.some(m => m.name === magicNameValue) && !load) {
-        ficha.magias.push(magicVar)
-    }
+    renderMagias(); // Re-render all magic cards
 
     if (!load) {
-        panelClose()
+        panelClose();
     }
-    
 }
 
-function showMagicInfo(name, description, dice, cardElement) {
+function showMagicInfo(magic) { // Now accepts the magic object
     const content = `
-        <p class="text">${description}</p>
+        <p class="text">Nome:</p>
+        <input type="text" id="editMagicName" class="input" value="${magic.name}">
+        <p class="text">Descrição:</p>
+        <textarea id="editMagicDescription" class="input" style="resize: none;">${magic.description}</textarea>
     `;
-    panelOpen(null, name, content);
+    panelOpen(null, "Editar Magia", content);
 
     const magicInfo = document.querySelector("#main-panel .box #dynamic-content");
     if (!magicInfo) return;
 
-    if (dice) {
+    const editMagicNameInput = document.getElementById('editMagicName');
+    const editMagicDescriptionInput = document.getElementById('editMagicDescription');
+
+    // Save Button
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn';
+    saveBtn.textContent = 'Salvar';
+    saveBtn.onclick = () => {
+        magic.name = editMagicNameInput.value;
+        magic.description = editMagicDescriptionInput.value;
+        renderMagias();
+        panelClose();
+    };
+    magicInfo.appendChild(saveBtn);
+
+    if (magic.dice) {
         const rollBtn = document.createElement('button');
         rollBtn.className = 'btn';
         rollBtn.textContent = 'Rolar';
         rollBtn.onclick = (e) => {
             e.stopPropagation();
-            diceInput.value = dice;
+            diceInput.value = magic.dice;
             rollDice(false);
         }
-        magicInfo.appendChild(rollBtn)
+        magicInfo.appendChild(rollBtn);
     }
+
+    // Favorite Button
+    const favoriteBtn = document.createElement('button');
+    favoriteBtn.className = 'btn';
+    favoriteBtn.textContent = magic.isFavorite ? 'Desfavoritar' : 'Favoritar';
+    favoriteBtn.onclick = () => {
+        magic.isFavorite = !magic.isFavorite;
+        renderMagias(); // Re-render to update sorting and star
+        panelClose(); // Close info panel after action
+    };
+    magicInfo.appendChild(favoriteBtn);
+
+    // Duplicate Button
+    const duplicateBtn = document.createElement('button');
+    duplicateBtn.className = 'btn';
+    duplicateBtn.textContent = 'Duplicar';
+    duplicateBtn.onclick = () => {
+        const duplicatedMagic = { ...magic, name: magic.name + " (Cópia)", isFavorite: false }; // Create a copy, change name, not favorited by default
+        ficha.magias.push(duplicatedMagic);
+        renderMagias(); // Re-render to show the new item
+        panelClose(); // Close info panel after action
+    };
+    magicInfo.appendChild(duplicateBtn);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn delete-btn';
     deleteBtn.textContent = 'Excluir';
     deleteBtn.onclick = () => {
-        const magicIndex = ficha.magias.findIndex(m => m.name === name);
+        const magicIndex = ficha.magias.findIndex(m => m.name === magic.name); // Find by name, assuming names are unique enough for deletion
         if (magicIndex > -1) {
             ficha.magias.splice(magicIndex, 1);
         }
-        cardElement.remove();
+        renderMagias(); // Re-render after deletion
         panelClose();
     };
     magicInfo.appendChild(deleteBtn);
 }
 
 const habilidadesContent = document.getElementsByClassName('habilidades-content')[0];
+
+function renderHabilidades() {
+    habilidadesContent.innerHTML = ''; // Clear existing cards
+
+    // Sort habilidades: favorites first
+    const sortedHabilidades = [...ficha.habilidades].sort((a, b) => {
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return 0;
+    });
+
+    sortedHabilidades.forEach(ability => {
+        const box = document.createElement('div');
+        box.className = "ability-card";
+        if (ability.isFavorite) {
+            box.classList.add('favorited'); // Add a class for styling favorited items
+        }
+
+        const abilityNameEl = document.createElement('h2');
+        abilityNameEl.className = "title";
+        abilityNameEl.style.color = "white";
+        abilityNameEl.textContent = ability.name;
+        box.appendChild(abilityNameEl);
+
+        // Add favorite star icon
+        const favoriteStar = document.createElement('span');
+        favoriteStar.className = 'favorite-star';
+        favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        box.appendChild(favoriteStar);
+
+        if (ability.dice) {
+            const rollBtn = document.createElement('button');
+            rollBtn.className = 'btn';
+            rollBtn.textContent = 'Rolar';
+            rollBtn.onclick = (e) => {
+                e.stopPropagation();
+                diceInput.value = ability.dice;
+                rollDice(false);
+            }
+            box.appendChild(rollBtn);
+        }
+
+        box.addEventListener('click', () => {
+            showAbilityInfo(ability); // Pass the entire ability object
+        });
+
+        habilidadesContent.appendChild(box);
+    });
+}
 
 const abilityName = document.getElementById('abilityName');
 const abilityDescription = document.getElementById('abilityDescription');
@@ -370,87 +473,96 @@ function addHabilidade(nome, descricao, dado, load = false) {
     const abilityVar = {
         name: nome,
         description: descricao,
-        dice: dado
+        dice: dado,
+        isFavorite: false
     };
 
     if (!ficha.habilidades.some(h => h.name === nome) && !load) {
         ficha.habilidades.push(abilityVar);
     }
-
-    const box = document.createElement('div');
-    box.className = "ability-card";
-
-    const abilityNameEl = document.createElement('h2');
-    abilityNameEl.className = "title";
-    abilityNameEl.style.color = "white";
-    abilityNameEl.textContent = nome;
-    box.appendChild(abilityNameEl);
-
-    const abilityDescriptionEl = document.createElement('p');
-    abilityDescriptionEl.className = "text";
-    abilityDescriptionEl.style.color = "white";
-    abilityDescriptionEl.textContent = descricao;
-    abilityDescriptionEl.style.display = "none";
-    box.appendChild(abilityDescriptionEl);
-
-    if (dado) {
-        const rollBtn = document.createElement('button');
-        rollBtn.className = 'btn';
-        rollBtn.textContent = 'Rolar';
-        rollBtn.onclick = (e) => {
-            e.stopPropagation();
-            diceInput.value = dado;
-            rollDice(false);
-        }
-        box.appendChild(rollBtn);
-    }
-
-    box.addEventListener('click', () => {
-        showAbilityInfo(nome, descricao, dado, box);
-    });
-
-    habilidadesContent.appendChild(box);
 }
 
 function createAbility() {
     if (!abilityName.value || !abilityDescription.value) return;
 
     addHabilidade(abilityName.value, abilityDescription.value, abilityDice.value);
+    renderHabilidades(); // Re-render all ability cards
 
     panelClose();
 }
 
-function showAbilityInfo(name, description, dice, cardElement) {
+function showAbilityInfo(ability) { // Now accepts the ability object
     const content = `
-        <p class="text">${description}</p>
-        <p class="text">${dice ? `Dado: ${dice}` : ""}</p>
+        <p class="text">Nome:</p>
+        <input type="text" id="editAbilityName" class="input" value="${ability.name}">
+        <p class="text">Descrição:</p>
+        <textarea id="editAbilityDescription" class="input" style="resize: none;">${ability.description}</textarea>
+        <p class="text">${ability.dice ? `Dado: ${ability.dice}` : ""}</p>
     `;
-    panelOpen(null, name, content);
+    panelOpen(null, "Editar Habilidade", content);
 
     const abilityInfo = document.querySelector("#main-panel .box #dynamic-content");
     if (!abilityInfo) return;
 
-    if (dice) {
+    const editAbilityNameInput = document.getElementById('editAbilityName');
+    const editAbilityDescriptionInput = document.getElementById('editAbilityDescription');
+
+    // Save Button
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn';
+    saveBtn.textContent = 'Salvar';
+    saveBtn.onclick = () => {
+        ability.name = editAbilityNameInput.value;
+        ability.description = editAbilityDescriptionInput.value;
+        renderHabilidades();
+        panelClose();
+    };
+    abilityInfo.appendChild(saveBtn);
+
+    if (ability.dice) {
         const rollBtn = document.createElement('button');
         rollBtn.className = 'btn';
         rollBtn.textContent = 'Rolar';
         rollBtn.onclick = (e) => {
             e.stopPropagation();
-            diceInput.value = dice;
+            diceInput.value = ability.dice;
             rollDice(false);
         }
-        abilityInfo.appendChild(rollBtn)
+        abilityInfo.appendChild(rollBtn);
     }
+
+    // Favorite Button
+    const favoriteBtn = document.createElement('button');
+    favoriteBtn.className = 'btn';
+    favoriteBtn.textContent = ability.isFavorite ? 'Desfavoritar' : 'Favoritar';
+    favoriteBtn.onclick = () => {
+        ability.isFavorite = !ability.isFavorite;
+        renderHabilidades(); // Re-render to update sorting and star
+        panelClose(); // Close info panel after action
+    };
+    abilityInfo.appendChild(favoriteBtn);
+
+    // Duplicate Button
+    const duplicateBtn = document.createElement('button');
+    duplicateBtn.className = 'btn';
+    duplicateBtn.textContent = 'Duplicar';
+    duplicateBtn.onclick = () => {
+        const duplicatedAbility = { ...ability, name: ability.name + " (Cópia)", isFavorite: false }; // Create a copy, change name, not favorited by default
+        ficha.habilidades.push(duplicatedAbility);
+        renderHabilidades(); // Re-render to show the new item
+        panelClose(); // Close info panel after action
+    };
+    abilityInfo.appendChild(duplicateBtn);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn delete-btn';
     deleteBtn.textContent = 'Excluir';
     deleteBtn.onclick = () => {
-        const abilityIndex = ficha.habilidades.findIndex(a => a.name === name);
+        const abilityIndex = ficha.habilidades.findIndex(a => a.name === ability.name); // Find by name, assuming names are unique enough for deletion
         if (abilityIndex > -1) {
             ficha.habilidades.splice(abilityIndex, 1);
         }
-        cardElement.remove();
+        renderHabilidades(); // Re-render after deletion
         panelClose();
     };
     abilityInfo.appendChild(deleteBtn);
@@ -492,7 +604,8 @@ function createItem() {
         name: name,
         description: description,
         weight: parseFloat(weight) || 0,
-        dice: dice
+        dice: dice,
+        isFavorite: false
     };
 
     if (category === 'arma') {
@@ -557,10 +670,20 @@ document.getElementById('itemCategory').addEventListener('change', initializeIte
 
 function renderInventory() {
     inventoryContainer.innerHTML = '';
-    ficha.inventario.content.forEach(item => {
+    // Sort inventory: favorites first
+    const sortedInventory = [...ficha.inventario.content].sort((a, b) => {
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return 0;
+    });
+
+    sortedInventory.forEach(item => {
         const itemCard = document.createElement('div');
         itemCard.className = 'item-card';
         itemCard.dataset.itemId = item.id;
+        if (item.isFavorite) {
+            itemCard.classList.add('favorited');
+        }
 
         const itemHeader = document.createElement('div');
         itemHeader.className = 'item-header';
@@ -571,13 +694,19 @@ function renderInventory() {
         itemHeader.textContent = itemText;
         itemCard.appendChild(itemHeader);
 
+        // Add favorite star icon
+        const favoriteStar = document.createElement('span');
+        favoriteStar.className = 'favorite-star';
+        favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        itemHeader.appendChild(favoriteStar); // Append to header for better positioning
+
         const itemContent = document.createElement('div');
         itemContent.className = 'item-content';
         itemContent.style.display = 'none';
 
         const infoButton = document.createElement('button');
         infoButton.textContent = 'Info';
-        infoButton.onclick = () => showItemInfo(item.id, 'inventario');
+        infoButton.onclick = () => showItemInfo(item, 'inventario'); // Pass item object
         itemContent.appendChild(infoButton);
 
         const useButton = document.createElement('button');
@@ -589,6 +718,25 @@ function renderInventory() {
         guardarButton.textContent = 'Guardar';
         guardarButton.onclick = () => moveItem(item.id, 'inventario');
         itemContent.appendChild(guardarButton);
+
+        // Favorite Button
+        const favoriteBtn = document.createElement('button');
+        favoriteBtn.textContent = item.isFavorite ? 'Desfavoritar' : 'Favoritar';
+        favoriteBtn.onclick = () => {
+            item.isFavorite = !item.isFavorite;
+            renderInventory();
+        };
+        itemContent.appendChild(favoriteBtn);
+
+        // Duplicate Button
+        const duplicateBtn = document.createElement('button');
+        duplicateBtn.textContent = 'Duplicar';
+        duplicateBtn.onclick = () => {
+            const duplicatedItem = { ...item, id: Date.now(), name: item.name + " (Cópia)", isFavorite: false };
+            ficha.inventario.content.push(duplicatedItem);
+            renderInventory();
+        };
+        itemContent.appendChild(duplicateBtn);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Excluir';
@@ -612,15 +760,31 @@ function renderInventory() {
 
 function renderGuardados() {
     guardadosContainer.innerHTML = '';
-    ficha.inventario.guardados.forEach(item => {
+    // Sort guardados: favorites first
+    const sortedGuardados = [...ficha.inventario.guardados].sort((a, b) => {
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return 0;
+    });
+
+    sortedGuardados.forEach(item => {
         const itemCard = document.createElement('div');
         itemCard.className = 'item-card';
         itemCard.dataset.itemId = item.id;
+        if (item.isFavorite) {
+            itemCard.classList.add('favorited');
+        }
 
         const itemHeader = document.createElement('div');
         itemHeader.className = 'item-header';
         itemHeader.textContent = item.name;
         itemCard.appendChild(itemHeader);
+
+        // Add favorite star icon
+        const favoriteStar = document.createElement('span');
+        favoriteStar.className = 'favorite-star';
+        favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        itemHeader.appendChild(favoriteStar); // Append to header for better positioning
 
         const itemContent = document.createElement('div');
         itemContent.className = 'item-content';
@@ -628,13 +792,32 @@ function renderGuardados() {
 
         const infoButton = document.createElement('button');
         infoButton.textContent = 'Info';
-        infoButton.onclick = () => showItemInfo(item.id, 'guardado');
+        infoButton.onclick = () => showItemInfo(item, 'guardado'); // Pass item object
         itemContent.appendChild(infoButton);
 
         const moveButton = document.createElement('button');
         moveButton.textContent = 'Mover para Inventário';
         moveButton.onclick = () => moveItem(item.id, 'guardado');
         itemContent.appendChild(moveButton);
+
+        // Favorite Button
+        const favoriteBtn = document.createElement('button');
+        favoriteBtn.textContent = item.isFavorite ? 'Desfavoritar' : 'Favoritar';
+        favoriteBtn.onclick = () => {
+            item.isFavorite = !item.isFavorite;
+            renderGuardados();
+        };
+        itemContent.appendChild(favoriteBtn);
+
+        // Duplicate Button
+        const duplicateBtn = document.createElement('button');
+        duplicateBtn.textContent = 'Duplicar';
+        duplicateBtn.onclick = () => {
+            const duplicatedItem = { ...item, id: Date.now(), name: item.name + " (Cópia)", isFavorite: false };
+            ficha.inventario.guardados.push(duplicatedItem);
+            renderGuardados();
+        };
+        itemContent.appendChild(duplicateBtn);
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Excluir';
@@ -770,21 +953,81 @@ function useItem(itemId) {
     }
 }
 
-function showItemInfo(itemId, location) {
-    let item;
-    if (location === 'inventario') {
-        item = ficha.inventario.content.find(i => i.id === itemId);
-    } else {
-        item = ficha.inventario.guardados.find(i => i.id === itemId);
-    }
-
+function showItemInfo(item, location) { // Now accepts the item object
     if (!item) return;
 
     const content = `
-        <p class="text">${item.description}</p>
+        <p class="text">Nome:</p>
+        <input type="text" id="editItemName" class="input" value="${item.name}">
+        <p class="text">Descrição:</p>
+        <textarea id="editItemDescription" class="input" style="resize: none;">${item.description}</textarea>
         <p class="text">${item.dice ? `Dado: ${item.dice}` : ""}</p>
     `;
-    panelOpen(null, item.name, content);
+    panelOpen(null, "Editar Item", content);
+
+    const itemInfo = document.querySelector("#main-panel .box #dynamic-content");
+    if (!itemInfo) return;
+
+    const editItemNameInput = document.getElementById('editItemName');
+    const editItemDescriptionInput = document.getElementById('editItemDescription');
+
+    // Save Button
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn';
+    saveBtn.textContent = 'Salvar';
+    saveBtn.onclick = () => {
+        item.name = editItemNameInput.value;
+        item.description = editItemDescriptionInput.value;
+        if (location === 'inventario') {
+            renderInventory();
+        } else {
+            renderGuardados();
+        }
+        panelClose();
+    };
+    itemInfo.appendChild(saveBtn);
+
+    // Favorite Button
+    const favoriteBtn = document.createElement('button');
+    favoriteBtn.className = 'btn';
+    favoriteBtn.textContent = item.isFavorite ? 'Desfavoritar' : 'Favoritar';
+    favoriteBtn.onclick = () => {
+        item.isFavorite = !item.isFavorite;
+        if (location === 'inventario') {
+            renderInventory();
+        } else {
+            renderGuardados();
+        }
+        panelClose();
+    };
+    itemInfo.appendChild(favoriteBtn);
+
+    // Duplicate Button
+    const duplicateBtn = document.createElement('button');
+    duplicateBtn.className = 'btn';
+    duplicateBtn.textContent = 'Duplicar';
+    duplicateBtn.onclick = () => {
+        const duplicatedItem = { ...item, id: Date.now(), name: item.name + " (Cópia)", isFavorite: false };
+        if (location === 'inventario') {
+            ficha.inventario.content.push(duplicatedItem);
+            renderInventory();
+        } else {
+            ficha.inventario.guardados.push(duplicatedItem);
+            renderGuardados();
+        }
+        panelClose();
+    };
+    itemInfo.appendChild(duplicateBtn);
+
+    // Delete Button (already exists, but needs to be updated to use item.id)
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn delete-btn';
+    deleteBtn.textContent = 'Excluir';
+    deleteBtn.onclick = () => {
+        deleteItem(item.id, location); // Use existing deleteItem function
+        panelClose();
+    };
+    itemInfo.appendChild(deleteBtn);
 }
 
 function updateWeaponArea() {
@@ -1003,7 +1246,8 @@ function createTrauma() {
         name: name,
         description: description,
         dado: dice,
-        time: { numero, tipo }
+        time: { numero, tipo },
+        isFavorite: false
     };
 
     ficha.traumas.push(newTrauma);
@@ -1016,41 +1260,110 @@ function renderTraumas() {
     const traumaContainer = document.getElementsByClassName('traumas-content')[0];
     traumaContainer.innerHTML = '';
 
-    ficha.traumas.forEach(trauma => {
+    // Sort traumas: favorites first
+    const sortedTraumas = [...ficha.traumas].sort((a, b) => {
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return 0;
+    });
+
+    sortedTraumas.forEach(trauma => {
         const traumaCard = document.createElement('div');
         traumaCard.className = 'trauma-card';
         traumaCard.textContent = trauma.name;
-        traumaCard.dataset.traumaId = trauma.id;
+        traumaCard.dataset.traumaId = trauma.id; // Assuming trauma objects have an 'id' property
+        if (trauma.isFavorite) {
+            traumaCard.classList.add('favorited');
+        }
+
+        // Add favorite star icon
+        const favoriteStar = document.createElement('span');
+        favoriteStar.className = 'favorite-star';
+        favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        traumaCard.appendChild(favoriteStar); // Append to card for better positioning
 
         traumaCard.addEventListener('click', (event) => {
-            showTraumaActions(trauma.id, event);
+            showTraumaInfo(trauma); // Pass the trauma object
         });
 
         traumaContainer.appendChild(traumaCard);
     });
 }
 
-function showTraumaActions(traumaId, event) {
-    const existingMenu = document.querySelector('.trauma-action-menu');
-    if (existingMenu) {
-        existingMenu.remove();
-    }
-    event.stopPropagation();
+function showTraumaInfo(trauma) { // Now accepts the trauma object
+    const content = `
+        <p class="text">Nome:</p>
+        <input type="text" id="editTraumaName" class="input" value="${trauma.name}">
+        <p class="text">Descrição:</p>
+        <textarea id="editTraumaDescription" class="input" style="resize: none;">${trauma.description}</textarea>
+        <p class="text">${trauma.dado ? `Dado: ${trauma.dado}` : ""}</p>
+        <p class="text">Tempo: ${trauma.time.numero} ${trauma.time.tipo}</p>
+    `;
+    panelOpen(null, "Editar Trauma", content);
 
-    const traumaCard = event.target;
-    const rect = traumaCard.getBoundingClientRect();
+    const traumaInfo = document.querySelector("#main-panel .box #dynamic-content");
+    if (!traumaInfo) return;
 
-    const menu = document.createElement('div');
-    menu.className = 'trauma-action-menu';
-    
+    const editTraumaNameInput = document.getElementById('editTraumaName');
+    const editTraumaDescriptionInput = document.getElementById('editTraumaDescription');
+
+    // Save Button
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'btn';
+    saveBtn.textContent = 'Salvar';
+    saveBtn.onclick = () => {
+        trauma.name = editTraumaNameInput.value;
+        trauma.description = editTraumaDescriptionInput.value;
+        renderTraumas();
+        panelClose();
+    };
+    traumaInfo.appendChild(saveBtn);
+
+    // Favorite Button
+    const favoriteBtn = document.createElement('button');
+    favoriteBtn.className = 'btn';
+    favoriteBtn.textContent = trauma.isFavorite ? 'Desfavoritar' : 'Favoritar';
+    favoriteBtn.onclick = () => {
+        trauma.isFavorite = !trauma.isFavorite;
+        renderTraumas(); // Re-render to update sorting and star
+        panelClose(); // Close info panel after action
+    };
+    traumaInfo.appendChild(favoriteBtn);
+
+    // Duplicate Button
+    const duplicateBtn = document.createElement('button');
+    duplicateBtn.className = 'btn';
+    duplicateBtn.textContent = 'Duplicar';
+    duplicateBtn.onclick = () => {
+        const duplicatedTrauma = { ...trauma, name: trauma.name + " (Cópia)", isFavorite: false }; // Create a copy, change name, not favorited by default
+        ficha.traumas.push(duplicatedTrauma);
+        renderTraumas(); // Re-render to show the new item
+        panelClose(); // Close info panel after action
+    };
+    traumaInfo.appendChild(duplicateBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn delete-btn';
+    deleteBtn.textContent = 'Excluir';
+    deleteBtn.onclick = () => {
+        const traumaIndex = ficha.traumas.findIndex(t => t.name === trauma.name); // Find by name, assuming names are unique enough for deletion
+        if (traumaIndex > -1) {
+            ficha.traumas.splice(traumaIndex, 1);
+        }
+        renderTraumas(); // Re-render after deletion
+        panelClose();
+    };
+    traumaInfo.appendChild(deleteBtn);
 }
+
+
 
 function deleteTrauma(traumaId) {
     const traumaIndex = ficha.traumas.findIndex(trauma => trauma.id === traumaId);
     if (traumaIndex > -1) {
         ficha.traumas.splice(traumaIndex, 1);
     }
-    renderTraumas();
+    renderTraumas(); // Re-render after deletion
 }
 
 var statusList = {
@@ -1174,6 +1487,7 @@ function load() {
             addHabilidade(h.name, h.description, h.dice, true)
         });
     }
+    renderHabilidades(); // Call renderHabilidades after all ability items are processed
 
     if (ficha.magias && Array.isArray(ficha.magias)) {
         ficha.magias.forEach(m => {
@@ -1183,6 +1497,7 @@ function load() {
             createMagic(true)
         });
     }
+    renderMagias(); // Call renderMagias after all magic items are processed
     statusAtu()
 }
 
