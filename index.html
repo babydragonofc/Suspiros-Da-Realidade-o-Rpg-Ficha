@@ -365,10 +365,34 @@
 
       <!-- ================= MAGIA ================= -->
       <div id="MagicCreate">
+        <section>
+          <p class="text">Nome</p>
+          <input type="text" id="magicName" class="input">
+
+          <p class="text">Descrição</p>
+          <textarea id="magicDescription" class="input" style="resize: none;"></textarea>
+
+          <p class="text">Dado</p>
+          <input type="text" id="magicDice" class="input dice">
+
+          <button class="btn" onclick="createMagic()">Criar</button>
+        </section>
         </div>
 
       <!-- ================= HABILIDADE ================= -->
       <div id="AbilityCreate" style="display: none;">
+        <section>
+          <p class="text">Nome</p>
+          <input type="text" id="abilityName" class="input">
+
+          <p class="text">Descrição</p>
+          <textarea id="abilityDescription" class="input" style="resize: none;"></textarea>
+
+          <p class="text">Dado</p>
+          <input type="text" id="abilityDice" class="input dice">
+
+          <button class="btn" onclick="createAbility()">Criar</button>
+        </section>
       </div>
       <!-- ================= ITEM ================= -->
       <div id="ItemCreate" style="display: none;">

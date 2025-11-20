@@ -1232,15 +1232,18 @@ function createTrauma() {
 
 
     // Usa regex para separar número e tipo
-    const match = time.match(/^(\d+)([a-zA-Z]+)$/);
-    
-    if (!match && time != "PER") {
-        throw new Error("Formato inválido. Use algo como '1D', '2H', '30M'.");
-        return;
+    if (time.toUpperCase() === 'PER') {
+        numero = 'PER';
+        tipo = 'PER';
+    } else {
+        const match = time.match(/^(\d+)([a-zA-Z]+)$/);
+        if (!match) {
+            alert("Formato de tempo inválido. Use algo como '1D', '2H', '30M' ou 'PER'.");
+            return;
+        }
+        numero = parseInt(match[1], 10);
+        tipo = match[2].toUpperCase();
     }
-
-    const numero = parseInt(match[1], 10);
-    const tipo = match[2].toUpperCase(); // Ex: 'D', 'H', 'M'
 
     const newTrauma = {
         name: name,
@@ -1297,7 +1300,7 @@ function showTraumaInfo(trauma) { // Now accepts the trauma object
         <p class="text">Descrição:</p>
         <textarea id="editTraumaDescription" class="input" style="resize: none;">${trauma.description}</textarea>
         <p class="text">${trauma.dado ? `Dado: ${trauma.dado}` : ""}</p>
-        <p class="text">Tempo: ${trauma.time.numero} ${trauma.time.tipo}</p>
+        <p class="text">Tempo: ${trauma.time.numero === 'PER' ? 'PER' : `${trauma.time.numero} ${trauma.time.tipo}`}</p>
     `;
     panelOpen(null, "Editar Trauma", content);
 
