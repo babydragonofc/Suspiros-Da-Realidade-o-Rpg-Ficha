@@ -1195,6 +1195,7 @@ function displayPericias() {
 
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = periciaName.replace(/([a-z])([A-Z])/g, '$1 $2');
+                
                 periciaElement.appendChild(nameSpan);
 
                 const nbrDiv = document.createElement('div');
@@ -1203,6 +1204,8 @@ function displayPericias() {
                 const valueSpan = document.createElement('span');
                 valueSpan.className = 'p-count';
                 valueSpan.textContent = pericia.value;
+                valueSpan.id = "D-" + periciaName + "-value";
+                
                 nbrDiv.appendChild(valueSpan);
 
                 const rollBtn = document.createElement('button');
@@ -1317,8 +1320,11 @@ function salvarPericiasEditadas() {
     const inputs = document.querySelectorAll('#periciasEditor input');
     inputs.forEach(input => {
         const nome = input.dataset.nome;
+        console.log("salvando " + input.dataset.nome + " ...")
         const valor = parseInt(input.value) || 0;
         ficha.pericias[nome].value = valor;
+        const span = document.getElementById("D-" + input.dataset.nome + "-value"); //retorna o span do valor da pericia
+        span.innerHTML = valor; // atualiza o valor do span
     });
     document.getElementById('periciasEditorBox').classList.add('hidden');
     alert('Perícias atualizadas!');

@@ -1179,6 +1179,7 @@ img.reverse {
 }
 
 .magic-card, .ability-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1613,6 +1614,10 @@ img.reverse {
     background-size: cover;
 }
 
+#spValue {
+    color: black;
+}
+
 #mpBar::after {
     content: '';
     height: 100%;
@@ -1623,7 +1628,6 @@ img.reverse {
     top: 0;
     background-size: cover;
 }
-
 
 
 
@@ -2132,8 +2136,6 @@ img.reverse {
         scale: 0.89;
     }
 
-
-
     #dados-content .title {
         margin-top: 0px;
     } 
@@ -2296,4 +2298,19 @@ img.reverse {
 .trauma-card.favorited {
     border: 2px solid gold; /* Or any other visual indicator */
     background-color: #333;
+}
+
+.ability-card .favorite-star,
+.magic-card .favorite-star,
+.trauma-card .favorite-star{
+    position: absolute;
+    color: white;
+    top: 3px;
+    right: 8px;
+}
+
+.ability-card .title,
+.magic-card .title,
+.trauma-card .title {
+    font-size: 60px;
 }
