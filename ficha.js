@@ -192,6 +192,8 @@ if (inputArquivo) {
             }
 
             irParaJogo()
+            renderHabilidades()
+            renderMagias()
             renderTraumas()
             updateTotalWeight()
             updateWeaponArea()

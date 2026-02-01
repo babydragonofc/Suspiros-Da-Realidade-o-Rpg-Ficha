@@ -1224,6 +1224,7 @@ function createTrauma() {
     const dice = document.getElementById('traumaDice').value;
     const time = document.getElementById('traumaTime').value;
 
+    var tipoT
 
     if (!name) {
         alert("O nome do trauma é obrigatório.");
@@ -1234,22 +1235,22 @@ function createTrauma() {
     // Usa regex para separar número e tipo
     if (time.toUpperCase() === 'PER') {
         numero = 'PER';
-        tipo = 'PER';
+        tipoT = 'PER';
     } else {
         const match = time.match(/^(\d+)([a-zA-Z]+)$/);
         if (!match) {
-            alert("Formato de tempo inválido. Use algo como '1D', '2H', '30M' ou 'PER'.");
+            alert("Formato de tempo inválido. Use algo como '1D', '2H', '12M' ou 'PER'.");
             return;
         }
         numero = parseInt(match[1], 10);
-        tipo = match[2].toUpperCase();
+        tipoT = match[2].toUpperCase();
     }
 
     const newTrauma = {
         name: name,
         description: description,
         dado: dice,
-        time: { numero, tipo },
+        time: { numero, tipoT },
         isFavorite: false
     };
 
