@@ -1,3 +1,4 @@
+var valueChanger = 1;
 function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -225,7 +226,7 @@ function gameHabaSel(id, btn) {
         content.style.display = 'none';
     });
 
-    const contentIds = ['magias-content', 'habilidades-content', 'traumas-content', 'inventario-content', 'dados-content', 'personagem-content', 'diario-content'];
+    const contentIds = ['magias-content', 'habilidades-content', 'traumas-content', 'inventario-content', 'dados-content', 'personagem-content', 'diario-content', 'options-content'];
     const selectedContent = document.getElementById(contentIds[id]);
     if (selectedContent) {
         selectedContent.style.display = 'flex';
@@ -1378,7 +1379,7 @@ var statusList = {
 
 function changeStatusValue(type, status) {
 
-    value = type == "+"? 1 : -1
+    value = type == "+"? valueChanger : -valueChanger
         
     ficha.status[status] += value
 
@@ -1407,9 +1408,10 @@ function formatDoc(command, value = null) {
 }
 
 function save() {
+        ficha.biografia.contatos = personagemContatos.value
     if (localStorage.getItem('hasFichaSave')) {
 
-        var r=confirm("Ja Existe um save! nome : " + JSON.parse(localStorage.getItem('ficha')).name + " Save criado às " + new Date(JSON.parse(localStorage.getItem('hour'))).toLocaleTimeString() + " ; Deseja Sobrescrever?");
+        var r=confirm("Já Existe um save! nome : " + JSON.parse(localStorage.getItem('ficha')).nome + " Save criado às " + new Date(JSON.parse(localStorage.getItem('hour'))).toLocaleTimeString() + " ; Deseja Sobrescrever?");
 
         if (r==true)
         {
@@ -1428,6 +1430,7 @@ function save() {
 
     }
 
+    
     localStorage.setItem('ficha', JSON.stringify(ficha));
     const hour = new Date();
     localStorage.setItem('hour', JSON.stringify(hour));
@@ -1482,6 +1485,9 @@ function load() {
     updateWeaponArea()
     renderGuardados()
     renderInventory()
+    setWallpaper(ficha.options.wallpaper)
+    loadUserOptions()
+    personagemComportamento =ficha.biografia.contatos
 
     habilidadesContent.innerHTML = '';
     magiasContent.innerHTML = '';
@@ -1515,3 +1521,80 @@ function enterPer() {
     const periciasContainer = document.getElementById("pericias-display-block")
     periciasContainer.style.display = "block"
 }
+
+const backgrounds = [
+    "wallpaperMedo.png",
+    "wallpaperRealidade.png"
+]
+
+const backgroundsRoots = [
+    {
+        "main":"white",
+        "sec": "black",
+        "btnBg": "rgb(239, 239, 239)",
+        "btnHvr": "rgb(205, 205, 205)",
+        "btnTx": "black",
+        "ter": "#555",
+        "uTb": "",
+    },
+    {
+        "main":"black",
+        "sec": "black",
+        "btnBg": "rgb(17, 2, 2)",
+        "btnHvr": "rgb(40, 3, 3)",
+        "btnTx": "white",
+        "ter": "#160f0f",
+        "uTb": "#0000007a"
+    },
+
+]
+setWallpaper(ficha.options.wallpaper)
+
+function setWallpaper(value) {
+
+    if (!(0 < value <= backgrounds.length)) return;
+
+    ficha.options.wallpaper = value
+    document.querySelector('body').style.backgroundImage = 'url(img/backgrounds/'+backgrounds[value]+')'
+    const root = document.documentElement;
+    const bgr =  backgroundsRoots[value]
+    root.style.setProperty ('--main-clr', bgr.main);
+    root.style.setProperty ('--sec-clr', bgr.sec);
+    root.style.setProperty ('--btn-bg', bgr.btnBg);
+    root.style.setProperty ('--btn-hvr', bgr.btnHvr);
+    root.style.setProperty ('--btn-tx', bgr.btnTx);
+    root.style.setProperty ('--ter-clr', bgr.ter);
+    root.style.setProperty ('--un-tab-clr', bgr.uTb);
+    
+    console.log(bgr)
+    
+}
+
+const chEdit = document.getElementById('chEdit')
+
+function turnStatusMod() {
+    if (chEdit.style.display  == "flex") {
+        chEdit.style.display  = "none"
+        ficha.options.chEdit = false
+    } else {
+        chEdit.style.display  = "flex"
+        ficha.options.chEdit = true
+    }
+    console.log(chEdit.style.display )
+}
+
+function valueCEdit(value) {
+    valueChanger = value
+    if(document.getElementsByClassName('on').length == 1) document.getElementsByClassName('on')[0].classList.remove('on');
+    document.getElementById(value+"-ch").classList.add('on')
+}
+
+function loadUserOptions() {
+    if (ficha.options.chEdit) {
+        chEdit.style.display = 'flex'
+    }else {
+        chEdit.style.display = "none"
+    }
+}
+
+const personagemContatos = document.getElementById('personagem-contatos')

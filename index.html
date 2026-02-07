@@ -15,7 +15,6 @@
         <button class="btn" onclick="abrirCriadorDeFicha()">Criar Ficha</button>
         <button class="btn" onclick="load()">Carregar</button>
         <button class="btn" onclick="openDiceRoller()">Rolar Dados</button>
-        
         <input type="file" id="arquivoJSON">
 
         <!--<button class="btn" onclick="irParaJogo()">Ir para o Jogo (Debug)</button>-->
@@ -26,7 +25,7 @@
     <div id="diceRollerArea" class="panel" style="display: none;">
         <div class="box">
             <p class="exit-box" onclick="closeDiceRoller()">x</p>
-            <h3 class="title" style="color: white;">Rolagem de Perícia</h3>
+            <h3 class="title" ">Rolagem de Perícia</h3>
             <div class="dice-roller-content">
                 <p class="text">Valor da Perícia</p>
                 <input type="number" id="periciaValue" class="input" min="1" max="20">
@@ -49,7 +48,7 @@
         </div>
 
         <div id="IB">
-            <h3 class="title" style="color: white;">Informacoes</h3>
+            <h3 class="title" ">Informacoes</h3>
             <hr>
             <p class="text">Nome</p>
             <input type="text" name="" id="name" class="input">
@@ -70,7 +69,7 @@
             <button class="pBtn" id="p1">Proximo</button>
         </div>
         <div id="Rs">
-            <h3 class="title" style="color: white;">Raças</h3>
+            <h3 class="title" ">Raças</h3>
             <hr>
             <div id="Rs-box">
                 <div class="race-card">
@@ -366,13 +365,13 @@
       <!-- ================= MAGIA ================= -->
       <div id="MagicCreate">
         <section>
-          <p class="text">Nome</p>
+          <p class="text white">Nome</p>
           <input type="text" id="magicName" class="input">
 
-          <p class="text">Descrição</p>
+          <p class="text white">Descrição</p>
           <textarea id="magicDescription" class="input" style="resize: none;"></textarea>
 
-          <p class="text">Dado</p>
+          <p class="text white">Dado</p>
           <input type="text" id="magicDice" class="input dice">
 
           <button class="btn" onclick="createMagic()">Criar</button>
@@ -382,13 +381,13 @@
       <!-- ================= HABILIDADE ================= -->
       <div id="AbilityCreate" style="display: none;">
         <section>
-          <p class="text">Nome</p>
+          <p class="text white">Nome</p>
           <input type="text" id="abilityName" class="input">
 
-          <p class="text">Descrição</p>
+          <p class="text white">Descrição</p>
           <textarea id="abilityDescription" class="input" style="resize: none;"></textarea>
 
-          <p class="text">Dado</p>
+          <p class="text white">Dado</p>
           <input type="text" id="abilityDice" class="input dice">
 
           <button class="btn" onclick="createAbility()">Criar</button>
@@ -398,7 +397,7 @@
       <div id="ItemCreate" style="display: none;">
         <section class="item-creation-grid">
           <div>
-            <p class="text">Categoria</p>
+            <p class="text white">Categoria</p>
             <select id="itemCategory" class="input">
               <option value="comum">Comum</option>
               <option value="arma">Arma</option>
@@ -407,27 +406,27 @@
           </div>
 
           <div>
-            <p class="text">Nome</p>
+            <p class="text white">Nome</p>
             <input type="text" id="itemName" class="input">
           </div>
 
           <div class="full-width">
-            <p class="text">Descrição</p>
+            <p class="text white">Descrição</p>
             <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
           </div>
 
           <div>
-            <p class="text">Peso</p>
+            <p class="text white">Peso</p>
             <input type="number" id="itemWeight" class="input">
           </div>
 
           <div>
-            <p class="text">Dado</p>
+            <p class="text white">Dado</p>
             <input type="text" id="itemDice" class="input dice">
           </div>
 
           <div>
-            <p class="text">Local</p>
+            <p class="text white">Local</p>
             <select id="itemLocal" class="input">
               <option value="inventario">Inventário</option>
               <option value="guardado">Guardado</option>
@@ -435,7 +434,7 @@
           </div>
 
           <a id="weapon-options" class="hidden">
-            <p class="text">Tipo de Arma</p>
+            <p class="text white">Tipo de Arma</p>
             <select id="itemType" class="input">
               <option value="fisica">Física</option>
               <option value="branca">Branca</option>
@@ -443,12 +442,12 @@
               <option value="rifle">Rifle</option>
               <option value="longo_alcance">Longo Alcance</option>
             </select>
-            <p class="text">Munição</p>
+            <p class="text white">Munição</p>
             <input type="number" id="itemAmmunition" class="input">
         </a>
 
           <a id="munition-options" class="hidden">
-            <p class="text">Tipo de Munição</p>
+            <p class="text white">Tipo de Munição</p>
             <select id="munitionType" class="input">
               <option value="bala">Bala Solta</option>
               <option value="cartucho">Cartucho</option>
@@ -462,16 +461,16 @@
       <!-- ================= TRAUMA ================= -->
       <div id="TraumaCreate" style="display: none;">
         <section>
-          <p class="text">Nome</p>
+          <p class="text white">Nome</p>
           <input type="text" id="traumaName" class="input">
 
-          <p class="text">Descrição</p>
+          <p class="text white">Descrição</p>
           <textarea id="traumaDescription" class="input" style="resize: none;"></textarea>
 
-          <p class="text">Dado</p>
+          <p class="text white">Dado</p>
           <input type="text" id="traumaDice" class="input dice">
 
-          <p class="text">Tempo</p>
+          <p class="text white">Tempo</p>
           <input type="text" id="traumaTime" class="input">
 
           <p class="text sm">Em caso de trauma permanente, coloque 'PER'</p>
@@ -489,7 +488,7 @@
         <img src="img/menu.svg" alt="" id="mMTImage">
       </button>
       <div id="mt-menu">
-        <button class="mTBtn active" onclick="gameHabaSel(0, this)" style="font-size: 10px; overflow: clip;">Magias / Rituais</button>
+        <button class="mTBtn active" onclick="gameHabaSel(0, this)" style="font-size: 10px; overflow: clip;">Magias/ Rituais</button>
         <div class="Sline"></div>
         <button class="mTBtn" onclick="gameHabaSel(2, this)">Traumas</button>
         <div class="Sline"></div>
@@ -507,13 +506,14 @@
         <div class="Sline"></div>
         <button class="mTBtn" onclick="baixarObjetoComoJSON(ficha, 'ficha_save')">Exportar</button>
         <div class="line"></div>
+        <button class="mTBtn last" onclick="gameHabaSel(7, this)">Opções</button>
       </div>
     </header>
 
     <main style="height: 100%;">
       <!-- ============ MAGIAS ============ -->
       <div class="mt-content active" id="magias-content">
-        <h3 class="title" style="color: white;">Magias & Rituais</h3>
+        <h3 class="title" ">Magias & Rituais</h3>
         <div class="magias-content"></div>
 
         <div class="central" style="justify-content: flex-end;">
@@ -523,7 +523,7 @@
 
       <!-- ============ HABILIDADES ============ -->
       <div class="mt-content" id="habilidades-content" style="display: none;">
-        <h3 class="title" style="color: white;">Habilidades</h3>
+        <h3 class="title" ">Habilidades</h3>
         <div class="habilidades-content"></div>
 
         <div class="central">
@@ -573,7 +573,7 @@
 
       <!-- ============ ROLAGENS ============ -->
       <div class="mt-content" id="dados-content" style="display: none;">
-          <h3 class="title" style="color: white;">Rolagem de Dado</h3>
+          <h3 class="title" ">Rolagem de Dado</h3>
           <input type="text" id="diceInput" class="dice">
           <button class="btn" id="diceBtnRoll" onclick="rollDice()">Rolar Dado</button>        
           <p class="text">Os padrões de escrita de dados são: 'd' para dado, 'm' para modificador, 'v' para vantagem e 'd' para desvantagem. Ex: 2d20+5, 1d12-2, 1d20+v, 1d20+d.</p>
@@ -583,7 +583,7 @@
       <div class="mt-content" id="personagem-content" style="display: none;">
           <div class="personagem-content">
               <div class="personagem-info-basica">
-                <h3 class="title" style="color: white;">Personagem</h3>
+                <h3 class="title" ">Personagem</h3>
                 <hr style="margin-bottom: 50px;">
                 <p><strong>Nome:</strong> <span id="personagem-nome"></span></p>
                 <p><strong>Idade:</strong> <span id="personagem-idade"></span></p>
@@ -616,7 +616,7 @@
 
       <!-- ============ DIÁRIO ============ -->
       <div class="mt-content" id="diario-content" style="display: none;">
-        <h3 class="title" style="color: white;">Diário</h3>
+        <h3 class="title" ">Diário</h3>
         <div class="diario-toolbar">
           <button onclick="formatDoc('bold')"><b>B</b></button>
           <button onclick="formatDoc('italic')"><i>I</i></button>
@@ -635,13 +635,37 @@
         </div>
         <div id="diario-editor" contenteditable="true" class="diario-editor"></div>
       </div>
+
+      <!-- ============ OPÇÕES ============ -->
+       <div class="mt-content" id="options-content" style="display: none;">
+            <h3 class="title">Opções</h3>
+            <div id="options-container">
+                <p>Papel De Parede</p>
+                <div class="flex">
+                    <button class="btn" onclick="setWallpaper(0)">Medo</button>
+                    <button class="btn" onclick="setWallpaper(1)">Realidade</button>
+                </div>
+                <p>Interface</p>
+                <div class="flex">
+                    <button class="btn" onclick="turnStatusMod()">Modificador Status</button>
+                </div>
+            </div>
+       </div>
     </main>
   </div>
 
   <div id="pericias-display-block">
     <button class="close-btn-per" onclick="closePer()">x</button>
     <div id="perTop">
-        <img src="" alt="" id="playerImg">
+        <div id="playerImg">
+        </div>
+        <div id="chEdit">
+            <button onclick="valueCEdit(1)" id="1-ch" class="chEBtn btn white on">1</button>
+            <button onclick="valueCEdit(5)" id="5-ch" class="chEBtn btn white">5</button>
+            <button onclick="valueCEdit(10)" id="10-ch" class="chEBtn btn white">10</button>
+            <button onclick="valueCEdit(50)" id="50-ch" class="chEBtn btn white">50</button>
+
+        </div>
         <div class="barBlock">
             <div id="hpBar" class="bar">
                 <div class="barDiv">
@@ -726,7 +750,7 @@
 
     <div id="update-notification" style="display: none;">
         <p>Seu save foi atualizado para a versão mais recente. Por favor, exporte-o novamente para garantir a compatibilidade.</p>
-        <button onclick="document.getElementById('update-notification').style.display = 'none'">Fechar</button>
+        <button onclick="document.getElementById('update-notification').style.display = 'none'" class="btn base">Fechar</button>
     </div>
 
 </div>

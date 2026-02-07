@@ -71,9 +71,13 @@ var ficha = {
         gostos: "",
         desgostos: "",
         medos: "",
-        contatosProximos: "",
+        contatos: "",
         historia: "",
         comportamento: ""
+    },
+    options: {
+      wallpaper: 0,
+      chEdit: false,
     }
 
 };

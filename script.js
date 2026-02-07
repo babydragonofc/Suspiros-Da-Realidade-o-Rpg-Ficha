@@ -1209,7 +1209,7 @@ function displayPericias() {
                 nbrDiv.appendChild(valueSpan);
 
                 const rollBtn = document.createElement('button');
-                rollBtn.className = 'btn roll-pericia-btn';
+                rollBtn.className = 'btn roll-pericia-btn base';
                 rollBtn.textContent = 'Rolar';
                 rollBtn.onclick = () => {
                     diceInput.value = `1d20`;
