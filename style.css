@@ -1555,6 +1555,7 @@ img.reverse {
     display: flex;
     flex-direction: column;
     align-items: center;
+
 }
 
 #perTop #playerImg {
@@ -1563,6 +1564,7 @@ img.reverse {
     height: 200px;
     border-radius: 10px;
     border: none;
+    background-size: cover;
 }
 
 #perTop #chEdit {
@@ -1728,10 +1730,17 @@ img.reverse {
     grid-template-columns: 1fr 2fr;
     gap: 20px;
     padding: 20px;
+    padding-bottom: 0;
     color: var(--main-clr);
     max-height: 84dvh;
     overflow-y: auto;
     width: 100%;
+}
+
+#bio-content, #other-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
 }
 
 .personagem-info-basica {
@@ -1753,6 +1762,9 @@ img.reverse {
 .personagem-biografia {
     display: flex;
     flex-direction: column;
+    max-height: 80dvh;
+    min-height: 80dvh;
+    overflow: auto;
 }
 
 .personagem-biografia label {
@@ -1761,7 +1773,7 @@ img.reverse {
 }
 
 .biografia-input {
-    width: 100%;
+    display: flex;
     padding: 5px;
     margin-top: 5px;
     background-color: #333;
@@ -1784,22 +1796,33 @@ img.reverse {
     overflow-y: scroll;
     top: 0;
     left: 0;
+    z-index: 20;
+    
 }
 
 #periciasEditorBox #periciasEditor,
 #statusEditor {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    grid-column-gap: 14px;
+    grid-row-gap: 14px;
+
+}
+
+.periciasEditorBoxContent {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
 }
 
 .closeBox {
-    background-color: var(--main-clr);
+    background-color: white;
     color: black;
     border-radius: 5px;
-    width: 30px;
+    width: 100px;
     height: 30px;
-    position: absolute;
-    right: 0;
     margin: 5px;
     transition: 0.3s;
 }
@@ -1808,19 +1831,31 @@ img.reverse {
     background-color: #e7e7e7;
 }
 
-
-
-#periciasEditorBox #periciasEditor div,
+.pericia-edit,
 #statusEditor div {
-    width: 200px;
+    
+    position: relative;
+    height: 40px;
     display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
     background-color: #444;
+    font-family: "Crimson Text", serif;
+    align-items: center;
 
 }
 
 
+.pericia-edit input {
+    border: 4px solid #444444;
+    height: 100%;
+    position: absolute;
+    right: 10px;
+}
+
+#statusMaxEditor {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 28px;
+}
 
 /* Mobile: troca hover por click */
 @media (hover: none) and (pointer: coarse) {
@@ -2206,7 +2241,13 @@ img.reverse {
         width: 100%;
     }
 
+    .personagem-biografia, #bio-content, #other-content {
+        overflow: hidden;
+    }
 
+    #periciasEditorBox #periciasEditor {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 #arquivoJSON {
@@ -2387,4 +2428,13 @@ img.reverse {
 
 .on:hover {
     background-color: #747474;
+}
+
+.divMark {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bord-clr);
+    padding: 0 10px;
+    margin-bottom: 10px;
 }

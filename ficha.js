@@ -1,4 +1,5 @@
 var ficha = { 
+    imagem: "",
     nome: "",
     idade: 0,
 
@@ -73,7 +74,8 @@ var ficha = {
         medos: "",
         contatos: "",
         historia: "",
-        comportamento: ""
+        comportamento: "",
+        dinheiro: ""
     },
     options: {
       wallpaper: 0,
@@ -169,13 +171,6 @@ function carregarObjetoJSON(file) {
   });
 }
 
-// Exemplo de uso:
-
-// 2. Carregando um objeto:
-
-// Primeiro, você precisa ter um elemento <input type="file"> no seu HTML:
-// <input type="file" id="arquivoJSON">
-
 const inputArquivo = document.getElementById('arquivoJSON');
 
 if (inputArquivo) {
@@ -195,26 +190,7 @@ if (inputArquivo) {
                 }
             }
 
-            irParaJogo()
-            renderHabilidades()
-            renderMagias()
-            renderTraumas()
-            updateTotalWeight()
-            updateWeaponArea()
-            renderGuardados()
-            renderInventory()
-
-            ficha.habilidades.forEach(h => {
-                addHabilidade(h.name, h.description, h.dice, true)
-            });
-
-            ficha.magias.forEach(m => {
-                magicName.value = m.name;
-                magicDescription.value = m.description;
-                magicDice.value = m.dice;
-                createMagic(true)
-            });
-          // Faça algo com os dados carregados aqui (por exemplo, exiba-os na tela)
+            CarregarFicha()
         })
         .catch((erro) => {
           console.error('Erro ao carregar o arquivo:', erro);

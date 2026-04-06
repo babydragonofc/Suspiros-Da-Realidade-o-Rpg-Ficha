@@ -1262,6 +1262,7 @@ function createTrauma() {
 }
 
 function renderTraumas() {
+
     const traumaContainer = document.getElementsByClassName('traumas-content')[0];
     traumaContainer.innerHTML = '';
 
@@ -1470,15 +1471,17 @@ function load() {
         }
     }
 
-    const main = document.querySelector("main");
-    const cF = document.getElementById("cF");
-    const game = document.getElementById("game");
+    CarregarFicha()
 
-    if (main) main.style.display = "none";
-    if (cF) cF.style.display = "none";
-    if (game) game.style.display = "flex";
+}
 
-
+/**
+ * Carrega todas as informações
+ */
+function CarregarFicha() {
+    imageField.value = ficha.imagem
+    RenderPlayerImage()
+    irParaJogo();
     displayPericias();
     renderTraumas()
     updateTotalWeight()
@@ -1487,7 +1490,7 @@ function load() {
     renderInventory()
     setWallpaper(ficha.options.wallpaper)
     loadUserOptions()
-    personagemComportamento =ficha.biografia.contatos
+    //ficha.biografia.comportamento = ficha.biografia.contatos
 
     habilidadesContent.innerHTML = '';
     magiasContent.innerHTML = '';
@@ -1520,6 +1523,41 @@ function closePer() {
 function enterPer() {
     const periciasContainer = document.getElementById("pericias-display-block")
     periciasContainer.style.display = "block"
+}
+
+const bioState = document.getElementById("bioStateBtn")
+const bioContent = document.getElementById("bio-content")
+
+var bioIsOpen = false
+function ChangeBiogrMode(){
+    bioIsOpen = !bioIsOpen
+    bioState.innerHTML = bioIsOpen? "Abrir" : "Fechar";
+    bioContent.style.display = bioIsOpen? "none": "flex";
+}
+
+const otherState = document.getElementById("otherStateBtn")
+const otherContent = document.getElementById("other-content")
+
+var otherIsOpen = false
+function ChangeOtherMode(){
+    otherIsOpen = !otherIsOpen
+    otherState.innerHTML = otherIsOpen? "Abrir" : "Fechar";
+    otherContent.style.display = otherIsOpen? "none": "flex";
+
+    
+}
+
+const imageField = document.getElementById("image-field")
+const playerImg = document.getElementById("playerImg")
+
+imageField.addEventListener('change', function() {
+    RenderPlayerImage()
+});
+
+function RenderPlayerImage() {
+    console.log("aaa")
+    ficha.imagem = imageField.value
+    playerImg.style.backgroundImage = "url(" + imageField.value + ")";
 }
 
 const backgrounds = [

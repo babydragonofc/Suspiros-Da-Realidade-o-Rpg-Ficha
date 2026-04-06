@@ -500,7 +500,7 @@
         <div class="Sline"></div>
         <button class="mTBtn" onclick="gameHabaSel(5, this)">Personagem</button>
         <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(6, this)">Diário</button>
+        <button class="mTBtn" onclick="gameHabaSel(6, this)">Diário*</button>
         <div class="Sline"></div>
         <button class="mTBtn" onclick="save()">Salvar</button>
         <div class="Sline"></div>
@@ -596,27 +596,49 @@
 
             </div>
             <div class="personagem-biografia">
-                <label for="personagem-familia">Familia:</label>
-                <textarea id="personagem-familia" class="biografia-input" rows="2"></textarea>
-                <label for="personagem-gostos">Gostos:</label>
-                <textarea id="personagem-gostos" class="biografia-input" rows="2"></textarea>
-                <label for="personagem-desgostos">Desgostos:</label>
-                <textarea id="personagem-desgostos" class="biografia-input" rows="2"></textarea>
-                <label for="personagem-medos">Medos:</label>
-                <textarea id="personagem-medos" class="biografia-input" rows="2"></textarea>
-                <label for="personagem-contatos">Contatos Proximos:</label>
-                <textarea id="personagem-contatos" class="biografia-input" rows="2"></textarea>
-                <label for="personagem-historia">Historia:</label>
-                <textarea id="personagem-historia" class="biografia-input" rows="5"></textarea>
-                <label for="personagem-comportamento">Comportamento:</label>
-                <textarea id="personagem-comportamento" class="biografia-input" rows="3"></textarea>
+                <div class="divMark" >
+                    <h2 class="text">Biografia</h2>
+                    <button class="btn" onclick="ChangeBiogrMode()" id="bioStateBtn">Fechar</button>
+                </div>
+                <div id="bio-content">
+                    <label for="personagem-familia">Familia:</label>
+                    <textarea id="personagem-familia" class="biografia-input" rows="2"></textarea>
+                    <label for="personagem-gostos">Gostos:</label>
+                    <textarea id="personagem-gostos" class="biografia-input" rows="2"></textarea>
+                    <label for="personagem-desgostos">Desgostos:</label>
+                    <textarea id="personagem-desgostos" class="biografia-input" rows="2"></textarea>
+                    <label for="personagem-medos">Medos:</label>
+                    <textarea id="personagem-medos" class="biografia-input" rows="2"></textarea>
+                    <label for="personagem-contatos">Contatos Proximos:</label>
+                    <textarea id="personagem-contatos" class="biografia-input" rows="2"></textarea>
+                    <label for="personagem-historia">Historia:</label>
+                    <textarea id="personagem-historia" class="biografia-input" rows="5"></textarea>
+                    <label for="personagem-comportamento">Comportamento:</label>
+                    <textarea id="personagem-comportamento" class="biografia-input" rows="3"></textarea>
+                </div>
+                    <div class="divMark" >
+                    <h2 class="text">Outros</h2>
+                    <button class="btn" onclick="ChangeOtherMode()" id="otherStateBtn">Fechar</button>
+                </div>
+                <div id="other-content">
+                    <label for="personagem-dinheiro">Dinheiro:</label>
+                    <textarea id="personagem-dinheiro" class="biografia-input" rows="1"></textarea>
+                    
+                </div>
             </div>
         </div>
       </div>
 
       <!-- ============ DIÁRIO ============ -->
-      <div class="mt-content" id="diario-content" style="display: none;">
+
+      
+      <div class="mt-content" id="diario-content" style="display: none;align-items: center;">
         <h3 class="title" ">Diário</h3>
+        <p class="text">*Removido por tempo indeterminado</p>
+      </div>
+
+      <!--
+      REMOVIDO POR TEMPO INDETERMINADO
         <div class="diario-toolbar">
           <button onclick="formatDoc('bold')"><b>B</b></button>
           <button onclick="formatDoc('italic')"><i>I</i></button>
@@ -634,7 +656,7 @@
           </select>
         </div>
         <div id="diario-editor" contenteditable="true" class="diario-editor"></div>
-      </div>
+      </div>-->
 
       <!-- ============ OPÇÕES ============ -->
        <div class="mt-content" id="options-content" style="display: none;">
@@ -649,6 +671,11 @@
                 <div class="flex">
                     <button class="btn" onclick="turnStatusMod()">Modificador Status</button>
                 </div>
+                <p>Imagem</p>
+                <div>
+                    <input class="input" type="text" id="image-field">
+                </div>
+
             </div>
        </div>
     </main>
@@ -743,7 +770,10 @@
     </div>
 
     <div id="periciasEditorBox" class="hidden">
-            <button class="closeBox" onclick="salvarPericiasEditadas(), salvarStatusMaxEditados()">X</button>
+        <div class="periciasEditorBoxContent">
+            <h2 class="title">Editar Pericias</h2>
+            <button class="closeBox" onclick="salvarPericiasEditadas(), salvarStatusMaxEditados()">Salvar e Voltar</button>
+        </div>
             <div id="periciasEditor"></div>
             <div id="statusMaxEditor" class="hidden"></div>
     </div>

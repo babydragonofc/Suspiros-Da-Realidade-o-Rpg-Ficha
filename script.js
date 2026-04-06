@@ -1229,6 +1229,7 @@ function displayPericias() {
 }
 
 function irParaJogo() {
+
     const cF = document.getElementById("cF");
     const game = document.getElementById("game");
     const main = document.querySelector("main");
@@ -1241,6 +1242,7 @@ function irParaJogo() {
     if (typeof displayPericias === 'function') {
         displayPericias();
     }
+
 }
 
 function renderPersonagem() {
@@ -1259,7 +1261,7 @@ function renderPersonagem() {
     document.getElementById('personagem-foco').textContent = focosText.join(', ');
 
     // Biography
-    const biografiaFields = ['familia', 'gostos', 'desgostos', 'medos', 'contatosProximos', 'historia', 'comportamento'];
+    const biografiaFields = ['familia', 'gostos', 'desgostos', 'medos', 'contatosProximos', 'historia', 'comportamento', 'dinheiro'];
     biografiaFields.forEach(field => {
         const element = document.getElementById(`personagem-${field.toLowerCase()}`);
         if (element) {
@@ -1300,7 +1302,7 @@ function renderPericiasEditor() {
         const linha = document.createElement('div');
         linha.className = 'pericia-edit';
         
-        const label = document.createElement('label');
+        const label = document.createElement('p');
         label.textContent = nome;
         
         const input = document.createElement('input');
@@ -1346,8 +1348,9 @@ function renderStatusMaxEditor() {
         const linha = document.createElement('div');
         linha.className = 'status-edit';
         
-        const lbl = document.createElement('label');
+        const lbl = document.createElement('p');
         lbl.textContent = label;
+        lbl.classList = "title"
         
         const input = document.createElement('input');
         input.type = 'number';
