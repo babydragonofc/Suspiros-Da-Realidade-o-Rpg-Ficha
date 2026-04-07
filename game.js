@@ -1562,7 +1562,9 @@ function RenderPlayerImage() {
 
 const backgrounds = [
     "wallpaperMedo.png",
-    "wallpaperRealidade.png"
+    "wallpaperRealidade.png",
+    "wallpaperEnergia.png",
+    "wallpaperSangue.png"
 ]
 
 const backgroundsRoots = [
@@ -1583,6 +1585,24 @@ const backgroundsRoots = [
         "btnTx": "white",
         "ter": "#160f0f",
         "uTb": "#0000007a"
+    },
+        {
+        "main":"white",
+        "sec": "black",
+        "btnBg": "rgb(239, 239, 239)",
+        "btnHvr": "rgb(205, 205, 205)",
+        "btnTx": "black",
+        "ter": "#555",
+        "uTb": "",
+    },
+    {
+        "main":"white",
+        "sec": "black",
+        "btnBg": "rgb(239, 239, 239)",
+        "btnHvr": "rgb(205, 205, 205)",
+        "btnTx": "black",
+        "ter": "#555",
+        "uTb": "",
     },
 
 ]
