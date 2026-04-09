@@ -1564,7 +1564,8 @@ const backgrounds = [
     "wallpaperMedo.png",
     "wallpaperRealidade.png",
     "wallpaperEnergia.png",
-    "wallpaperSangue.png"
+    "wallpaperSangue.png",
+    "wallpaperHadassa.gif"
 ]
 
 const backgroundsRoots = [
@@ -1604,7 +1605,15 @@ const backgroundsRoots = [
         "ter": "#555",
         "uTb": "",
     },
-
+        {
+        "main":"white",
+        "sec": "black",
+        "btnBg": "rgb(239, 239, 239)",
+        "btnHvr": "rgb(205, 205, 205)",
+        "btnTx": "black",
+        "ter": "#555",
+        "uTb": "",
+    }
 ]
 setWallpaper(ficha.options.wallpaper)
 
@@ -1656,3 +1665,21 @@ function loadUserOptions() {
 }
 
 const personagemContatos = document.getElementById('personagem-contatos')
+
+const openMindArea = document.getElementById('openMindArea')
+const openMindInput = document.getElementById('openMindInput')
+function openMind() {
+    openMindArea.style.display = "flex"
+}
+
+function closeMind() {
+    openMindArea.style.display = "none"
+}
+
+function Vincular() {
+    let vinculo = openMindInput.value
+    if (vinculo == "Ainda eu?") {
+        setWallpaper(4)
+        closeMind()
+    }
+}

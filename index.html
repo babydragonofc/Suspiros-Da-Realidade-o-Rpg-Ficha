@@ -686,7 +686,7 @@
   <div id="pericias-display-block">
     <button class="close-btn-per" onclick="closePer()">x</button>
     <div id="perTop">
-        <div id="playerImg">
+        <div id="playerImg" onclick="openMind()">
         </div>
         <div id="chEdit">
             <button onclick="valueCEdit(1)" id="1-ch" class="chEBtn btn white on">1</button>
@@ -785,6 +785,15 @@
         <button onclick="document.getElementById('update-notification').style.display = 'none'" class="btn base">Fechar</button>
     </div>
 
+    <div id="openMindArea" class="panel">
+        <button class="close-btn" onclick="closeMind()">X</button>
+        <div class="box">
+            <p class="text">Senha</p>
+            <input type="text" class="input" id="openMindInput">
+            <br>
+            <button class="btn" onclick="Vincular()">Vincular</button>
+        </div>
+    </div>
 </div>
     
     <script src="ficha.js"></script>

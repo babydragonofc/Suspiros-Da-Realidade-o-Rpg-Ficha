@@ -2438,3 +2438,28 @@ img.reverse {
     padding: 0 10px;
     margin-bottom: 10px;
 }
+
+#openMindArea {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100dvh;
+    width: 100dvw;
+    background-color: rgba(0, 0, 0, 0.253);
+    backdrop-filter: blur(2px);
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 20px;
+    width: 20px;
+    background-color: #111;
+    border: var(--bord-clr) 1px solid;
+    border-radius: 5px;
+    color: var(--main-clr);
+    transition: 0.3s;
+    cursor: pointer;
+}
