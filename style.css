@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
 @font-face {
     font-family: 'DDC';
     src: url('DCC - Manifest.otf') format('opentype');
@@ -2461,5 +2462,63 @@ img.reverse {
     border-radius: 5px;
     color: var(--main-clr);
     transition: 0.3s;
+    cursor: pointer;
+}
+
+/* Estilo para o container principal da "última cena" */
+#lastActScream {
+    width: 100dvw;
+    height: 100dvh;
+    position: fixed; /* 'fixed' é melhor para cobrir toda a tela */
+    top: 0;
+    left: 0;
+    z-index: 10000000;
+    background-color: white; /* Cor de fundo branca, ajustável */
+    display: flex; /* Para centralizar os textos */
+    flex-direction: column; /* Textos um abaixo do outro */
+    justify-content: center; /* Centraliza verticalmente */
+    align-items: center; /* Centraliza horizontalmente */
+    text-align: center; /* Alinha o texto dentro dos parágrafos */
+    color: black; /* Cor do texto, ajustável */
+    font-size: 3em; /* Tamanho da fonte, ajustável */
+    font-family: 'Arial', sans-serif; /* Fonte, ajustável */
+
+    /* Transição para o fade-in do container */
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out; 
+    opacity: 1; /* Estado final: totalmente visível */
+    visibility: visible; /* Estado final: visível */
+}
+
+/* Estado inicial do container (invisível) */
+#lastActScream.fade {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* Impede interação enquanto invisível */
+}
+
+/* Estilo para os parágrafos dentro do container */
+#lastActScream p {
+    margin: 0.2em 0; /* Espaçamento entre os parágrafos */
+    padding: 0;
+    /* Adiciona uma altura mínima para evitar que o layout "salte" */
+    min-height: 1.2em; 
+    visibility: hidden;
+}
+
+/* === NOVO ESTILO: Para cada letra individual === */
+.last-act-char {
+    opacity: 0; /* Começa invisível */
+    transition: opacity 0.3s ease-in-out; /* Fade suave para cada letra (0.3s) */
+    display: inline-block; /* Essencial para que espaços sejam renderizados e para que cada char seja um bloco para a transição */
+}
+
+#lastActCloseBtn {
+    background-color: white;
+    height: 50px;
+    width: 200px;
+    color: #7a7a7a;
+    border: none;
+    opacity: 0;
+    transition: 1s ease-in-out;
     cursor: pointer;
 }

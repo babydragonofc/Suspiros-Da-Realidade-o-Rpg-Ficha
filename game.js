@@ -1388,10 +1388,22 @@ function changeStatusValue(type, status) {
 }
 
 function statusAtu() {
-    console.log(ficha.status)
-    const vidaPer = (ficha.status.vida / ficha.status.vidaMax) * 100;
-    const mpPer = (ficha.status.pontosDeMagia / ficha.status.pontosDeMagiaMax) * 100;
-    const spPer = (ficha.status.medo / ficha.status.medoMax) * 100
+
+    let vidaPer;
+    let mpPer;
+    let spPer;
+
+    if (ficha.status.vida == "???") {
+        vidaPer = 100;
+        mpPer = 100;
+        spPer = 100
+    } else {
+        console.log(ficha.status)
+        
+        vidaPer = (ficha.status.vida / ficha.status.vidaMax) * 100;
+        mpPer = (ficha.status.pontosDeMagia / ficha.status.pontosDeMagiaMax) * 100;
+        spPer = (ficha.status.medo / ficha.status.medoMax) * 100
+    }
     
     statusList["vida"].fill.style.width = ficha.status.vida >= ficha.status.vidaMax? "100%" :vidaPer + "%"
     statusList["pontosDeMagia"].fill.style.width = ficha.status.pontosDeMagia >= ficha.status.pontosDeMagiaMax? "100%" :mpPer + "%"
@@ -1408,11 +1420,15 @@ function formatDoc(command, value = null) {
     document.execCommand(command, false, value);
 }
 
-function save() {
+function save(confirm = true) {
         ficha.biografia.contatos = personagemContatos.value
     if (localStorage.getItem('hasFichaSave')) {
-
-        var r=confirm("Já Existe um save! nome : " + JSON.parse(localStorage.getItem('ficha')).nome + " Save criado às " + new Date(JSON.parse(localStorage.getItem('hour'))).toLocaleTimeString() + " ; Deseja Sobrescrever?");
+        if(confirm) {
+            var r=confirm("Já Existe um save! nome : " + JSON.parse(localStorage.getItem('ficha')).nome + " Save criado às " + new Date(JSON.parse(localStorage.getItem('hour'))).toLocaleTimeString() + " ; Deseja Sobrescrever?");
+        }
+        else {
+            var r=true;
+        }
 
         if (r==true)
         {
@@ -1676,10 +1692,124 @@ function closeMind() {
     openMindArea.style.display = "none"
 }
 
+var colar = true;
 function Vincular() {
     let vinculo = openMindInput.value
     if (vinculo == "Ainda eu?") {
         setWallpaper(4)
         closeMind()
     }
+    if(vinculo == "Erinnern") {
+        startLastAct()
+    }
+    if (vinculo == "colar") {
+        colar = !colar
+        closeMind()
+    }
+}
+
+const lastActScream = document.getElementById("lastActScream");
+const lastActText1 = document.getElementById("lastActText1");
+const lastActText2 = document.getElementById("lastActText2");
+
+/**
+ * Anima o texto de um elemento HTML caractere por caractere com um efeito fade-in.
+ * Cada caractere é envolto em um <span> com a classe 'last-act-char' para permitir animação individual.
+ * @param {HTMLElement} element O elemento HTML cujo texto será animado.
+ * @param {number} charDelay O atraso em milissegundos entre o aparecimento de cada caractere.
+ * @returns {Promise<void>} Uma promessa que resolve quando todos os caracteres foram animados.
+ */
+function typewriterFadeIn(element, charDelay = 70) {
+    return new Promise(resolve => {
+        const text = element.textContent; // Pega o texto original do elemento
+        element.innerHTML = ''; // Limpa o conteúdo original do parágrafo
+        element.style.visibility = "visible"
+        const chars = [];
+        // Cria um <span> para cada caractere e o adiciona ao elemento
+        for (let i = 0; i < text.length; i++) {
+            const charSpan = document.createElement('span');
+            charSpan.textContent = text[i];
+            charSpan.classList.add('last-act-char'); // Adiciona a classe para o estilo de fade
+
+            // Substitui espaços por &nbsp; para garantir que eles ocupem espaço e animem
+            // Se fosse apenas ' ', o navegador poderia colapsar múltiplos espaços
+            if (text[i] === ' ') {
+                charSpan.innerHTML = '&nbsp;';
+            }
+            element.appendChild(charSpan);
+            chars.push(charSpan);
+        }
+
+        // Inicia a animação caractere por caractere
+        let i = 0;
+        function animateChar() {
+            if (i < chars.length) {
+                // Define a opacidade para 1, acionando a transição CSS definida em .last-act-char
+                chars[i].style.opacity = '1';
+                i++;
+                setTimeout(animateChar, charDelay); // Chama a função para o próximo caractere após o atraso
+            } else {
+                resolve(); // Resolve a promessa quando todos os caracteres são exibidos
+            }
+        }
+        animateChar(); // Inicia a animação para o primeiro caractere
+    });
+}
+
+/**
+ * Função principal para iniciar a sequência da "última cena".
+ * É uma função assíncrona para permitir o uso de 'await' para sequenciar as animações.
+ */
+async function startLastAct() {
+    console.log("Saber tudo é perder tudo");
+
+    // 1. Faz o fade-in do container principal (#lastActScream)
+    // O setTimeout de 50ms é uma boa prática para garantir que o navegador
+    // registre o estado inicial (opacity: 0, visibility: hidden) antes de remover a classe
+    // e iniciar a transição para opacity: 1, visibility: visible.
+    setTimeout(() => {
+        lastActScream.classList.remove('fade');
+    }, 50);
+
+    // Opcional: Espera o fade-in do container principal ser concluído (ou quase).
+    // A transição no CSS para #lastActScream é de 1s, então 1000ms é um bom valor.
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // 2. Anima o primeiro texto, caractere por caractere.
+    // 'await' garante que a execução do código só continue após este texto ser completamente exibido.
+    await typewriterFadeIn(lastActText1, 200); // 70ms de atraso entre cada letra
+
+    // 3. Atraso entre o primeiro e o segundo texto.
+    // 1 segundo de pausa antes de começar o segundo texto.
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
+
+    // 4. Anima o segundo texto, caractere por caractere.
+    await typewriterFadeIn(lastActText2, 200); // 70ms de atraso entre cada letra
+
+    if (colar) {
+        imageField.value = "https://i.imgur.com/MBD3HSj.png"
+    } else {
+        imageField.value = "https://i.imgur.com/jT4UF6j.png"
+    }
+    RenderPlayerImage()
+    closeMind()
+    // A partir daqui, você pode adicionar qualquer outra lógica que queira
+    // que aconteça após os textos serem completamente exibidos.
+    console.log("Sequência de 'Last Act' concluída!");
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    document.getElementById('lastActCloseBtn').opacity = 1;
+
+}
+
+
+function perderTudo() {
+    console.log("Saber tudo é perder tudo");
+    ficha.status.medoMax = "???"
+    ficha.status.medo = "???"
+    ficha.status.vidaMax = "???"
+    ficha.status.vida = "???"
+    ficha.status.pontosDeMagiaMax = "???"
+    ficha.status.pontosDeMagia = "???"
+    ficha.biografia.nome = "Erinnern Sousa"
+    save(false)
 }
