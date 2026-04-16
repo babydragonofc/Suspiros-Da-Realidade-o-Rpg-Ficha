@@ -1436,7 +1436,7 @@ function save(confirm = true) {
             const hour = new Date();
             localStorage.setItem('hour', JSON.stringify(hour));
             localStorage.setItem('hasFichaSave', true)
-            alert("Ficha salva!")
+            if (confirm) alert("Ficha salva!")
             return;
         }
         else
@@ -1452,7 +1452,7 @@ function save(confirm = true) {
     const hour = new Date();
     localStorage.setItem('hour', JSON.stringify(hour));
     localStorage.setItem('hasFichaSave', true)
-    alert("Ficha salva!")
+    if (confirm) alert("Ficha salva!")
     return;
     
 }
@@ -1773,8 +1773,10 @@ async function startLastAct() {
 
     // Opcional: Espera o fade-in do container principal ser concluído (ou quase).
     // A transição no CSS para #lastActScream é de 1s, então 1000ms é um bom valor.
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
+    setMobileHeaderColor('#fff');
+    await new Promise(resolve => setTimeout(resolve, 1000));
     // 2. Anima o primeiro texto, caractere por caractere.
     // 'await' garante que a execução do código só continue após este texto ser completamente exibido.
     await typewriterFadeIn(lastActText1, 200); // 70ms de atraso entre cada letra
@@ -1797,7 +1799,7 @@ async function startLastAct() {
     // que aconteça após os textos serem completamente exibidos.
     console.log("Sequência de 'Last Act' concluída!");
     await new Promise(resolve => setTimeout(resolve, 1000)); 
-    document.getElementById('lastActCloseBtn').opacity = 1;
+    document.getElementById('lastActCloseBtn').style.opacity = 1;
 
 }
 
@@ -1812,4 +1814,19 @@ function perderTudo() {
     ficha.status.pontosDeMagia = "???"
     ficha.biografia.nome = "Erinnern Sousa"
     save(false)
+    location.reload()
 }
+
+function setMobileHeaderColor(color) {
+  let metaTag = document.querySelector('meta[name="theme-color"]');
+  
+  if (!metaTag) {
+    metaTag = document.createElement('meta');
+    metaTag.name = "theme-color";
+    document.head.appendChild(metaTag);
+  }
+  
+  metaTag.setAttribute('content', color);
+}
+
+
