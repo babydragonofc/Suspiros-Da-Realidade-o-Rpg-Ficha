@@ -347,6 +347,7 @@ function showMagicInfo(magic) { // Now accepts the magic object
     const editMagicNameInput = document.getElementById('editMagicName');
     const editMagicDescriptionInput = document.getElementById('editMagicDescription');
 
+    //save
     // Save Button
     const saveBtn = document.createElement('button');
     saveBtn.className = 'btn';
@@ -1420,10 +1421,10 @@ function formatDoc(command, value = null) {
     document.execCommand(command, false, value);
 }
 
-function save(confirm = true) {
+function save(ask = true) {
         ficha.biografia.contatos = personagemContatos.value
     if (localStorage.getItem('hasFichaSave')) {
-        if(confirm) {
+        if(ask) {
             var r=confirm("Já Existe um save! nome : " + JSON.parse(localStorage.getItem('ficha')).nome + " Save criado às " + new Date(JSON.parse(localStorage.getItem('hour'))).toLocaleTimeString() + " ; Deseja Sobrescrever?");
         }
         else {
@@ -1436,7 +1437,7 @@ function save(confirm = true) {
             const hour = new Date();
             localStorage.setItem('hour', JSON.stringify(hour));
             localStorage.setItem('hasFichaSave', true)
-            if (confirm) alert("Ficha salva!")
+            if (ask) alert("Ficha salva!")
             return;
         }
         else
