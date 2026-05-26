@@ -80,8 +80,10 @@ var ficha = {
     options: {
       wallpaper: 0,
       chEdit: false,
-    }
-
+      autoSave: false
+    },
+    mods :[],
+customStatus: []
 };
 
 const defaultFicha = JSON.parse(JSON.stringify(ficha));

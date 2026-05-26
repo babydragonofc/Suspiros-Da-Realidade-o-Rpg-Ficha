@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap');
 @font-face {
     font-family: 'DDC';
     src: url('DCC - Manifest.otf') format('opentype');
@@ -7,6 +6,7 @@
 }
 *{
   font-family: "Crimson Text", serif;
+  user-select: none;
 }
 
 :root {
@@ -19,9 +19,10 @@
     --btn-tx: black;
 
     --ter-clr: #555;
-    --bord-clr: #555;
 
     --un-tab-clr: rgba(255, 255, 255, 0.5);
+
+    --slider-clr: #2196F3;
 }
 
 body {
@@ -46,13 +47,17 @@ main {
     gap: 3em;
 }
 
+main::-webkit-scrollbar {
+    display: none;
+}
+
 .logo {
     filter: brightness(0) invert(1);
     width: 90%;
 }
 
 .btn {
-    height: 30px;
+    min-height: 30px;
     padding: 0 50px;
     background-color: var(--btn-bg);
     border: none;
@@ -74,6 +79,66 @@ main {
     background-color: rgb(205, 205, 205);
 }
 
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--slider-clr);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--slider-clr);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
 .sex-btn.selected {
     background-color: #a0a0a0;
     color: var(--main-clr);
@@ -86,7 +151,7 @@ main {
 
 .text.sm {
     font-size: 12px;
-    color: var(--bord-clr);
+    color: var(--ter-clr);
 }
 
 .input {
@@ -1145,6 +1210,16 @@ img.reverse {
 
 #options-content #options-container {
     width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    position: relative;
+    height: 80%;
+}
+
+#options-container p {
+    margin-bottom: 0;
 }
 
 .panel {
@@ -1217,19 +1292,27 @@ img.reverse {
     height: 100px;
 }
 
-.magic-card, .ability-card, .trauma-card {
+.magic-card, .ability-card{
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: #111;
-    border: 1px solid var(--bord-clr);
+    border: 1px solid var(--ter-clr);
     height: 130px;
     
 }
 
 .trauma-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #111;
+    border: 1px solid var(--ter-clr);
+    min-height: 130px;
     color: white;
 }
 
@@ -1311,6 +1394,10 @@ img.reverse {
     margin-top: 0;
 }
 
+#inventory::-webkit-scrollbar {
+  display: none;
+}
+
 .item-card {
     background-color: #222;
     border: 1px solid #444;
@@ -1323,6 +1410,11 @@ img.reverse {
 
 .item-card:hover {
     background-color: #333;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
 }
 
 .item-content {
@@ -1383,10 +1475,11 @@ img.reverse {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     width: 281.587px;
     height: 150px;
+    padding-left: 17px;
     background-image: repeating-linear-gradient(-2deg, var(--ter-clr), var(--ter-clr) 8px, transparent 8px, transparent 18px, var(--ter-clr) 18px), repeating-linear-gradient(88deg, var(--ter-clr), var(--ter-clr) 8px, transparent 8px, transparent 18px, var(--ter-clr) 18px), repeating-linear-gradient(178deg, var(--ter-clr), var(--ter-clr) 8px, transparent 8px, transparent 18px, var(--ter-clr) 18px), repeating-linear-gradient(268deg, var(--ter-clr), var(--ter-clr) 8px, transparent 8px, transparent 18px, var(--ter-clr) 18px);
     background-size: 2px 100%, 100% 2px, 2px 100% , 100% 2px;
     background-position: 0 0, 0 0, 100% 0, 0 100%;
@@ -1404,16 +1497,59 @@ img.reverse {
     display: none;
     justify-content: space-between;
 }
-#ItemCreate section {
+
+#infoGroup {
     display: flex;
-    flex-direction: column;
-    overflow: auto;
+    justify-content: space-between;
 }
 
-#ItemCreate section::-webkit-scrollbar
+#infoGroup .infoBlock {
+    width: 49%;
+    margin-bottom: 20px;
+}
+
+#infoGroup .infoBlock .createItemInfo {
+    display: flex;
+    flex-direction: column;
+}
 
 #dice-multiplier-options {
     gap: 5px;
+}
+
+#categoriesDefinitions {
+    margin-top: 20px;
+}
+
+#categoriesGroup {
+    display: flex;
+}
+#categoriesGroup section{
+    width: -webkit-fill-available;
+}
+
+#categoriesGroup section button {
+    width: 100px;
+    background-color: #343434;
+    border: none;
+    color: white;
+}
+
+#categoriesGroup section button.active {
+    background-color: #222;
+}
+
+#createItemDefinitions {
+    height: 200px;
+    background-color: #222;
+}
+
+#createItem, #createWeapon, #createMunition {
+    display: none;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    height: stretch;
 }
 
 .item-card.equipped {
@@ -1472,7 +1608,7 @@ img.reverse {
     height: 100%;
 }
 #ItemCreate section textarea {
-    height: 100px;
+    height: stretch;
 }
 
 #additional-weight-panel .box {
@@ -1487,16 +1623,7 @@ img.reverse {
 }
 
 #traumas-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-    align-items: center;
-    color: var(--main-clr);
-}
-
-.traumas-content {
-    width: 80%;
-    height: 405px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     gap: 1em;
@@ -1504,6 +1631,10 @@ img.reverse {
     overflow-y: auto;
     padding: 1em;
     box-sizing: border-box;
+}
+
+#traumas-content::-webkit-scrollbar {
+    display: none;
 }
 
 
@@ -1612,6 +1743,10 @@ img.reverse {
     margin-top: 10px;
 }
 
+.statusBtns {
+    display: flex;
+}
+
 .barBtn {
     background-color: #222;
     border: none;
@@ -1695,13 +1830,13 @@ img.reverse {
   margin-right: 5px;
   background-color: #444;
   color: white;
-  border: 1px solid var(--bord-clr);
+  border: 1px solid var(--ter-clr);
   border-radius: 3px;
   cursor: pointer;
 }
 
 .diario-toolbar button:hover, .diario-toolbar select:hover {
-  background-color: var(--bord-clr);
+  background-color: var(--ter-clr);
 }
 
 .diario-toolbar input[type="color"] {
@@ -1778,7 +1913,7 @@ img.reverse {
     padding: 5px;
     margin-top: 5px;
     background-color: #333;
-    border: 1px solid var(--bord-clr);
+    border: 1px solid var(--ter-clr);
     color: var(--main-clr);
     border-radius: 3px;
     resize: vertical;
@@ -1961,6 +2096,20 @@ img.reverse {
     #enterPer {
         display: block;
     }
+
+    .bar {
+        width: -webkit-fill-available;
+        height: 62px;
+        background-color: #222;
+        position: relative;
+    }
+
+    .barBlock {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        margin-top: 10px;
+    }
 }
 
 /* Responsividade geral */
@@ -2087,26 +2236,9 @@ img.reverse {
 
 @media (max-width: 768px) {
 
-    .bar {
-        width: 236px;
-        height: 97px;
-        background-color: #222;
-        position: relative;
-    }
 
-    .barBtn {
-        background-color: #222;
-        border: none;
-        color: var(--main-clr);
-        margin-left: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 54px;
-    }
-
-    .barBlock {
-        justify-content: space-between;
+    .statusBtns {
+        
     }
 
     #multiTask header {
@@ -2295,6 +2427,7 @@ img.reverse {
     cursor: pointer;
 }
 
+
 .item-creation-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -2334,7 +2467,7 @@ img.reverse {
     resize: vertical;
     min-height: 80px;
 }
-
+/**
 .item-creation-grid button {
     background-color: #4CAF50;
     color: var(--main-clr);
@@ -2348,7 +2481,7 @@ img.reverse {
 .item-creation-grid button:hover {
     background-color: #45a049;
 }
-
+*/
 .item-creation-grid .button-group {
     display: flex;
     gap: 1em;
@@ -2376,9 +2509,8 @@ img.reverse {
 
 .item-content {
     display: flex;
-    scale: 0.6;
-    position: relative;
-    left: -34px;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .magic-card.favorited,
@@ -2393,9 +2525,14 @@ img.reverse {
 .magic-card .favorite-star,
 .trauma-card .favorite-star{
     position: absolute;
-    color: white;
+    color: gold;
     top: 3px;
     right: 8px;
+}
+
+.item-header .favorite-star {
+    color: gold;
+
 }
 
 .ability-card .title,
@@ -2435,90 +2572,127 @@ img.reverse {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--bord-clr);
+    background: var(--ter-clr);
     padding: 0 10px;
     margin-bottom: 10px;
 }
 
-#openMindArea {
+.mod-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 250px;
+}
+
+.mod-card .text {
+    margin: 0;
+}
+
+.mod-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mod-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+}
+
+.custom-status {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.custom-status-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.custom-status-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+}
+
+.custom-status-name {
+    color: white;
+    font-size: 14px;
+}
+
+.custom-status-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 5px;
+    position: relative;
+}
+
+.custom-status-fill {
+    height: 100%;
+    width: 0%;
+    transition: .2s;
+}
+
+.custom-status-value {
     position: absolute;
+    inset: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100dvh;
-    width: 100dvw;
-    background-color: rgba(0, 0, 0, 0.253);
-    backdrop-filter: blur(2px);
+
+    color: white;
+    font-size: 12px;
 }
 
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    height: 20px;
-    width: 20px;
-    background-color: #111;
-    border: var(--bord-clr) 1px solid;
-    border-radius: 5px;
-    color: var(--main-clr);
-    transition: 0.3s;
-    cursor: pointer;
+/* Esconde o input original */
+#modFileInput {
+  display: none;
 }
 
-/* Estilo para o container principal da "última cena" */
-#lastActScream {
-    width: 100dvw;
-    height: 100dvh;
-    position: fixed; /* 'fixed' é melhor para cobrir toda a tela */
-    top: 0;
-    left: 0;
-    z-index: 10000000;
-    background-color: white; /* Cor de fundo branca, ajustável */
-    display: flex; /* Para centralizar os textos */
-    flex-direction: column; /* Textos um abaixo do outro */
-    justify-content: center; /* Centraliza verticalmente */
-    align-items: center; /* Centraliza horizontalmente */
-    text-align: center; /* Alinha o texto dentro dos parágrafos */
-    color: black; /* Cor do texto, ajustável */
-    font-size: 3em; /* Tamanho da fonte, ajustável */
-    font-family: 'Arial', sans-serif; /* Fonte, ajustável */
-
-    /* Transição para o fade-in do container */
-    transition: opacity 1s ease-in-out, visibility 1s ease-in-out; 
-    opacity: 1; /* Estado final: totalmente visível */
-    visibility: visible; /* Estado final: visível */
+#mods-list {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    overflow-y: auto;
 }
 
-/* Estado inicial do container (invisível) */
-#lastActScream.fade {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none; /* Impede interação enquanto invisível */
+#mods-list::-webkit-scrollbar {
+    display: none;
 }
 
-/* Estilo para os parágrafos dentro do container */
-#lastActScream p {
-    margin: 0.2em 0; /* Espaçamento entre os parágrafos */
-    padding: 0;
-    /* Adiciona uma altura mínima para evitar que o layout "salte" */
-    min-height: 1.2em; 
-    visibility: hidden;
+/* Estiliza o rótulo para parecer um botão clicável */
+.btn-personalizado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* === NOVO ESTILO: Para cada letra individual === */
-.last-act-char {
-    opacity: 0; /* Começa invisível */
-    transition: opacity 0.3s ease-in-out; /* Fade suave para cada letra (0.3s) */
-    display: inline-block; /* Essencial para que espaços sejam renderizados e para que cada char seja um bloco para a transição */
+.btn-personalizado.preenchido {
+    background-color: #39a239;
 }
 
-#lastActCloseBtn {
-    background-color: white;
-    height: 50px;
-    width: 200px;
-    color: #7a7a7a;
-    border: none;
-    opacity: 0;
-    transition: 1s ease-in-out;
-    cursor: pointer;
+/* Efeito ao passar o mouse */
+.btn-personalizado:hover {
+    background-color: #a1a3a1;
 }
+
+.btn-personalizado.preenchido:hover {
+    background-color: #67c367;
+}
+

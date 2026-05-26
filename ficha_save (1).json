@@ -1,0 +1,394 @@
+{
+  "imagem": "",
+  "nome": "Anthony",
+  "idade": "27",
+  "ConhecimentoMagico": 0,
+  "origem": [
+    12,
+    0
+  ],
+  "tipo": 0,
+  "raça": 0,
+  "peso": 65,
+  "altura": 178,
+  "elementos": [],
+  "status": {
+    "vida": 35,
+    "pontosDeMagia": 27,
+    "medo": 85,
+    "vidaMax": 35,
+    "pontosDeMagiaMax": 27,
+    "medoMax": 90
+  },
+  "pericias": {
+    "Lábia": {
+      "value": 1,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Aparência": {
+      "value": 4,
+      "min": 2,
+      "max": 20,
+      "editable": true
+    },
+    "Intimidar": {
+      "value": 1,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Poder": {
+      "value": 8,
+      "min": 5,
+      "max": 16,
+      "editable": true
+    },
+    "Sorte": {
+      "value": 1,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Força": {
+      "value": 2,
+      "min": 2,
+      "max": 20,
+      "editable": true
+    },
+    "Corpo": {
+      "value": 4,
+      "min": 0,
+      "max": 16,
+      "editable": false
+    },
+    "Constituição": {
+      "value": 6,
+      "min": 1,
+      "max": 20,
+      "editable": true
+    },
+    "Destreza": {
+      "value": 10,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Inteligência": {
+      "value": 10,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Percepção": {
+      "value": 10,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Estabilidade": {
+      "value": 17,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "ArmasBrancas": {
+      "value": 8,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Pistolas": {
+      "value": 0,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Rifles": {
+      "value": 0,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "LongoAlcance": {
+      "value": 0,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Arremeçar": {
+      "value": 0,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Movimento": {
+      "value": 10,
+      "min": 0,
+      "max": 16,
+      "editable": false
+    },
+    "Furtividade": {
+      "value": 10,
+      "min": 0,
+      "max": 16,
+      "editable": false
+    },
+    "Esquiva": {
+      "value": 13,
+      "min": 0,
+      "max": 16,
+      "editable": false
+    },
+    "Acrobacia": {
+      "value": 1,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "ContraAtaque": {
+      "value": 12,
+      "min": 0,
+      "max": 16,
+      "editable": false
+    },
+    "Magia": {
+      "value": 1,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Alquimia": {
+      "value": 0,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Ocultismo": {
+      "value": 16,
+      "min": 5,
+      "max": 16,
+      "editable": true
+    },
+    "História": {
+      "value": 1,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Mecanica": {
+      "value": 0,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "UsarComputadores": {
+      "value": 0,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Sobrevivência": {
+      "value": 1,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Música": {
+      "value": 0,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "ConhecimentosGerais": {
+      "value": 1,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Linguas": {
+      "value": 5,
+      "min": 0,
+      "max": 16,
+      "editable": true
+    },
+    "Medicina": {
+      "value": 10,
+      "min": 5,
+      "max": 16,
+      "editable": true
+    },
+    "Ciência": {
+      "value": 6,
+      "min": 5,
+      "max": 16,
+      "editable": true
+    },
+    "Aprendizado": {
+      "value": 6,
+      "min": 5,
+      "max": 16,
+      "editable": true
+    }
+  },
+  "pontos": 0,
+  "habilidades": [
+    {
+      "name": "Ocultismo",
+      "description": "Seu conhecimento sobre o oculto permite reconhecer criaturas, rituais e artefatos sobrenaturais. Gastando 20 de Medo, você recebe duas vantagens em qualquer teste de Ocultismo.",
+      "dice": null,
+      "isFavorite": false
+    },
+    {
+      "name": "Leitura De Símbolos Antigos",
+      "description": "Você é capaz de decifrar símbolos e rituais antigos que seriam incompreensíveis para a maioria das pessoas.",
+      "dice": null,
+      "isFavorite": false
+    },
+    {
+      "name": "Conhecimento Anatômico",
+      "description": "Gastando 5 de Medo e um turno, você é capaz de identificar o ponto fraco de um alvo. Todos que souberem dessa fraqueza causarão +50% de dano contra ele durante 1D3 turnos.",
+      "dice": null,
+      "isFavorite": false
+    },
+    {
+      "name": "Uso De Remédios",
+      "description": "Você pode gastar um kit médico completo para curar um Ferimento Grave em meia hora.",
+      "dice": null,
+      "isFavorite": false
+    },
+    {
+      "name": "Injunte - Trauma",
+      "description": "Gastando 15 de Medo e o custo do Ritual, pode armazenar o efeito de um ritual no seu corpo, podendo liberá-lo em qualquer momento perdendo 1d6 de vida.",
+      "dice": "1d6",
+      "isFavorite": true
+    },
+    {
+      "name": "Afinidade à morte",
+      "description": "- Ao aprender um ritual de morte, não gasta medo máximo.\n",
+      "dice": "",
+      "isFavorite": false
+    }
+  ],
+  "magias": [
+    {
+      "name": "Dissecação Mental",
+      "description": "Gastando entre 5 e 15 de Medo, dissecar um alvo faz com que você possa extrair memórias dele.",
+      "dice": "",
+      "isFavorite": false
+    },
+    {
+      "name": "Perto do fim?",
+      "description": "Gastando 10 de Medo. caso um alvo esteja em até 1d20 + 10 de sua morte, o alvo recebe +5 de dano de morte.\n- Gastando 5 de Medo, o alvo recebe fraqueza a qualquer dano",
+      "dice": "1d20+10",
+      "isFavorite": false
+    },
+    {
+      "name": "Reverter espiral",
+      "description": "Gastando 10 de medo, um alvo ao toque é curado em 1d20 de vida.\nNão cura caso: \n- Esteja em ferimento grave;\n- Possua afinidade com Energia;\n- Esteja morrendo.",
+      "dice": "1d20",
+      "isFavorite": false
+    },
+    {
+      "name": "Ad finem",
+      "description": "Gastando 5 de Medo, um alvo em médio alcance recebe 1d10 de dano de morte.\n- Gastando 15 de Medo e mais uma ação completa, um alvo em longo alcance recebe 1d12+5 de dano de morte e fica cego por um turno.",
+      "dice": "",
+      "isFavorite": false
+    },
+    {
+      "name": "Paz espiral",
+      "description": "Gastando 10 de Vida e 5 de Magia, o usuário recupera 1d10+5 de Medo, ficando uma ação completa desprevenido e imóvel.",
+      "dice": "1d10+5",
+      "isFavorite": false
+    },
+    {
+      "name": "Amaldiçoar arma",
+      "description": "Gastando 5 se medo, um alvo ao toque que estiver  segurando uma arma recebe mais 2d6 de dano por 1d3 turnos\n\n- Gastando 10 de medo ao amaldiçoar uma arma com mais de 5 dados de dano, adiciona 1d8 adicional para cada dois dados com valor máximo. Além dos dados do ritual padrão",
+      "dice": "",
+      "isFavorite": false
+    },
+    {
+      "name": "Conjurar Lodo",
+      "description": "Gastando 10 de Medo, conjura uma poça de lodo preto de 3m de diâmetro, que deixa qualquer alvo que terminar sua rodada em contato com ele fraco, além de reduzir a mobilidade pela metade.\n\n-Gastando 15 de Medo, deixa o alvo confuso.",
+      "dice": "",
+      "isFavorite": false
+    }
+  ],
+  "inventario": {
+    "content": [
+      {
+        "id": 1769883101601,
+        "name": "Saco de couro",
+        "description": "Mais 30 de Peso",
+        "weight": 0,
+        "dice": "",
+        "isFavorite": true
+      },
+      {
+        "id": 1769883392993,
+        "name": "Adaga de Morte",
+        "description": "Adaga com uma lâmina torta, com detalhes em espiral.\nÚtil para dissecar.\nRemove um órgão de um corpo morto.",
+        "weight": 3,
+        "dice": "1d6",
+        "isFavorite": true
+      },
+      {
+        "id": 1769883892260,
+        "name": "Ingrediente de ritual",
+        "description": "Está escondido no saco de couro.\nÓrgãos e cinzas humanas - Utilizado para rituais de Morte.\n20x",
+        "weight": 10,
+        "dice": "",
+        "isFavorite": true,
+        "isWeapon": true,
+        "weaponType": "fisica",
+        "ammunition": 20,
+        "maxAmmunition": 20
+      }
+    ],
+    "guardados": [
+      {
+        "id": 1769884306275,
+        "name": "Refil de componentes",
+        "description": "",
+        "weight": 0,
+        "dice": "",
+        "isFavorite": false,
+        "isMunition": true,
+        "munitionType": "cartucho"
+      },
+      {
+        "id": 1769884319227,
+        "name": "Refil de componentes",
+        "description": "",
+        "weight": 0,
+        "dice": "",
+        "isFavorite": false,
+        "isMunition": true,
+        "munitionType": "cartucho"
+      }
+    ],
+    "usando": "",
+    "weapon": {},
+    "additionalWeight": 35
+  },
+  "traumas": [],
+  "biografia": {
+    "familia": "aaa",
+    "gostos": "",
+    "desgostos": "",
+    "medos": "",
+    "contatos": "",
+    "historia": "",
+    "comportamento": "",
+    "dinheiro": "10",
+    "contatosProximos": ""
+  },
+  "options": {
+    "wallpaper": 0,
+    "chEdit": true,
+    "autoSave": false
+  },
+  "sexo": "masculino",
+  "dataNascimento": "2000-02-29"
+}

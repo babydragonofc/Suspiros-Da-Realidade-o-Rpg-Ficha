@@ -15,13 +15,31 @@
         <button class="btn" onclick="abrirCriadorDeFicha()">Criar Ficha</button>
         <button class="btn" onclick="load()">Carregar</button>
         <button class="btn" onclick="openDiceRoller()">Rolar Dados</button>
-        <input type="file" id="arquivoJSON">
+        <input type="file" id="arquivoJSON" accept=".json" >
 
+        <button class="btn" onclick="agradecimentos()" style="display: none;">Agradecimentos</button>
         <!--<button class="btn" onclick="irParaJogo()">Ir para o Jogo (Debug)</button>-->
 
 
     </main>
 
+    <div id="agradecimentos" class="panel" style="display: none;">
+        <div class="box">
+            <p class="exit-box" onclick="closeAgradecimentos()">x</p>
+            <h3 class="title" >Agradecimentos</h3>
+            <p>Muito obrigado às pessoas incriveis que fizeram esse sonho real:<br>
+                Allícia Fleishman - Allícia Fleishman <br>
+                Heitor - Anthony, Astre, Roy <br>
+                Sara Yasmin - <br>
+                Mauro Araujo - Dante<br>
+                Rodrigo Miguel - <br>
+                Debora Santos - Hadassa Santos, Amber <br>
+                Lilian Gomes - Irina<br>
+
+
+                </p>
+        </div>
+    </div>
     <div id="diceRollerArea" class="panel" style="display: none;">
         <div class="box">
             <p class="exit-box" onclick="closeDiceRoller()">x</p>
@@ -359,7 +377,32 @@
     <button id="enterPer" onclick="enterPer()">Abrir Pericias e Status</button>
 
   <div class="panel" id="main-panel">
+        
     <div class="box">
+
+        <div id="ModsPanel" style="display: none; flex-direction: column; gap: 10px;">
+
+        <section style="display: flex; justify-content: space-between;">
+            <h2 class="title">
+                Mods
+            </h2>
+        
+            <section style="display: flex; flex-direction: column; gap: 10px;">
+                <section class="file-upload-wrapper">
+                    <input type="file" id="modFileInput" accept=".json" class="input" hidden onchange="document.getElementsByClassName('btn-personalizado')[0].classList.toggle('preenchido', this.value.length > 0)">
+            
+                    <label for="modFileInput" class="btn btn-personalizado"> Selecionar Arquivo </label>
+                </section>
+            
+                <button class="btn" onclick="importMod()">Importar Mod</button>
+            
+                <button class="btn" onclick="downloadExampleMod()"> Baixar Mod Exemplo </button>
+            </section>
+        </section>
+
+    <section id="mods-list"></section>
+
+</div>
       <p class="exit-box" onclick="panelClose()">x</p>
 
       <!-- ================= MAGIA ================= -->
@@ -395,43 +438,115 @@
       </div>
       <!-- ================= ITEM ================= -->
       <div id="ItemCreate" style="display: none;">
-        <section class="item-creation-grid">
-          <div>
-            <p class="text white">Categoria</p>
+        <section >
+          
+            <!--<p class="text white">Categoria</p>
             <select id="itemCategory" class="input">
               <option value="comum">Comum</option>
               <option value="arma">Arma</option>
               <option value="municao">Munição</option>
-            </select>
-          </div>
+            </select>-->
 
-          <div>
-            <p class="text white">Nome</p>
-            <input type="text" id="itemName" class="input">
-          </div>
+            <section id="infoGroup">
+                <section class="infoBlock">
+                    <section class="createItemInfo">
+                        <p class="text white">Nome</p>
+                        <input type="text" id="itemName" class="input">
+                    </section>
+                    
+                    <section class="createItemInfo">
+                        <p class="text white">Peso</p>
+                        <input type="number" id="itemWeight" class="input">
+                    </section>
 
-          <div class="full-width">
-            <p class="text white">Descrição</p>
-            <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
-          </div>
+                    <section class="createItemInfo">
+                        <p class="text white">Local</p>
+                        <select id="itemLocal" class="input">
+                            <option value="inventario">Inventário</option>
+                            <option value="guardado">Guardado</option>
+                        </select>
+                    </section>
+                </section>
+                <section class="infoBlock">
+                    <section class="createItemInfo" style="height: -webkit-fill-available;">
+                        <p class="text white">Descrição</p>
+                        <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
+                    </section>
+                </section>
+            </section>
+          
+            <hr>
 
-          <div>
-            <p class="text white">Peso</p>
-            <input type="number" id="itemWeight" class="input">
-          </div>
+            <section id="categoriesDefinitions">
+                <section id="categoriesGroup">
+                    <section>
+                        <button onclick="createItemCategory('item')" id="categoriesGroupItem" class="active">Item</button>
+                    </section>
+                    <section>
+                        <button onclick="createItemCategory('arma')" id="categoriesGroupWeapon">Arma</button>
+                    </section>
+                    <section>
+                        <button onclick="createItemCategory('municao')" id="categoriesGroupMunition">Munição</button>
+                    </section>
+                </section>
+    
+                <section id="createItemDefinitions">
+                    <section id="createItem">
+                        <p class="text white">Dado</p>
+                        <input type="text" id="itemCreateDice" class="input dice">
+                        <p class="text white">Tipo</p>
+                        <select name="tipo" id="itemCreateType">
+                            <option value="objeto">Objeto</option>
+                            <option value="documento">Documento</option>
+                            <option value="vestimenta">Vestimenta</option>
+                            <option value="artefato">Artefato</option>
+                        </select>
+                    </section>
+                    <section id="createWeapon">
+                        <section>
+                            <p class="text white" style="margin-top: 0;">Tipo</p>
+                            <select name="tipo" id="weaponCreateType">
+                                <option value="branca">Branca</option>
+                                <option value="pistola">Pistola</option>
+                                <option value="rifle">Rifle</option>
+                                <option value="longo_alcance">Longo Alcance</option>
+                            </select>
+                            <p class="text white" style="margin-top: 0;">Munição</p>
+                            <input type="number" id="weaponCreateMMO">
+                        </section>
+                        <section>
+                            <p class="text white">Dano</p>
+                            <input type="text" id="weaponCreateDamage">
+                            <p class="text white">Dano Critico</p>
+                            <input type="text" id="weaponCreateCritical">
+                        </p>
+                        </section>
+                    </section>
+                    <section id="createMunition">
+                        <section>
+                            <p class="text white" style="margin-top: 0;">Arma</p>
+                            <select name="tipo" id="mmoCreateWeapon">
+                                <option value="pistola">Pistola</option>
+                                <option value="rifle">Rifle</option>
+                                <option value="longo_alcance">Longo Alcance</option>
+                            </select>
+                            <p class="text white">Quantidade</p>
+                            <input type="number" id="mmoCreateQuantity">
+                        </section>
+                        <section>
+                            <p class="text white" style="margin-top: 0;">Tipo</p>
+                            <select name="tipo" id="mmoCreateType">
+                                <option value="bala">Bala Solta</option>
+                                <option value="cartucho">Cartucho</option>
+                            </select>
+                        </section>
+                    </section>
+                </section>
+            </section>
 
-          <div>
-            <p class="text white">Dado</p>
-            <input type="text" id="itemDice" class="input dice">
-          </div>
+            <section>
 
-          <div>
-            <p class="text white">Local</p>
-            <select id="itemLocal" class="input">
-              <option value="inventario">Inventário</option>
-              <option value="guardado">Guardado</option>
-            </select>
-          </div>
+            </section>
 
           <a id="weapon-options" class="hidden">
             <p class="text white">Tipo de Arma</p>
@@ -490,23 +605,19 @@
       <div id="mt-menu">
         <button class="mTBtn active" onclick="gameHabaSel(0, this)" style="font-size: 10px; overflow: clip;">Magias/ Rituais</button>
         <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(2, this)">Traumas</button>
-        <div class="Sline"></div>
         <button class="mTBtn" onclick="gameHabaSel(1, this)">Habilidades</button>
         <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(3, this)">Inventário</button>
+        <button class="mTBtn" onclick="gameHabaSel(2, this)">Inventário</button>
         <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(4, this)">Rolagens</button>
+        <button class="mTBtn" onclick="gameHabaSel(3, this)">Rolagens</button>
         <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(5, this)">Personagem</button>
+        <button class="mTBtn" onclick="gameHabaSel(4, this)">Personagem</button>
         <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(6, this)">Diário*</button>
+        <button class="mTBtn" onclick="gameHabaSel(5, this)">Diário*</button>
         <div class="Sline"></div>
         <button class="mTBtn" onclick="save()">Salvar</button>
-        <div class="Sline"></div>
-        <button class="mTBtn" onclick="baixarObjetoComoJSON(ficha, 'ficha_save')">Exportar</button>
         <div class="line"></div>
-        <button class="mTBtn last" onclick="gameHabaSel(7, this)">Opções</button>
+        <button class="mTBtn last" onclick="gameHabaSel(6, this)">Opções</button>
       </div>
     </header>
 
@@ -529,13 +640,6 @@
         <div class="central">
           <button class="btn" onclick="addAbility()">+</button>
         </div>
-      </div>
-
-      <!-- ============ TRAUMAS ============ -->
-      <div class="mt-content" id="traumas-content" style="display: none;">
-        <h2 class="title">Traumas</h2>
-        <div class="traumas-content"></div>
-        <button class="btn" onclick="addTrauma()">+</button>
       </div>
 
       <!-- ============ INVENTÁRIO ============ -->
@@ -623,7 +727,11 @@
                 <div id="other-content">
                     <label for="personagem-dinheiro">Dinheiro:</label>
                     <textarea id="personagem-dinheiro" class="biografia-input" rows="1"></textarea>
-                    
+                    <label>Traumas</label>
+                    <div id="traumas-content"></div>
+                    <br>
+                    <button class="btn" onclick="addTrauma()">+</button>
+                        
                 </div>
             </div>
         </div>
@@ -677,7 +785,12 @@
                 <div>
                     <input class="input" type="text" id="image-field">
                 </div>
+                <p>Salvamento automatico</p>
+                <button class="btn" id="changeAutoSaveBtn" onclick="changeAutoSave()">Desligado</button>
 
+                <p>Mods</p>
+                <button class="btn" onclick="openModsMenu()">Gerenciar Mods</button>
+                <button class="btn" onclick="baixarObjetoComoJSON(ficha, 'ficha_save')" style="position: absolute; bottom: 0;">Exportar</button>
             </div>
        </div>
     </main>
@@ -686,7 +799,7 @@
   <div id="pericias-display-block">
     <button class="close-btn-per" onclick="closePer()">x</button>
     <div id="perTop">
-        <div id="playerImg" onclick="openMind()">
+        <div id="playerImg">
         </div>
         <div id="chEdit">
             <button onclick="valueCEdit(1)" id="1-ch" class="chEBtn btn white on">1</button>
@@ -702,8 +815,10 @@
                 </div>
                 <div id="hpBarFill" class="barFill"></div>
             </div>
-            <button class="barBtn" onclick="changeStatusValue('-', 'vida')"><</button>
-            <button class="barBtn" onclick="changeStatusValue('+', 'vida')">></button>
+            <div class="statusBtns">
+                <button class="barBtn" onclick="changeStatusValue('-', 'vida')"><</button>
+                <button class="barBtn" onclick="changeStatusValue('+', 'vida')">></button>
+            </div>
         </div>
         <div class="barBlock">
             <div id="mpBar" class="bar">
@@ -712,8 +827,10 @@
                 </div>
                 <div id="mpBarFill" class="barFill"></div>
             </div>
-            <button class="barBtn" onclick="changeStatusValue('-', 'pontosDeMagia')"><</button>
-            <button class="barBtn" onclick="changeStatusValue('+', 'pontosDeMagia')">></button>
+            <div class="statusBtns">
+                <button class="barBtn" onclick="changeStatusValue('-', 'pontosDeMagia')"><</button>
+                <button class="barBtn" onclick="changeStatusValue('+', 'pontosDeMagia')">></button>
+            </div>
         </div>
         <div class="barBlock">
             <div id="spBar" class="bar">
@@ -722,9 +839,12 @@
                 </div>
                 <div id="spBarFill" class="barFill"></div>
             </div>
-            <button class="barBtn" onclick="changeStatusValue('-', 'medo')"><</button>
-            <button class="barBtn" onclick="changeStatusValue('+', 'medo')">></button>
+            <div class="statusBtns">
+                <button class="barBtn" onclick="changeStatusValue('-', 'medo')"><</button>
+                <button class="barBtn" onclick="changeStatusValue('+', 'medo')">></button>
+            </div>
         </div>
+        <div id="custom-status-container" style="width: 100%;"></div>
     </div>
 
     <div id="pericias-display"></div>
@@ -763,7 +883,7 @@
         </div>
     </div>
 
-    <div id="dice-div" onclick="a()">
+    <div id="dice-div" onclick="hideDiceResult()">
             <div>
                 <h1 id="nmb" class="title"></h1>
                 <span id="nbmType" class="text sm">--</span>
@@ -785,21 +905,6 @@
         <button onclick="document.getElementById('update-notification').style.display = 'none'" class="btn base">Fechar</button>
     </div>
 
-    <div id="openMindArea" class="panel" style="display: none;">
-        <button class="close-btn" onclick="closeMind()">X</button>
-        <div class="box">
-            <p class="text">Senha</p>
-            <input type="text" class="input" id="openMindInput">
-            <br>
-            <button class="btn" onclick="Vincular()">Vincular</button>
-        </div>
-    </div>
-</div>
-<div class="fade" id="lastActScream" >
-    <p id="lastActText1">Saber tudo</p>
-    <p id="lastActText2">é Perder tudo.</p>
-
-    <button id="lastActCloseBtn" onclick="perderTudo()">..Futuro..</button>
 </div>
     
     <script src="ficha.js"></script>

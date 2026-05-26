@@ -76,8 +76,10 @@ const nbmType = document.getElementById("nbmType")
 const roll = new Roll(); // cria uma instância da classe
 const diceInput = document.getElementById("diceInput");
 const diceDiv = document.getElementById("dice-div")
+const diceDivShow =document.querySelector("#dice-div div")
 
-function rollDice(per) {
+
+function rollDice(per, damage = false) {
 
     const diceString = diceInput.value;
     const multiplierRegex = /^(\d+)\*d(\d+)$/i;
@@ -115,12 +117,18 @@ function rollDice(per) {
         }
     }
 
+    console.log(per)
     if (per) {
-        const type = verificarResultado(total, per).type
+        var type = verificarResultado(total, per).type
         nbmType.textContent = total != 1? type : "Dessastre";
         nbmType.style.color = type == "Extremo" ? "purple" : type == "Bom" ? "green" : type == "Normal" ? "white" : total == 1 ? "red" : "gray";
     } else {
+        nbmType.style.color = "white"
         nbmType.textContent = "--";
+        if (damage) { 
+            nbmType.textContent = "de Dano"; 
+            diceDivShow.style.background = "linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgb(128, 16, 16) 50%, rgba(0, 0, 0, 0) 100%)";
+        }
     }
 
     nmb.textContent = total;
@@ -129,12 +137,21 @@ function rollDice(per) {
     setTimeout(()=> {
         nmbW.style.opacity = "1"
     }, 3000)
+
+    return {value: total, type: type};
 }
 
-function a() {
+var hideDiceResultBlocked = false
+
+function hideDiceResult(priority = false) {
+    if (hideDiceResultBlocked && !priority) return;
     nmbW.style.opacity = "0"
     diceDiv.style.opacity = "0"
     diceDiv.style.pointerEvents = "none"
+    setTimeout(() => {
+        diceDivShow.style.background = "linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%)";
+    }, 500);
+
 }
 
 function openDiceMultiplierPanel(maxDice, sides) {
@@ -226,13 +243,13 @@ function gameHabaSel(id, btn) {
         content.style.display = 'none';
     });
 
-    const contentIds = ['magias-content', 'habilidades-content', 'traumas-content', 'inventario-content', 'dados-content', 'personagem-content', 'diario-content', 'options-content'];
+    const contentIds = ['magias-content', 'habilidades-content', 'inventario-content', 'dados-content', 'personagem-content', 'diario-content', 'options-content'];
     const selectedContent = document.getElementById(contentIds[id]);
     if (selectedContent) {
         selectedContent.style.display = 'flex';
     }
 
-    console.log(id, selectedContent)
+    (id, selectedContent)
     if (id === 5) { // Personagem tab
         renderPersonagem();
     }
@@ -267,6 +284,11 @@ function renderMagias() {
         const favoriteStar = document.createElement('span');
         favoriteStar.className = 'favorite-star';
         favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        if (magic.isFavorite) {
+            favoriteStar.style.display = "block";
+        } else {
+            favoriteStar.style.display = "none";
+        }
         box.appendChild(favoriteStar);
 
         if (magic.dice) {
@@ -287,6 +309,7 @@ function renderMagias() {
 
         magiasContent.appendChild(box);
     });
+    verifyAutoSave()
 }
 
 const magicName = document.getElementById('magicName')
@@ -347,7 +370,6 @@ function showMagicInfo(magic) { // Now accepts the magic object
     const editMagicNameInput = document.getElementById('editMagicName');
     const editMagicDescriptionInput = document.getElementById('editMagicDescription');
 
-    //save
     // Save Button
     const saveBtn = document.createElement('button');
     saveBtn.className = 'btn';
@@ -438,6 +460,11 @@ function renderHabilidades() {
         const favoriteStar = document.createElement('span');
         favoriteStar.className = 'favorite-star';
         favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        if (ability.isFavorite) {
+            favoriteStar.style.display = "block";
+        } else {
+            favoriteStar.style.display = "none";
+        }
         box.appendChild(favoriteStar);
 
         if (ability.dice) {
@@ -458,6 +485,7 @@ function renderHabilidades() {
 
         habilidadesContent.appendChild(box);
     });
+    verifyAutoSave()
 }
 
 const abilityName = document.getElementById('abilityName');
@@ -570,61 +598,99 @@ function showAbilityInfo(ability) { // Now accepts the ability object
     abilityInfo.appendChild(deleteBtn);
 }
 
-// ====================== INVENTORY ======================
-
 const inventoryContainer = document.getElementById('inventory');
 const guardadosContainer = document.getElementById('guardados');
+// ====================== INVENTORY ======================
+/*
 const itemNameInput = document.getElementById('itemName');
 const itemDescriptionInput = document.getElementById('itemDescription');
 const itemWeightInput = document.getElementById('itemWeight');
 const itemDiceInput = document.getElementById('itemDice');
 const itemLocalInput = document.getElementById('itemLocal');
+*/
+
+const itemName = document.getElementById('itemName');
+const itemWeight = document.getElementById('itemWeight');
+const itemLocal = document.getElementById('itemLocal');
+const itemDescription = document.getElementById('itemDescription');
+
+const itemCreateDice = document.getElementById('itemCreateDice');
+const itemCreateType = document.getElementById('itemCreateType');
+
+const weaponCreateType = document.getElementById('weaponCreateType')
+const weaponCreateMMO = document.getElementById('weaponCreateMMO')
+const weaponCreateDamage = document.getElementById('weaponCreateDamage')
+const weaponCreateCritical = document.getElementById('weaponCreateCritical')
+
+const mmoCreateWeapon = document.getElementById('mmoCreateWeapon')
+const mmoCreateType = document.getElementById('mmoCreateType')
 
 function addItem() {
     panelOpen("ItemCreate");
-    itemNameInput.value = '';
-    itemDescriptionInput.value = '';
-    itemWeightInput.value = '';
-    itemDiceInput.value = '';
+    const itemName = document.getElementById('itemName');
+    itemWeight.value = ""
+    itemLocal.value = "inventario"
+    itemDescription.value = ""
+
+    itemCreateDice.value = ""
+    itemCreateType.value = "objeto"
+
+    weaponCreateType.value = "branca"
+    weaponCreateMMO.value = ""
+    weaponCreateDamage.value = ""
+    weaponCreateCritical.value = ""
+
+    mmoCreateWeapon.value = "pistola"
+    mmoCreateType.value = ""
 }
 
 function createItem() {
-    const name = itemNameInput.value;
-    const description = itemDescriptionInput.value;
-    const weight = itemWeightInput.value;
-    const dice = itemDiceInput.value;
-    const local = itemLocalInput.value;
-    const category = document.getElementById('itemCategory').value;
 
-    if (!name) {
+    if (itemName.value == "") {
         alert("O nome do item é obrigatório.");
         return;
     }
-
-    const newItem = {
-        id: Date.now(), // Unique ID for the item
-        name: name,
-        description: description,
-        weight: parseFloat(weight) || 0,
-        dice: dice,
-        isFavorite: false
-    };
-
-    if (category === 'arma') {
-        newItem.isWeapon = true;
-        newItem.weaponType = document.getElementById('itemType').value;
-        newItem.ammunition = parseInt(document.getElementById('itemAmmunition').value) || 0;
-        newItem.maxAmmunition = parseInt(document.getElementById('itemAmmunition').value) || 0;
-    } else if (category === 'municao') {
-        newItem.isMunition = true;
-        newItem.munitionType = document.getElementById('munitionType').value;
+    if (createItemCategorySelected == "item") {
+        var data = {
+            dice: itemCreateDice.value,
+            type: itemCreateType.value
+        }
+    } else if (createItemCategorySelected == "arma") {
+        var data = {
+            type: weaponCreateType.value,
+            mmo: 0,
+            maxMmo: parseInt(weaponCreateMMO.value),
+            damage: weaponCreateDamage.value,
+            critical: weaponCreateCritical.value
+        }
+    } else if (createItemCategorySelected == "municao") {
+        var data = {
+            type: mmoCreateType.value,
+            weapon: mmoCreateWeapon.value
+        }
+    } else {
+        
+        alert("Erro ao criar item. Pagina sera reiniciada")
+        save()
+        location.reload();
     }
 
-    if (local === 'inventario') {
-        ficha.inventario.content.push(newItem);
+    const item = {
+        name: itemName.value,
+        id: Date.now(), // Unique ID for the item
+        description: itemDescription.value,
+        weight: parseFloat(itemWeight.value) || 0,
+        storageLocate: itemLocal.value,
+        isFavorite: false,
+        type: createItemCategorySelected,
+        data : data
+    }
+
+    if (item.storageLocate == 'inventario') {
+        ficha.inventario.content.push(item);
         renderInventory();
     } else {
-        ficha.inventario.guardados.push(newItem);
+        ficha.inventario.guardados.push(item);
         renderGuardados();
     }
 
@@ -632,44 +698,71 @@ function createItem() {
     panelClose();
 }
 
+const categoriesGroupItem = document.getElementById('categoriesGroupItem');
+const categoriesGroupWeapon = document.getElementById('categoriesGroupWeapon');
+const categoriesGroupMunition = document.getElementById('categoriesGroupMunition');
+
+const createItemA = document.getElementById('createItem');
+const createWeapon = document.getElementById('createWeapon');
+const createMunition = document.getElementById('createMunition');
+
+const CategoryList = {
+    "item": {opt: createItemA, btn: categoriesGroupItem },
+    "arma": {opt: createWeapon, btn: categoriesGroupWeapon },
+    "municao": {opt: createMunition, btn: categoriesGroupMunition }
+}
+
+var createItemCategorySelected = "item"
+
+function createItemCategory(item) {
+
+    if (item != createItemCategorySelected) {
+        const previusBtn = CategoryList[createItemCategorySelected].btn
+        previusBtn.classList.remove('active')
+        createItemCategorySelected = item
+    }
+    createItemA.style.display = "none";
+    createWeapon.style.display = "none";
+    createMunition.style.display = "none";
+
+    const newBtn = CategoryList[item].btn
+    newBtn.classList.add('active')
+    
+    CategoryList[item].opt.style.display = 'flex'
+}
+
 function initializeItemCategoryDisplay() {
     const itemCategory = document.getElementById('itemCategory');
     const weaponOptions = document.getElementById('weapon-options');
     const munitionOptions = document.getElementById('munition-options');
 
-    console.log('initializeItemCategoryDisplay called');
-    console.log('itemCategory element:', itemCategory);
-    console.log('weaponOptions element:', weaponOptions);
-    console.log('munitionOptions element:', munitionOptions);
-
     if (!itemCategory || !weaponOptions || !munitionOptions) {
-        console.error('One or more item category elements not found.');
+        error('One or more item category elements not found.');
         return;
     }
 
     const category = itemCategory.value;
-    console.log('Selected item category:', category);
 
     // Ensure both are hidden first
     weaponOptions.classList.add('hidden');
     munitionOptions.classList.add('hidden');
-    console.log('After hiding all: weaponOptions hidden:', weaponOptions.classList.contains('hidden'), 'munitionOptions hidden:', munitionOptions.classList.contains('hidden'));
 
 
     if (category === 'arma') {
         weaponOptions.classList.remove('hidden');
-        console.log('Category is arma: weaponOptions hidden:', weaponOptions.classList.contains('hidden'));
+        ('Category is arma: weaponOptions hidden:', weaponOptions.classList.contains('hidden'));
     } else if (category === 'municao') {
         munitionOptions.classList.remove('hidden');
-        console.log('Category is municao: munitionOptions hidden:', munitionOptions.classList.contains('hidden'));
+        ('Category is municao: munitionOptions hidden:', munitionOptions.classList.contains('hidden'));
     }
 }
 
-document.getElementById('itemCategory').addEventListener('change', initializeItemCategoryDisplay);
+//document.getElementById('itemCategory').addEventListener('change', initializeItemCategoryDisplay);
 
 // Call the function once on page load to set the initial state
 
 
+let openedInventoryItem = null;
 function renderInventory() {
     inventoryContainer.innerHTML = '';
     // Sort inventory: favorites first
@@ -690,7 +783,7 @@ function renderInventory() {
         const itemHeader = document.createElement('div');
         itemHeader.className = 'item-header';
         let itemText = item.name;
-        if (item.isWeapon) {
+        if (item.type == "weapon") {
             itemText += ` (${item.ammunition}/${item.maxAmmunition})`;
         }
         itemHeader.textContent = itemText;
@@ -700,6 +793,12 @@ function renderInventory() {
         const favoriteStar = document.createElement('span');
         favoriteStar.className = 'favorite-star';
         favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        if (item.isFavorite) {
+            favoriteStar.style.display = "block";
+        } else {
+            favoriteStar.style.display = "none";
+        }
+        itemHeader.appendChild(favoriteStar)
         itemHeader.appendChild(favoriteStar); // Append to header for better positioning
 
         const itemContent = document.createElement('div');
@@ -735,6 +834,10 @@ function renderInventory() {
         duplicateBtn.textContent = 'Duplicar';
         duplicateBtn.onclick = () => {
             const duplicatedItem = { ...item, id: Date.now(), name: item.name + " (Cópia)", isFavorite: false };
+            // Se o item duplicado for uma arma e tiver dados de munição, zere-a.
+            if (duplicatedItem.type === "weapon" && duplicatedItem.data && typeof duplicatedItem.data.mmo !== 'undefined') {
+                duplicatedItem.data.mmo = 0; // Reinicia a munição para armas
+            }
             ficha.inventario.content.push(duplicatedItem);
             renderInventory();
         };
@@ -748,8 +851,19 @@ function renderInventory() {
         itemCard.appendChild(itemContent);
 
         itemHeader.addEventListener('click', () => {
+
             const isVisible = itemContent.style.display === 'flex';
+
+            // Fecha o item anterior
+            if (openedInventoryItem && openedInventoryItem !== itemContent) {
+                openedInventoryItem.style.display = 'none';
+            }
+
+            // Alterna o atual
             itemContent.style.display = isVisible ? 'none' : 'flex';
+
+            // Atualiza referência
+            openedInventoryItem = !isVisible ? itemContent : null;
         });
 
         if (ficha.inventario.weapon && ficha.inventario.weapon.id === item.id) {
@@ -758,6 +872,7 @@ function renderInventory() {
 
         inventoryContainer.appendChild(itemCard);
     });
+    verifyAutoSave()
 }
 
 function renderGuardados() {
@@ -786,6 +901,11 @@ function renderGuardados() {
         const favoriteStar = document.createElement('span');
         favoriteStar.className = 'favorite-star';
         favoriteStar.innerHTML = '&#9733;'; // Unicode star character
+        if (item.isFavorite) {
+            favoriteStar.style.display = "block";
+        } else {
+            favoriteStar.style.display = "none";
+        }
         itemHeader.appendChild(favoriteStar); // Append to header for better positioning
 
         const itemContent = document.createElement('div');
@@ -816,7 +936,10 @@ function renderGuardados() {
         duplicateBtn.textContent = 'Duplicar';
         duplicateBtn.onclick = () => {
             const duplicatedItem = { ...item, id: Date.now(), name: item.name + " (Cópia)", isFavorite: false };
-            ficha.inventario.guardados.push(duplicatedItem);
+            // Se o item duplicado for uma arma e tiver dados de munição, zere-a.
+            if (duplicatedItem.type === "weapon" && duplicatedItem.data && typeof duplicatedItem.data.mmo !== 'undefined') {
+                duplicatedItem.data.mmo = 0; // Reinicia a munição para armas
+            }            ficha.inventario.guardados.push(duplicatedItem);
             renderGuardados();
         };
         itemContent.appendChild(duplicateBtn);
@@ -829,12 +952,24 @@ function renderGuardados() {
         itemCard.appendChild(itemContent);
 
         itemHeader.addEventListener('click', () => {
+
             const isVisible = itemContent.style.display === 'flex';
+
+            // Fecha o item anterior
+            if (openedInventoryItem && openedInventoryItem !== itemContent) {
+                openedInventoryItem.style.display = 'none';
+            }
+
+            // Alterna o atual
             itemContent.style.display = isVisible ? 'none' : 'flex';
+
+            // Atualiza referência
+            openedInventoryItem = !isVisible ? itemContent : null;
         });
 
         guardadosContainer.appendChild(itemCard);
     });
+    verifyAutoSave()
 }
 
 function showItemActions(itemId, event, location) {
@@ -939,14 +1074,14 @@ function useItem(itemId) {
     const item = ficha.inventario.content.find(item => item.id === itemId);
     if (!item) return;
 
-    if (item.isMunition) {
+    if (item.type == "municao") {
         reloadWeapon(item.id);
-    } else if (item.dice) {
+    } else if (item.type == "arma") {
         ficha.inventario.weapon = item;
         updateWeaponArea();
         renderInventory();
     } else {
-        console.log(`Usando ${item.name}`);
+        (`Usando ${item.name}`);
     }
 
     const existingMenu = document.querySelector('.item-action-menu');
@@ -1032,136 +1167,193 @@ function showItemInfo(item, location) { // Now accepts the item object
     itemInfo.appendChild(deleteBtn);
 }
 
+const weaponArea = document.querySelector('.arma-area');
+
 function updateWeaponArea() {
-    const weaponArea = document.querySelector('.arma-area');
     const weapon = ficha.inventario.weapon;
 
-    weaponArea.innerHTML = '';
+    // Sem arma equipada
+    if (!weapon || !weapon.name) {
+        weaponArea.innerHTML = `
+            <p class="text pre">
+                Adicione uma arma clicando no Inventário
+            </p>
 
-    if (weapon && weapon.name) {
-        const weaponName = document.createElement('p');
-        weaponName.className = 'text';
-        weaponName.textContent = weapon.name;
+            <p class="text pre">+</p>
+        `;
 
-        const weaponDice = document.createElement('p');
-        weaponDice.className = 'text sm'
-        weaponDice.textContent = `Dano: ${weapon.dice}`;
-
-        const weaponAmmo = document.createElement('p');
-        weaponAmmo.className = 'text sm';
-        if (weapon.isWeapon) {
-            weaponAmmo.textContent = `Munição: ${weapon.ammunition}/${weapon.maxAmmunition}`;
-        }
-        
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'btn-container';
-        buttonContainer.style.display = 'flex';
-        buttonContainer.style.gap = '10px';
-        buttonContainer.style.marginTop = '10px';
-
-
-        const rollBtn = document.createElement('button');
-        rollBtn.className = 'btn';
-        rollBtn.textContent = 'Rolar';
-        rollBtn.onclick = () => {
-            diceInput.value = weapon.dice;
-            rollDice(false);
-        };
-
-        const useBtn = document.createElement('button');
-        useBtn.className = 'btn';
-        useBtn.textContent = 'Usar';
-        useBtn.onclick = () => useWeapon();
-
-        const reloadBtn = document.createElement('button');
-        reloadBtn.className = 'btn';
-        reloadBtn.textContent = 'Recarregar';
-        reloadBtn.onclick = () => reloadWeapon();
-
-        const removeBtn = document.createElement('button');
-        removeBtn.className = 'btn delete-btn';
-        removeBtn.textContent = 'Remover';
-        removeBtn.onclick = () => unequipWeapon();
-
-        buttonContainer.appendChild(rollBtn);
-        if (weapon.isWeapon) {
-            buttonContainer.appendChild(useBtn);
-            buttonContainer.appendChild(reloadBtn);
-        }
-        buttonContainer.appendChild(removeBtn);
-
-        weaponArea.appendChild(weaponName);
-        weaponArea.appendChild(weaponDice);
-        if (weapon.isWeapon) {
-            weaponArea.appendChild(weaponAmmo);
-        }
-        weaponArea.appendChild(buttonContainer);
-    } else {
-        const placeholder1 = document.createElement('p');
-        placeholder1.className = 'text pre';
-        placeholder1.textContent = 'Adicione uma arma clicando no Inventario';
-
-        const placeholder2 = document.createElement('p');
-        placeholder2.className = 'text pre';
-        placeholder2.textContent = '+';
-
-        weaponArea.appendChild(placeholder1);
-        weaponArea.appendChild(placeholder2);
+        return;
     }
+
+    // Define se usa munição
+    const isFireWeapon = weapon.data.type !== "branca";
+
+    // Dados seguros
+    const damage = weapon.data.damage || "-";
+    const critical = weapon.data.critical || "-";
+    const ammo = weapon.data.mmo ?? 0;
+    const maxAmmo = weapon.data.maxMmo ?? 0;
+
+    weaponArea.innerHTML = `
+        <p class="text">${weapon.name}</p>
+
+        <p class="text">
+            Dano: ${damage}
+            |
+            Crítico: ${critical}
+        </p>
+
+        ${
+            isFireWeapon
+                ? `
+                    <p class="text sm">
+                        Munição: ${ammo}/${maxAmmo}
+                    </p>
+                `
+                : ""
+        }
+
+        <div class="btn-container">
+            <button class="btn" id="weaponAttackBtn">
+                ${isFireWeapon ? "Atirar" : "Atacar"}
+            </button>
+
+            ${
+                isFireWeapon
+                    ? `
+                        <button class="btn" id="weaponReloadBtn">
+                            Recarregar
+                        </button>
+                    `
+                    : ""
+            }
+
+            <button class="btn delete-btn" id="weaponRemoveBtn">
+                Remover
+            </button>
+        </div>
+    `;
+
+    // Eventos
+    document
+        .getElementById('weaponAttackBtn')
+        .onclick = attackWeapon;
+
+    if (isFireWeapon) {
+        document
+            .getElementById('weaponReloadBtn')
+            .onclick = () => reloadWeapon();
+    }
+
+    document
+        .getElementById('weaponRemoveBtn')
+        .onclick = unequipWeapon;
 }
 
-function useWeapon() {
+
+
+function attackWeapon() {
+
     const weapon = ficha.inventario.weapon;
-    if (weapon && weapon.isWeapon && weapon.ammunition > 0) {
-        weapon.ammunition--;
-        updateWeaponArea();
-        renderInventory();
+
+    const per = 
+    weapon.data.type == "branca"? 'ArmasBrancas':
+    weapon.data.type == "pistola"? 'Pistolas':
+    weapon.data.type == "rifle"? 'Rifles':
+    weapon.data.type == "longo_alcance"? 'LongoAlcance':
+    null;
+
+    if (ficha.pericias[per].value == 0) alert("Você não tem a pericia necessaria para usar essa arma.") 
+    if (!weapon || ficha.pericias[per].value == 0) return;
+
+    const isFireWeapon = weapon.data.type !== "branca";
+
+    if (isFireWeapon && weapon.data.mmo <= 0) {
+        alert("Sem munição.");
+        return;
     }
+
+    if (isFireWeapon) {
+        weapon.data.mmo--;
+    }
+
+    diceInput.value = "1D20";
+    const result = rollDice(ficha.pericias[per].value).type;
+    hideDiceResultBlocked = true
+    
+    console.log(result)
+    setTimeout(() => {
+        hideDiceResult(true)
+        setTimeout(() => {
+            if (result == "Bom" || result == "Normal") {
+                diceInput.value = weapon.data.damage
+                rollDice(false, true);
+            } else if (result == "Extremo") {
+                diceInput.value = weapon.data.critical
+                rollDice(false, true);
+            }
+            hideDiceResultBlocked = false
+        }, 1000);
+    }, 1000);
+
+    updateWeaponArea();
+    renderInventory();
+
+    return result;
 }
 
 function reloadWeapon(munitionId) {
     const weapon = ficha.inventario.weapon;
-    if (!weapon || !weapon.isWeapon) {
+    if (!weapon || weapon.data.type == "branca") {
         alert("Nenhuma arma equipada.");
+        (weapon)
         return;
     }
 
-    if (weapon.ammunition === weapon.maxAmmunition) {
+    if (weapon.data.mmo === weapon.data.maxMmo) {
         alert("A munição já está cheia.");
         return;
     }
 
-    let munition;
-    let munitionIndex;
+let munition = null;
 
-    if (munitionId) {
-        munitionIndex = ficha.inventario.content.findIndex(item => item.id === munitionId && item.isMunition);
-        if (munitionIndex !== -1) {
-            munition = ficha.inventario.content[munitionIndex];
-        }
-    } else {
-        // Find first available munition
-        munitionIndex = ficha.inventario.content.findIndex(item => item.isMunition);
-        if (munitionIndex !== -1) {
-            munition = ficha.inventario.content[munitionIndex];
-        }
-    }
+let munitionIndex = -1;
 
-    if (!munition) {
-        alert("Nenhuma munição encontrada no inventário.");
-        return;
-    }
+if (munitionId) {
 
-    if (munition.munitionType === 'cartucho') {
-        if (weapon.ammunition === 0) {
-            weapon.ammunition = weapon.maxAmmunition;
+    munitionIndex = ficha.inventario.content.findIndex(item =>
+        item.id === munitionId &&
+        item.type === "municao"
+    );
+
+} else {
+
+    munitionIndex = ficha.inventario.content.findIndex(item =>
+        item.type === "municao" &&
+        item.data.weapon === weapon.data.type
+    );
+
+}
+
+if (munitionIndex !== -1) {
+    munition = ficha.inventario.content[munitionIndex];
+}
+
+if (!munition) {
+    alert("Nenhuma munição encontrada.");
+    return;
+}
+
+    if (munition.data.type === 'cartucho') {
+        if (weapon.data.mmo === 0) {
+            weapon.data.mmo = weapon.data.maxMmo;
             ficha.inventario.content.splice(munitionIndex, 1);
         } else {
             alert("Cartuchos só podem ser usados quando a munição da arma estiver zerada.");
             return;
         }
-    } else if (munition.munitionType === 'bala') {
-        weapon.ammunition++;
+    } else if (munition.data.type === 'bala') {
+        weapon.data.mmo++;
         ficha.inventario.content.splice(munitionIndex, 1);
     }
 
@@ -1210,6 +1402,7 @@ function updateTotalWeight() {
     if (currentWeight > ficha.inventario.additionalWeight + (ficha.inventario.additionalWeight / 100)*10 ) {
         alert("MOBILIDADE INFERIDA GRAVEMENTE");
     }
+    verifyAutoSave()
 }
 
 function addTrauma() {
@@ -1264,7 +1457,7 @@ function createTrauma() {
 
 function renderTraumas() {
 
-    const traumaContainer = document.getElementsByClassName('traumas-content')[0];
+    const traumaContainer = document.getElementById('traumas-content')
     traumaContainer.innerHTML = '';
 
     // Sort traumas: favorites first
@@ -1279,22 +1472,14 @@ function renderTraumas() {
         traumaCard.className = 'trauma-card';
         traumaCard.textContent = trauma.name;
         traumaCard.dataset.traumaId = trauma.id; // Assuming trauma objects have an 'id' property
-        if (trauma.isFavorite) {
-            traumaCard.classList.add('favorited');
-        }
-
-        // Add favorite star icon
-        const favoriteStar = document.createElement('span');
-        favoriteStar.className = 'favorite-star';
-        favoriteStar.innerHTML = '&#9733;'; // Unicode star character
-        traumaCard.appendChild(favoriteStar); // Append to card for better positioning
-
+        
         traumaCard.addEventListener('click', (event) => {
             showTraumaInfo(trauma); // Pass the trauma object
         });
 
         traumaContainer.appendChild(traumaCard);
     });
+    verifyAutoSave()
 }
 
 function showTraumaInfo(trauma) { // Now accepts the trauma object
@@ -1325,17 +1510,6 @@ function showTraumaInfo(trauma) { // Now accepts the trauma object
         panelClose();
     };
     traumaInfo.appendChild(saveBtn);
-
-    // Favorite Button
-    const favoriteBtn = document.createElement('button');
-    favoriteBtn.className = 'btn';
-    favoriteBtn.textContent = trauma.isFavorite ? 'Desfavoritar' : 'Favoritar';
-    favoriteBtn.onclick = () => {
-        trauma.isFavorite = !trauma.isFavorite;
-        renderTraumas(); // Re-render to update sorting and star
-        panelClose(); // Close info panel after action
-    };
-    traumaInfo.appendChild(favoriteBtn);
 
     // Duplicate Button
     const duplicateBtn = document.createElement('button');
@@ -1379,32 +1553,34 @@ var statusList = {
     "medo": {fill: document.getElementById('spBarFill'), text: document.getElementById('spValue')},
 }
 
-function changeStatusValue(type, status) {
+function changeStatusValue(type, status, custom = false) {
 
+    if (custom) {
+
+        value = type == "+"? valueChanger : -valueChanger
+
+        ficha.customStatus.forEach(Cstatus => {
+            if (Cstatus.name == status) {
+                Cstatus.value += value
+            }
+        })
+        
+        statusAtu()
+        return;
+    }
     value = type == "+"? valueChanger : -valueChanger
         
     ficha.status[status] += value
 
     statusAtu()
+    
 }
 
 function statusAtu() {
-
-    let vidaPer;
-    let mpPer;
-    let spPer;
-
-    if (ficha.status.vida == "???") {
-        vidaPer = 100;
-        mpPer = 100;
-        spPer = 100
-    } else {
-        console.log(ficha.status)
-        
-        vidaPer = (ficha.status.vida / ficha.status.vidaMax) * 100;
-        mpPer = (ficha.status.pontosDeMagia / ficha.status.pontosDeMagiaMax) * 100;
-        spPer = (ficha.status.medo / ficha.status.medoMax) * 100
-    }
+    (ficha.status)
+    const vidaPer = (ficha.status.vida / ficha.status.vidaMax) * 100;
+    const mpPer = (ficha.status.pontosDeMagia / ficha.status.pontosDeMagiaMax) * 100;
+    const spPer = (ficha.status.medo / ficha.status.medoMax) * 100
     
     statusList["vida"].fill.style.width = ficha.status.vida >= ficha.status.vidaMax? "100%" :vidaPer + "%"
     statusList["pontosDeMagia"].fill.style.width = ficha.status.pontosDeMagia >= ficha.status.pontosDeMagiaMax? "100%" :mpPer + "%"
@@ -1414,7 +1590,14 @@ function statusAtu() {
     statusList["pontosDeMagia"].text.innerHTML = ficha.status.pontosDeMagia + "/" + ficha.status.pontosDeMagiaMax;
     statusList["medo"].text.innerHTML = ficha.status.medo + "/" + ficha.status.medoMax;
 
-    console.log(statusList["vida"].fill.style.width, vidaPer)
+    if (ficha.customStatus.length != 0) {
+        ficha.customStatus.forEach(Cstatus => {
+            console.log(Cstatus)
+            Cstatus.fill.style.width = Cstatus.value >= Cstatus.max? "100%" :(Cstatus.value / Cstatus.max) * 100 + "%"
+            Cstatus.text.innerHTML = Cstatus.value + "/" + Cstatus.max;
+        })
+    }
+    verifyAutoSave()
 }
 
 function formatDoc(command, value = null) {
@@ -1422,13 +1605,14 @@ function formatDoc(command, value = null) {
 }
 
 function save(ask = true) {
+
         ficha.biografia.contatos = personagemContatos.value
     if (localStorage.getItem('hasFichaSave')) {
-        if(ask) {
+
+        if (ask) {
             var r=confirm("Já Existe um save! nome : " + JSON.parse(localStorage.getItem('ficha')).nome + " Save criado às " + new Date(JSON.parse(localStorage.getItem('hour'))).toLocaleTimeString() + " ; Deseja Sobrescrever?");
-        }
-        else {
-            var r=true;
+        } else { 
+            var r = true
         }
 
         if (r==true)
@@ -1437,12 +1621,13 @@ function save(ask = true) {
             const hour = new Date();
             localStorage.setItem('hour', JSON.stringify(hour));
             localStorage.setItem('hasFichaSave', true)
-            if (ask) alert("Ficha salva!")
+            if (ask) alert("Ficha salva!");
+            ("save")
             return;
         }
         else
         {
-            alert('Ficha não salva!')
+            if (ask) alert('Ficha não salva!');
             return;
         }
 
@@ -1453,7 +1638,7 @@ function save(ask = true) {
     const hour = new Date();
     localStorage.setItem('hour', JSON.stringify(hour));
     localStorage.setItem('hasFichaSave', true)
-    if (confirm) alert("Ficha salva!")
+    alert("Ficha salva!")
     return;
     
 }
@@ -1495,9 +1680,11 @@ function load() {
 /**
  * Carrega todas as informações
  */
+
 function CarregarFicha() {
     imageField.value = ficha.imagem
     RenderPlayerImage()
+    reloadMods()
     irParaJogo();
     displayPericias();
     renderTraumas()
@@ -1505,6 +1692,7 @@ function CarregarFicha() {
     updateWeaponArea()
     renderGuardados()
     renderInventory()
+    console.log("A")
     setWallpaper(ficha.options.wallpaper)
     loadUserOptions()
     //ficha.biografia.comportamento = ficha.biografia.contatos
@@ -1527,6 +1715,13 @@ function CarregarFicha() {
             createMagic(true)
         });
     }
+    
+    if (ficha.options.autoSave) {
+        changeAutoSaveBtn.innerHTML = "Ligado"
+    } else {
+        changeAutoSaveBtn.innerHTML = "Desligado"
+    }
+
     renderMagias(); // Call renderMagias after all magic items are processed
     statusAtu()
 }
@@ -1572,9 +1767,10 @@ imageField.addEventListener('change', function() {
 });
 
 function RenderPlayerImage() {
-    console.log("aaa")
+    ("aaa")
     ficha.imagem = imageField.value
     playerImg.style.backgroundImage = "url(" + imageField.value + ")";
+    verifyAutoSave()
 }
 
 const backgrounds = [
@@ -1582,7 +1778,6 @@ const backgrounds = [
     "wallpaperRealidade.png",
     "wallpaperEnergia.png",
     "wallpaperSangue.png",
-    "wallpaperHadassa.gif"
 ]
 
 const backgroundsRoots = [
@@ -1592,8 +1787,9 @@ const backgroundsRoots = [
         "btnBg": "rgb(239, 239, 239)",
         "btnHvr": "rgb(205, 205, 205)",
         "btnTx": "black",
-        "ter": "#555",
+        "ter": "#929292",
         "uTb": "",
+        "sc": "#333333"
     },
     {
         "main":"black",
@@ -1602,16 +1798,9 @@ const backgroundsRoots = [
         "btnHvr": "rgb(40, 3, 3)",
         "btnTx": "white",
         "ter": "#160f0f",
-        "uTb": "#0000007a"
-    },
-        {
-        "main":"white",
-        "sec": "black",
-        "btnBg": "rgb(239, 239, 239)",
-        "btnHvr": "rgb(205, 205, 205)",
-        "btnTx": "black",
-        "ter": "#555",
-        "uTb": "",
+        "uTb": "#0000007a",
+        "sc": "#333333"
+
     },
     {
         "main":"white",
@@ -1621,16 +1810,19 @@ const backgroundsRoots = [
         "btnTx": "black",
         "ter": "#555",
         "uTb": "",
+        "sc": "#5E13CF"
+
     },
-        {
+    {
         "main":"white",
         "sec": "black",
         "btnBg": "rgb(239, 239, 239)",
         "btnHvr": "rgb(205, 205, 205)",
         "btnTx": "black",
-        "ter": "#555",
+        "ter": "#c1c1c1",
         "uTb": "",
-    }
+        "sc": "#CB0E09"
+    },
 ]
 setWallpaper(ficha.options.wallpaper)
 
@@ -1649,9 +1841,11 @@ function setWallpaper(value) {
     root.style.setProperty ('--btn-tx', bgr.btnTx);
     root.style.setProperty ('--ter-clr', bgr.ter);
     root.style.setProperty ('--un-tab-clr', bgr.uTb);
+    root.style.setProperty ('--slider-clr', bgr.sc);
+
     
-    console.log(bgr)
-    
+    (bgr)
+    verifyAutoSave()
 }
 
 const chEdit = document.getElementById('chEdit')
@@ -1664,7 +1858,7 @@ function turnStatusMod() {
         chEdit.style.display  = "flex"
         ficha.options.chEdit = true
     }
-    console.log(chEdit.style.display )
+    (chEdit.style.display )
 }
 
 function valueCEdit(value) {
@@ -1681,153 +1875,825 @@ function loadUserOptions() {
     }
 }
 
+const changeAutoSaveBtn = document.getElementById("changeAutoSaveBtn")
+
+function changeAutoSave() {
+    ficha.options.autoSave = !ficha.options.autoSave;
+    (ficha.options.autoSave)
+    verifyAutoSave()
+
+    if (ficha.options.autoSave) {
+        changeAutoSaveBtn.innerHTML = "Ligado"
+    } else {
+        changeAutoSaveBtn.innerHTML = "Desligado"
+    }
+}
+
+function verifyAutoSave() {
+    if (!ficha.options.autoSave) return;
+    save(false)
+}
 const personagemContatos = document.getElementById('personagem-contatos')
 
-const openMindArea = document.getElementById('openMindArea')
-const openMindInput = document.getElementById('openMindInput')
-function openMind() {
-    openMindArea.style.display = "flex"
+// =========================
+// MOD SYSTEM
+// =========================
+
+const modsList = document.getElementById('mods-list');
+
+
+// =========================
+// OPEN MOD MENU
+// =========================
+
+
+function openModsMenu() {
+
+    renderMods();
+
+    panelOpen("ModsPanel");
+
 }
 
-function closeMind() {
-    openMindArea.style.display = "none"
-}
+// =========================
+// IMPORT MOD
+// =========================
 
-var colar = true;
-function Vincular() {
-    let vinculo = openMindInput.value
-    if (vinculo == "Ainda eu?") {
-        setWallpaper(4)
-        closeMind()
+function importMod() {
+
+    const input = document.getElementById('modFileInput');
+
+    const file = input.files[0];
+
+    if (!file) {
+        alert("Selecione um arquivo JSON.");
+        return;
     }
-    if(vinculo == "Erinnern") {
-        startLastAct()
-    }
-    if (vinculo == "colar") {
-        colar = !colar
-        closeMind()
-    }
-}
 
-const lastActScream = document.getElementById("lastActScream");
-const lastActText1 = document.getElementById("lastActText1");
-const lastActText2 = document.getElementById("lastActText2");
+    const reader = new FileReader();
 
-/**
- * Anima o texto de um elemento HTML caractere por caractere com um efeito fade-in.
- * Cada caractere é envolto em um <span> com a classe 'last-act-char' para permitir animação individual.
- * @param {HTMLElement} element O elemento HTML cujo texto será animado.
- * @param {number} charDelay O atraso em milissegundos entre o aparecimento de cada caractere.
- * @returns {Promise<void>} Uma promessa que resolve quando todos os caracteres foram animados.
- */
-function typewriterFadeIn(element, charDelay = 70) {
-    return new Promise(resolve => {
-        const text = element.textContent; // Pega o texto original do elemento
-        element.innerHTML = ''; // Limpa o conteúdo original do parágrafo
-        element.style.visibility = "visible"
-        const chars = [];
-        // Cria um <span> para cada caractere e o adiciona ao elemento
-        for (let i = 0; i < text.length; i++) {
-            const charSpan = document.createElement('span');
-            charSpan.textContent = text[i];
-            charSpan.classList.add('last-act-char'); // Adiciona a classe para o estilo de fade
+    reader.onload = function(event) {
 
-            // Substitui espaços por &nbsp; para garantir que eles ocupem espaço e animem
-            // Se fosse apenas ' ', o navegador poderia colapsar múltiplos espaços
-            if (text[i] === ' ') {
-                charSpan.innerHTML = '&nbsp;';
+        try {
+
+            const mod = JSON.parse(event.target.result);
+
+            validateMod(mod);
+
+            // Evita duplicação
+            const alreadyExists = ficha.mods.some(
+                m => m.id === mod.id
+            );
+
+            if (alreadyExists) {
+                alert("Esse mod já está carregado.");
+                return;
             }
-            element.appendChild(charSpan);
-            chars.push(charSpan);
+
+            ficha.mods.push(mod);
+
+            applyMod(mod);
+
+            renderMods();
+
+            verifyAutoSave();
+
+            alert("Mod carregado com sucesso.");
+
+        } catch(err) {
+
+            console.error(err);
+
+            alert("Erro ao carregar mod.");
+
         }
 
-        // Inicia a animação caractere por caractere
-        let i = 0;
-        function animateChar() {
-            if (i < chars.length) {
-                // Define a opacidade para 1, acionando a transição CSS definida em .last-act-char
-                chars[i].style.opacity = '1';
-                i++;
-                setTimeout(animateChar, charDelay); // Chama a função para o próximo caractere após o atraso
-            } else {
-                resolve(); // Resolve a promessa quando todos os caracteres são exibidos
-            }
-        }
-        animateChar(); // Inicia a animação para o primeiro caractere
+    };
+
+    reader.readAsText(file);
+    input.value = '';
+
+}
+
+
+// =========================
+// VALIDATE MOD
+// =========================
+
+function validateMod(mod) {
+
+    if (!mod.id) {
+        throw new Error("Mod sem ID.");
+    }
+
+    if (!mod.name) {
+        throw new Error("Mod sem nome.");
+    }
+
+    if (!Array.isArray(mod.skills)) {
+        mod.skills = [];
+    }
+
+    if (!Array.isArray(mod.statuses)) {
+        mod.statuses = [];
+    }
+
+    if (!mod.options) {
+        mod.options = {};
+    }
+
+}
+
+
+// =========================
+// APPLY MOD
+// =========================
+
+function applyMod(mod) {
+
+    console.log("aaahb")
+    mod.skills.forEach(skill => {
+
+        ficha.habilidades.push({
+
+            name: skill.name || "Skill",
+
+            description: skill.description || "",
+
+            dice: skill.dice || "",
+
+            isFavorite: false,
+
+            modded: true,
+
+            modId: mod.id
+
+        });
+
     });
+
+    mod.statuses.forEach(status => {
+
+        if (
+            ficha.status[status.id] === undefined
+        ) {
+
+            ficha.status[status.id] =
+                status.default || 0;
+
+        }
+
+        if (
+            ficha.status[status.id + "Max"]
+            === undefined
+        ) {
+
+            ficha.status[status.id + "Max"] =
+                status.max || 100;
+
+        }
+
+    });
+
+    renderHabilidades();
+    renderCustomStatuses();
+
+    console.log('a')
+
+}
+
+
+// =========================
+// RENDER MODS
+// =========================
+
+function renderMods() {
+
+    if (!modsList) return;
+
+    modsList.innerHTML = '';
+
+    if (ficha.mods.length <= 0) {
+
+        modsList.innerHTML = `
+            <p class="text">
+                Nenhum mod carregado.
+            </p>
+        `;
+
+        return;
+    }
+
+    ficha.mods.forEach(mod => {
+
+        const card = document.createElement('section');
+
+        card.className = 'mod-card';
+
+        card.innerHTML = `
+
+            <h2 class="title">
+                ${mod.name}
+            </h2>
+
+            <p class="text">
+                ${mod.description || ""}
+            </p>
+
+            <p class="text sm">
+                Versão:
+                ${mod.version || "1.0"}
+            </p>
+
+            <p class="text sm">
+                Autor:
+                ${mod.author || "Desconhecido"}
+            </p>
+
+        `;
+
+
+        // =====================
+        // DETAILS BUTTON
+        // =====================
+
+        const detailsBtn =
+            document.createElement('button');
+
+        detailsBtn.className = 'btn';
+
+        detailsBtn.textContent = 'Detalhes';
+
+        detailsBtn.onclick = () => {
+
+            openModDetails(mod);
+
+        };
+
+        card.appendChild(detailsBtn);
+
+
+        // =====================
+        // REMOVE BUTTON
+        // =====================
+
+        const removeBtn =
+            document.createElement('button');
+
+        removeBtn.className =
+            'btn delete-btn';
+
+        removeBtn.textContent = 'Remover';
+
+        removeBtn.onclick = () => {
+
+            removeMod(mod.id);
+
+        };
+
+        card.appendChild(removeBtn);
+
+        modsList.appendChild(card);
+
+    });
+
+}
+
+
+// =========================
+// MOD DETAILS
+// =========================
+
+/*
+function openModDetails(mod) {
+
+    let html = `
+
+        <div class="mod-details">
+
+            <p class="text">
+                ${mod.description || ""}
+            </p>
+
+            <br>
+
+    `;
+
+
+    // =====================
+    // OPTIONS
+    // =====================
+
+    if (
+        mod.options &&
+        Object.keys(mod.options).length > 0
+    ) {
+
+        html += `
+            <h2 class="title">
+                Opções
+            </h2>
+        `;
+
+        Object.keys(mod.options).forEach(key => {
+
+            html += `
+
+                <p class="text">
+                    ${key}
+                </p>
+
+                <input
+                    class="input"
+
+                    value="${mod.options[key]}"
+
+                    onchange="
+                        updateModOption(
+                            '${mod.id}',
+                            '${key}',
+                            this.value
+                        )
+                    "
+                >
+
+            `;
+
+        });
+
+        ficha.customStatus.forEach(status => {
+            if(status.modID == mod.id) {
+                html += `
+                <div>
+                    <p class="text">${status.name}</p>
+                    <input class="input" type="number" id="${status.id}maxValue" value="${status.max}">
+                </div>`
+                document.getElementById(status.id + "maxValue").addEventListener("change", function(){
+                    status.max = document.getElementById(status.id + "maxValue").value
+                    verifyAutoSave()
+                })
+            }
+        })
+
+
+    }
+
+
+    // =====================
+    // SKILLS
+    // =====================
+
+    if (mod.skills.length > 0) {
+
+        html += `
+            <h2 class="title">
+                Habilidades
+            </h2>
+        `;
+
+        mod.skills.forEach(skill => {
+
+            html += `
+
+                <div class="mod-skill">
+
+                    <p class="text">
+                        ${skill.name}
+                    </p>
+
+                    <p class="text sm">
+                        ${skill.description || ""}
+                    </p>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+
+    // =====================
+    // STATUS
+    // =====================
+/**
+ * 
+ 
+    if (mod.statuses.length > 0) {
+
+        mod.statuses.forEach(status => {
+
+                html += `
+                <div>
+                    <p class="text">${status.name}</p>
+                    <input class="input" type="number" id="${status.id}maxValue" value="${status.max}">
+                </div>`
+
+                document.getElementById(status.id + "maxValue").addEventListener("change", function(){
+                    status.max = document.getElementById(status.id + "maxValue").value
+                    verifyAutoSave()
+                })
+
+        });
+
+    }
+
+    panelOpen(
+        null,
+        mod.name,
+        html
+    );
+
+}
+*/
+
+function openModDetails(mod) {
+
+    let html = `
+
+        <div class="mod-details">
+
+            <p class="text">
+                ${mod.description || ""}
+            </p>
+
+            <br>
+
+    `;
+
+    // =====================
+    // OPTIONS
+    // =====================
+
+    if (
+        mod.options &&
+        Object.keys(mod.options).length > 0
+    ) {
+
+        html += `
+            <h2 class="title">
+                Opções
+            </h2>
+        `;
+
+        Object.keys(mod.options).forEach(key => {
+
+            html += `
+
+                <p class="text">
+                    ${key}
+                </p>
+
+                <input
+                    class="input"
+
+                    value="${mod.options[key]}"
+
+                    onchange="
+                        updateModOption(
+                            '${mod.id}',
+                            '${key}',
+                            this.value
+                        )
+                    "
+                >
+
+            `;
+
+        });
+
+    }
+
+    ficha.customStatus.forEach(status => {
+
+        console.log(status.modId, mod.id);
+
+        if (status.modId == mod.id) {
+
+            html += `
+                <div>
+                    <p class="text">${status.name}</p>
+
+                    <input
+                        class="input"
+                        type="number"
+                        id="${status.id}maxValue"
+                        value="${status.max}"
+                    >
+                </div>
+            `;
+
+        }
+
+    });
+
+
+    // PRIMEIRO abre o painel
+    panelOpen(
+        null,
+        mod.name,
+        html
+    );
+
+    // DEPOIS adiciona os listeners
+    ficha.customStatus.forEach(status => {
+
+        if (status.modId == mod.id) {
+
+            const input = document.getElementById(status.id + "maxValue");
+
+            if (input) {
+
+                input.addEventListener("change", function () {
+
+                    status.max = input.value;
+
+                    verifyAutoSave();
+                    renderCustomStatuses();
+
+                });
+
+            }
+
+        }
+
+    });
+
+}
+
+// =========================
+// UPDATE OPTION
+// =========================
+
+function updateModOption(
+    modId,
+    key,
+    value
+) {
+
+    const mod = ficha.mods.find(
+        m => m.id === modId
+    );
+
+    if (!mod) return;
+
+    mod.options[key] = value;
+
+    verifyAutoSave();
+
+}
+
+// =========================
+// REMOVE MOD
+// =========================
+
+function removeMod(modId) {
+
+    const confirmDelete = confirm(
+        "Deseja remover este mod?"
+    );
+
+    if (!confirmDelete) return;
+
+
+    // =====================
+    // REMOVE HABILIDADES
+    // =====================
+
+    ficha.habilidades =
+        ficha.habilidades.filter(
+            h => h.modId !== modId
+        );
+
+
+    // =====================
+    // REMOVE MOD
+    // =====================
+
+    ficha.mods =
+        ficha.mods.filter(
+            mod => mod.id !== modId
+        );
+
+
+    renderMods();
+
+    renderHabilidades();
+
+    renderCustomStatuses();
+
+    verifyAutoSave();
+
+}
+
+
+// =========================
+// CUSTOM STATUS
+// =========================
+
+function renderCustomStatuses() {
+
+    const container = document.getElementById('custom-status-container');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    ficha.mods.forEach(mod => {
+        
+        mod.statuses.forEach(status => {
+            
+            const id = status.id
+            const name = status.name
+            const value = status.value
+            const max = status.max
+            const box = document.createElement('div');
+            const fillColor = status.fillColor
+            
+            
+            box.className = 'custom-status-card';
+            
+            box.innerHTML = `      
+            <div class="barBlock">
+                <div id="${id}Bar" class="bar">
+            <div class="barDiv">
+                <p id="${id}Value"></p>
+            </div>
+                <div id="${id}BarFill" class="barFill"></div>
+            </div>
+            <div class='statusBtns'>
+                <button class="barBtn" onclick="changeStatusValue('-', '${name}', true)"><</button>
+                <button class="barBtn" onclick="changeStatusValue('+', '${name}', true)">></button>
+            </div>
+            </div>
+            `
+            
+            container.appendChild(box);
+            document.getElementById(id + "BarFill").style.backgroundColor = fillColor;
+            ficha.customStatus.push({
+                name: name, 
+                id: id, 
+                fill: document.getElementById(id + "BarFill"), 
+                text: document.getElementById(id + "Value"),
+                value: value,
+                max: max , 
+                modId: mod.id
+            });
+            console.log(ficha.customStatus[0].text)    
+        });
+    });
+
+    statusAtu()
+    verifyAutoSave()
+}
+
+
+// =========================
+// RELOAD MODS AFTER LOAD()
+// =========================
+
+function reloadMods() {
+
+    if (
+        !ficha.mods ||
+        ficha.mods.length <= 0
+    ) return;
+
+    ficha.customStatus = []
+
+    ficha.mods.forEach(mod => {
+        console.log("carregando mod " + mod.name + " ...")
+        applyMod(mod);
+    });
+
+}
+
+function downloadExampleMod() {
+
+    const exampleMod = {
+
+        id: "midnight_trip",
+
+        name: "E.M.T [MOD]",
+
+        author: 'Babydragon',
+
+        version: "1.0",
+
+        description:
+            "MOD OFICIAL DA CAMPANHA Eternal Midnight Trip.",
+
+        skills: [],
+
+        statuses: [
+
+            {
+                id: "cm",
+                name: "Calma",
+                max: 100,
+                value: 50,
+                background:"https://i.imgur.com/KjoMoq3.png",
+                fillColor: "#57e389ff"
+            },
+            {
+                id: "en",
+                name: "Energia",
+                max: 100,
+                value: 50,
+                background:"https://i.imgur.com/ykWerrn.png",
+                fillColor: "#c061cbff"
+            }
+
+        ],
+
+        options: {}
+
+    };
+
+    const blob = new Blob(
+        [
+            JSON.stringify(
+                exampleMod,
+                null,
+                4
+            )
+        ],
+        {
+            type: "application/json"
+        }
+    );
+
+    const a =
+        document.createElement('a');
+
+    a.href =
+        URL.createObjectURL(blob);
+
+    a.download =
+        "example_mod.json";
+
+    a.click();
+
 }
 
 /**
- * Função principal para iniciar a sequência da "última cena".
- * É uma função assíncrona para permitir o uso de 'await' para sequenciar as animações.
+ *     const exampleMod = {
+
+        id: "example_magic",
+
+        name: "Example Magic Mod",
+
+        author: 'Babydragon',
+
+        version: "1.0",
+
+        description:
+            "MOD OFICIAL DA CAMPANHA Eternal Midnight Trip.",
+
+        skills: [
+
+            {
+
+                name: "Shadow Bolt",
+
+                description:
+                    "MOD OFICIAL DA CAMPANHA Eternal Midnight Trip.",
+
+                dice: "2d8+4"
+
+            }
+
+        ],
+
+        statuses: [
+
+            {
+                id: "cm",
+                name: "Calma",
+                max: 100,
+                value: 50,
+                background:"https://i.imgur.com/KjoMoq3.png",
+                fillColor: "#57e389ff"
+            },
+            {
+                id: "en",
+                name: "Energia",
+                max: 100,
+                value: 50,
+                background:"https://i.imgur.com/ykWerrn.png",
+                fillColor: "#c061cbff"
+            }
+
+        ],
+
+        options: {
+
+            enableCorruption: true,
+
+            damageMultiplier: 2
+
+        }
+
+    };
  */
-async function startLastAct() {
-    console.log("Saber tudo é perder tudo");
-
-    // 1. Faz o fade-in do container principal (#lastActScream)
-    // O setTimeout de 50ms é uma boa prática para garantir que o navegador
-    // registre o estado inicial (opacity: 0, visibility: hidden) antes de remover a classe
-    // e iniciar a transição para opacity: 1, visibility: visible.
-    setTimeout(() => {
-        lastActScream.classList.remove('fade');
-    }, 50);
-
-    // Opcional: Espera o fade-in do container principal ser concluído (ou quase).
-    // A transição no CSS para #lastActScream é de 1s, então 1000ms é um bom valor.
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    setMobileHeaderColor('#fff');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // 2. Anima o primeiro texto, caractere por caractere.
-    // 'await' garante que a execução do código só continue após este texto ser completamente exibido.
-    await typewriterFadeIn(lastActText1, 200); // 70ms de atraso entre cada letra
-
-    // 3. Atraso entre o primeiro e o segundo texto.
-    // 1 segundo de pausa antes de começar o segundo texto.
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-
-    // 4. Anima o segundo texto, caractere por caractere.
-    await typewriterFadeIn(lastActText2, 200); // 70ms de atraso entre cada letra
-
-    if (colar) {
-        imageField.value = "https://i.imgur.com/MBD3HSj.png"
-    } else {
-        imageField.value = "https://i.imgur.com/jT4UF6j.png"
-    }
-    RenderPlayerImage()
-    closeMind()
-    // A partir daqui, você pode adicionar qualquer outra lógica que queira
-    // que aconteça após os textos serem completamente exibidos.
-    console.log("Sequência de 'Last Act' concluída!");
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-    document.getElementById('lastActCloseBtn').style.opacity = 1;
-
-}
-
-
-function perderTudo() {
-    console.log("Saber tudo é perder tudo");
-    ficha.status.medoMax = "???"
-    ficha.status.medo = "???"
-    ficha.status.vidaMax = "???"
-    ficha.status.vida = "???"
-    ficha.status.pontosDeMagiaMax = "???"
-    ficha.status.pontosDeMagia = "???"
-    ficha.biografia.nome = "Erinnern Sousa"
-    save(false)
-    location.reload()
-}
-
-function setMobileHeaderColor(color) {
-  let metaTag = document.querySelector('meta[name="theme-color"]');
-  
-  if (!metaTag) {
-    metaTag = document.createElement('meta');
-    metaTag.name = "theme-color";
-    document.head.appendChild(metaTag);
-  }
-  
-  metaTag.setAttribute('content', color);
-}
-
-

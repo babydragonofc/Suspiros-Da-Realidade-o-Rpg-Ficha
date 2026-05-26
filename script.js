@@ -1,3 +1,7 @@
+function pS() {
+    console.log("opening prefabSave");
+    document.getElementById('arquivoJSON').value = 'ficha_save (1).json';}
+
 // ====================== TOOLTIP ======================
 
 const tooltipDictionary = { 
@@ -224,7 +228,7 @@ function initTooltips(scope = document) {
             const data = tooltipDictionary[categoria]?.[conteudo] || {};
             const descricao = data.descricao || `Informações adicionais sobre ${conteudo}.`;
 
-            console.log(data, tooltipDictionary[categoria][conteudo])
+            (data, tooltipDictionary[categoria][conteudo])
             if (categoria === 'Pericia' && scope === rightTooltip) {
                 periciaTooltip.textContent = descricao;
                 const rect = el.getBoundingClientRect();
@@ -483,7 +487,7 @@ function raceChose(rs) {
 
     ficha.raça = rs
 
-    console.log(ficha.pontos)
+    (ficha.pontos)
     raças[rs].per.forEach(e => {
         ficha.pericias[e.per].value = e.quant
         ficha.pericias[e.per].min = e.quant
@@ -727,7 +731,7 @@ function focoChose(id){
 function aa() {
     IB.style.display = "none";
     Rs.style.display = "block";
-    console.log("aa")
+    ("aa")
 }
 
 function putMagicPt(){
@@ -982,7 +986,7 @@ function elementNext() {
     foco.style.display = "none";
     Mg.style.display = "none";
     Pr.style.display = "flex";
-    console.log(ficha)
+    (ficha)
     setTimeout(() => {
         perAtu()
     }, 1000);
@@ -1083,7 +1087,7 @@ function calcularPericiaCorpo() {
 
 function perAtu() {
 
-    console.log(ficha)
+    (ficha)
     document.getElementById("ptsDisplay").innerHTML = ficha.pontos
 
     const perList = ficha.pericias;
@@ -1152,11 +1156,11 @@ function FichaEnd() {
 
     ficha.status.pontosDeMagiaMax = 8 + ficha.pericias.Magia.value*3 + ficha.status.pontosDeMagiaMax + Math.ceil(ficha.pericias.Ocultismo.value);
     ficha.status.pontosDeMagia = ficha.status.pontosDeMagiaMax;
-    console.log(ficha.status.pontosDeMagiaMax)
+    (ficha.status.pontosDeMagiaMax)
 
     ficha.status.medoMax = ficha.status.medoMax + (ficha.pericias.Estabilidade.value*5) + 30
     ficha.status.medo = ficha.status.medoMax;
-    console.log(ficha.status.medoMax)
+    (ficha.status.medoMax)
 
 
 }
@@ -1320,9 +1324,9 @@ function renderPericiasEditor() {
 
 function salvarPericiasEditadas() {
     const inputs = document.querySelectorAll('#periciasEditor input');
+    console.log("salvando pericias")
     inputs.forEach(input => {
         const nome = input.dataset.nome;
-        console.log("salvando " + input.dataset.nome + " ...")
         const valor = parseInt(input.value) || 0;
         ficha.pericias[nome].value = valor;
         const span = document.getElementById("D-" + input.dataset.nome + "-value"); //retorna o span do valor da pericia
@@ -1519,3 +1523,4 @@ function displayRollResult(result) {
         <p class="text">Sucesso: <span style="color: ${color}; font-weight: bold;">${result.type}</span></p>
     `;
 }
+
