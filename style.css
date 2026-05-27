@@ -1780,6 +1780,15 @@ img.reverse {
     width: 30%;
 }
 
+.customAfterBar {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-size: cover;
+}
+
 #hpBar::after {
     content: '';
     height: 100%;
