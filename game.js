@@ -117,7 +117,6 @@ function rollDice(per, damage = false) {
         }
     }
 
-    console.log(per)
     if (per) {
         var type = verificarResultado(total, per).type
         nbmType.textContent = total != 1? type : "Dessastre";
@@ -1281,7 +1280,6 @@ function attackWeapon() {
     const result = rollDice(ficha.pericias[per].value).type;
     hideDiceResultBlocked = true
     
-    console.log(result)
     setTimeout(() => {
         hideDiceResult(true)
         setTimeout(() => {
@@ -1592,7 +1590,6 @@ function statusAtu() {
 
     if (ficha.customStatus.length != 0) {
         ficha.customStatus.forEach(Cstatus => {
-            console.log(Cstatus)
             Cstatus.fill.style.width = Cstatus.value >= Cstatus.max? "100%" :(Cstatus.value / Cstatus.max) * 100 + "%"
             Cstatus.text.innerHTML = Cstatus.value + "/" + Cstatus.max;
         })
@@ -1692,7 +1689,6 @@ function CarregarFicha() {
     updateWeaponArea()
     renderGuardados()
     renderInventory()
-    console.log("A")
     setWallpaper(ficha.options.wallpaper)
     loadUserOptions()
     //ficha.biografia.comportamento = ficha.biografia.contatos
@@ -2011,7 +2007,6 @@ function validateMod(mod) {
 
 function applyMod(mod) {
 
-    console.log("aaahb")
     mod.skills.forEach(skill => {
 
         ficha.habilidades.push({
@@ -2058,7 +2053,6 @@ function applyMod(mod) {
     renderHabilidades();
     renderCustomStatuses();
 
-    console.log('a')
 
 }
 
@@ -2367,7 +2361,6 @@ function openModDetails(mod) {
 
     ficha.customStatus.forEach(status => {
 
-        console.log(status.modId, mod.id);
 
         if (status.modId == mod.id) {
 
@@ -2408,9 +2401,10 @@ function openModDetails(mod) {
                 input.addEventListener("change", function () {
 
                     status.max = input.value;
+                    console.log(input.value)
 
                     verifyAutoSave();
-                    renderCustomStatuses();
+                    statusAtu();
 
                 });
 
@@ -2426,15 +2420,9 @@ function openModDetails(mod) {
 // UPDATE OPTION
 // =========================
 
-function updateModOption(
-    modId,
-    key,
-    value
-) {
+function updateModOption( modId, key, value) {
 
-    const mod = ficha.mods.find(
-        m => m.id === modId
-    );
+    const mod = ficha.mods.find(m => m.id === modId);
 
     if (!mod) return;
 
@@ -2517,30 +2505,37 @@ function renderCustomStatuses() {
             box.innerHTML = `      
             <div class="barBlock">
                 <div id="${id}Bar" class="bar">
-            <div class="barDiv">
-                <p id="${id}Value"></p>
-            </div>
-                <div id="${id}BarFill" class="barFill"></div>
-            </div>
-            <div class='statusBtns'>
-                <button class="barBtn" onclick="changeStatusValue('-', '${name}', true)"><</button>
-                <button class="barBtn" onclick="changeStatusValue('+', '${name}', true)">></button>
-            </div>
+                    <div id="${id}AfterBar" class="customAfterBar"></div>
+                    <div class="barDiv">
+                        <p id="${id}Value"></p>
+                    </div>
+                    <div id="${id}BarFill" class="barFill"></div>
+                </div>
+                <div class='statusBtns'>
+                    <button class="barBtn" onclick="changeStatusValue('-', '${name}', true)"><</button>
+                    <button class="barBtn" onclick="changeStatusValue('+', '${name}', true)">></button>
+                </div>
             </div>
             `
             
             container.appendChild(box);
-            document.getElementById(id + "BarFill").style.backgroundColor = fillColor;
+            const bar = document.getElementById(id + "Bar")
+            const barFill = document.getElementById(id + "BarFill")
+            const afterBar = document.getElementById(id + "AfterBar")
+
+            afterBar.style.backgroundImage = `url(${status.background})`
+            barFill.style.backgroundColor = fillColor;
+
+
             ficha.customStatus.push({
                 name: name, 
                 id: id, 
-                fill: document.getElementById(id + "BarFill"), 
+                fill: barFill, 
                 text: document.getElementById(id + "Value"),
                 value: value,
                 max: max , 
                 modId: mod.id
             });
-            console.log(ficha.customStatus[0].text)    
         });
     });
 
@@ -2591,16 +2586,16 @@ function downloadExampleMod() {
             {
                 id: "cm",
                 name: "Calma",
-                max: 100,
-                value: 50,
+                max: 60,
+                value: 60,
                 background:"https://i.imgur.com/KjoMoq3.png",
                 fillColor: "#57e389ff"
             },
             {
                 id: "en",
                 name: "Energia",
-                max: 100,
-                value: 50,
+                max: 15,
+                value: 15,
                 background:"https://i.imgur.com/ykWerrn.png",
                 fillColor: "#c061cbff"
             }
