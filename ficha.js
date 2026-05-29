@@ -83,7 +83,8 @@ var ficha = {
       autoSave: false
     },
     mods :[],
-customStatus: []
+    customStatus: [],
+    customWallpaper: {},
 };
 
 const defaultFicha = JSON.parse(JSON.stringify(ficha));
@@ -185,13 +186,14 @@ if (inputArquivo) {
           console.log('Dados carregados:', dadosCarregados);
           ficha = mergeFicha(dadosCarregados);
 
+          /*
             if (saveUpdated) {
                 const notification = document.getElementById('update-notification');
                 if (notification) {
                     notification.style.display = 'block';
                 }
             }
-
+*/
             CarregarFicha()
         })
         .catch((erro) => {

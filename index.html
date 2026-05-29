@@ -396,7 +396,7 @@
             
                 <button class="btn" onclick="importMod()">Importar Mod</button>
             
-                <button class="btn" onclick="downloadExampleMod()"> Baixar Mod Exemplo </button>
+                <button class="btn" onclick="downloadExampleMod()" hidden> Baixar Mod Exemplo </button>
             </section>
         </section>
 
@@ -416,7 +416,7 @@
 
           <p class="text white">Dado</p>
           <input type="text" id="magicDice" class="input dice">
-
+        <br>
           <button class="btn" onclick="createMagic()">Criar</button>
         </section>
         </div>
@@ -432,21 +432,13 @@
 
           <p class="text white">Dado</p>
           <input type="text" id="abilityDice" class="input dice">
-
+            <br>
           <button class="btn" onclick="createAbility()">Criar</button>
         </section>
       </div>
       <!-- ================= ITEM ================= -->
       <div id="ItemCreate" style="display: none;">
         <section >
-          
-            <!--<p class="text white">Categoria</p>
-            <select id="itemCategory" class="input">
-              <option value="comum">Comum</option>
-              <option value="arma">Arma</option>
-              <option value="municao">Munição</option>
-            </select>-->
-
             <section id="infoGroup">
                 <section class="infoBlock">
                     <section class="createItemInfo">
@@ -461,7 +453,7 @@
 
                     <section class="createItemInfo">
                         <p class="text white">Local</p>
-                        <select id="itemLocal" class="input">
+                        <select class="input" style="width:100%;" id="itemLocal" class="input">
                             <option value="inventario">Inventário</option>
                             <option value="guardado">Guardado</option>
                         </select>
@@ -493,64 +485,63 @@
                 <section id="createItemDefinitions">
                     <section id="createItem">
                         <p class="text white">Dado</p>
-                        <input type="text" id="itemCreateDice" class="input dice">
-                        <p class="text white">Tipo</p>
-                        <select name="tipo" id="itemCreateType">
-                            <option value="objeto">Objeto</option>
-                            <option value="documento">Documento</option>
-                            <option value="vestimenta">Vestimenta</option>
-                            <option value="artefato">Artefato</option>
-                        </select>
+                        <input class="input" type="text" id="itemCreateDice" class="input dice">
+                        <section>
+                            <p class="text white">Tipo</p>
+                            <select class="input" style="width:100%;" name="tipo" id="itemCreateType">
+                                <option value="objeto">Objeto</option>
+                                <option value="documento">Documento</option>
+                                <option value="vestimenta">Vestimenta</option>
+                                <option value="artefato">Artefato</option>
+                            </select>
+                        </section>
                     </section>
                     <section id="createWeapon">
                         <section>
                             <p class="text white" style="margin-top: 0;">Tipo</p>
-                            <select name="tipo" id="weaponCreateType">
+                            <select class="input" style="width:100%;" name="tipo" id="weaponCreateType">
                                 <option value="branca">Branca</option>
                                 <option value="pistola">Pistola</option>
                                 <option value="rifle">Rifle</option>
                                 <option value="longo_alcance">Longo Alcance</option>
                             </select>
                             <p class="text white" style="margin-top: 0;">Munição</p>
-                            <input type="number" id="weaponCreateMMO">
+                            <input class="input" type="number" id="weaponCreateMMO">
                         </section>
                         <section>
                             <p class="text white">Dano</p>
-                            <input type="text" id="weaponCreateDamage">
+                            <input class="input" type="text" id="weaponCreateDamage">
                             <p class="text white">Dano Critico</p>
-                            <input type="text" id="weaponCreateCritical">
+                            <input class="input" type="text" id="weaponCreateCritical">
                         </p>
                         </section>
                     </section>
                     <section id="createMunition">
                         <section>
                             <p class="text white" style="margin-top: 0;">Arma</p>
-                            <select name="tipo" id="mmoCreateWeapon">
+                            <select class="input" style="width:100%;" name="tipo" id="mmoCreateWeapon">
                                 <option value="pistola">Pistola</option>
                                 <option value="rifle">Rifle</option>
                                 <option value="longo_alcance">Longo Alcance</option>
                             </select>
-                            <p class="text white">Quantidade</p>
-                            <input type="number" id="mmoCreateQuantity">
+                            <p class="text white" style="display: none;">Quantidade</p>
+                            <input class="input" type="number" style="display: none;" id="mmoCreateQuantity">
                         </section>
                         <section>
                             <p class="text white" style="margin-top: 0;">Tipo</p>
-                            <select name="tipo" id="mmoCreateType">
+                            <select class="input" style="width:100%;" name="tipo" id="mmoCreateType">
                                 <option value="bala">Bala Solta</option>
                                 <option value="cartucho">Cartucho</option>
                             </select>
                         </section>
                     </section>
                 </section>
-            </section>
-
-            <section>
-
+                <br>
             </section>
 
           <a id="weapon-options" class="hidden">
             <p class="text white">Tipo de Arma</p>
-            <select id="itemType" class="input">
+            <select class="input" style="width:100%;" id="itemType" class="input">
               <option value="fisica">Física</option>
               <option value="branca">Branca</option>
               <option value="pistola">Pistola</option>
@@ -558,18 +549,18 @@
               <option value="longo_alcance">Longo Alcance</option>
             </select>
             <p class="text white">Munição</p>
-            <input type="number" id="itemAmmunition" class="input">
+            <input class="input" type="number" id="itemAmmunition">
         </a>
 
           <a id="munition-options" class="hidden">
             <p class="text white">Tipo de Munição</p>
-            <select id="munitionType" class="input">
+            <select class="input" style="width:100%;" id="munitionType" class="input">
               <option value="bala">Bala Solta</option>
               <option value="cartucho">Cartucho</option>
             </select>
           </a>
         </section>
-
+        <br>
         <button class="btn" onclick="createItem()">Criar</button>
       </div>
 
@@ -589,6 +580,7 @@
           <input type="text" id="traumaTime" class="input">
 
           <p class="text sm">Em caso de trauma permanente, coloque 'PER'</p>
+          <br>
           <button class="btn" onclick="createTrauma()">Criar</button>
         </section>
       </div>
@@ -599,7 +591,7 @@
   <div id="multiTask">
     <header>
       <button id="MobileMTBtn">
-        Rolagens
+        Magias/ Rituais
         <img src="img/menu.svg" alt="" id="mMTImage">
       </button>
       <div id="mt-menu">
@@ -753,7 +745,7 @@
           <button onclick="formatDoc('underline')"><u>U</u></button>
           <input type="color" id="diario-color-picker">
           <button onclick="formatDoc('foreColor', document.getElementById('diario-color-picker').value)">Aplicar Cor</button>
-          <select onchange="formatDoc('fontSize', this.value)">
+          <select class="input" style="width:100%;" onchange="formatDoc('fontSize', this.value)">
             <option value="1">1 (8pt)</option>
             <option value="2">2 (10pt)</option>
             <option value="3" selected>3 (12pt)</option>
@@ -914,3 +906,4 @@
 </html>
 </body>
 </html>
+

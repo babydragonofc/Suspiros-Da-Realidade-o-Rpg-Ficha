@@ -1409,15 +1409,17 @@ enableTooltipsMobile();
 
 const mobileMTBtn = document.getElementById('MobileMTBtn');
 const mtMenu = document.getElementById('mt-menu');
+const mMTImage = document.getElementById('mMTImage');
 
 if (mobileMTBtn) {
     mobileMTBtn.addEventListener('click', () => {
         mobileMTBtn.classList.toggle('active');
-        const menu = document.getElementById('mt-menu');
         if (mobileMTBtn.classList.contains('active')) {
-            menu.style.display = 'flex';
+            mtMenu.style.display = 'flex';
+            mMTImage.style.rotate = '180deg';
         } else {
-            menu.style.display = 'none';
+            mtMenu.style.display = 'none';
+            mMTImage.style.rotate = '0deg';
         }
     });
 }
@@ -1446,8 +1448,16 @@ window.addEventListener('resize', () => {
 
     if(window.innerWidth > 400) {
         document.getElementById("pericias-display-block").style.display = "block"
-    
     }
+
+    if(window.innerWidth > 500) {
+        document.getElementById("pericias-display-block").style.backgroundImage = ""
+    }
+
+    if(window.innerWidth < 500) {
+        document.getElementById("pericias-display-block").style.backgroundImage = document.querySelector("body").style.backgroundImage
+    }
+
 });
 
 // ====================== DICE ROLLER ======================

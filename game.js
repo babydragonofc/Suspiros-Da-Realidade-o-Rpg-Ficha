@@ -247,11 +247,12 @@ function gameHabaSel(id, btn) {
     if (selectedContent) {
         selectedContent.style.display = 'flex';
     }
-
-    (id, selectedContent)
-    if (id === 5) { // Personagem tab
+    
+    if (contentIds[id] === 'personagem-content') {
         renderPersonagem();
     }
+
+    document.getElementById('MobileMTBtn').innerHTML = btn.innerHTML + '<img src="img/menu.svg" alt="" id="mMTImage">';
 }
 
 const magiasContent = document.getElementsByClassName('magias-content')[0];
@@ -641,6 +642,7 @@ function addItem() {
 
     mmoCreateWeapon.value = "pistola"
     mmoCreateType.value = ""
+    createItemCategory('item')
 }
 
 function createItem() {
@@ -1079,8 +1081,9 @@ function useItem(itemId) {
         ficha.inventario.weapon = item;
         updateWeaponArea();
         renderInventory();
-    } else {
-        (`Usando ${item.name}`);
+    } else if (item.type == "item" && item.data.dice != "") {
+        diceInput.value = item.data.dice;
+        rollDice(false);  
     }
 
     const existingMenu = document.querySelector('.item-action-menu');
@@ -1553,29 +1556,44 @@ var statusList = {
 
 function changeStatusValue(type, status, custom = false) {
 
+    const value = type == "+" ? valueChanger : -valueChanger;
+
+    // =========================
+    // STATUS CUSTOMIZADO
+    // =========================
+
     if (custom) {
 
-        value = type == "+"? valueChanger : -valueChanger
+        const customStatus = ficha.customStatus.find(s => s.name == status);
 
-        ficha.customStatus.forEach(Cstatus => {
-            if (Cstatus.name == status) {
-                Cstatus.value += value
-            }
-        })
-        
-        statusAtu()
+        if (!customStatus) return;
+
+        const statusId = customStatus.id;
+
+        // Atualiza o valor REAL salvo
+        ficha.status[statusId] += value;
+
+        // Atualiza o valor visual
+        customStatus.value = ficha.status[statusId];
+        customStatus.max =
+            ficha.status[statusId + "Max"];
+
+        statusAtu();
+
         return;
     }
-    value = type == "+"? valueChanger : -valueChanger
-        
-    ficha.status[status] += value
 
-    statusAtu()
-    
+    // =========================
+    // STATUS NORMAL
+    // =========================
+
+    ficha.status[status] += value;
+
+    statusAtu();
+
 }
 
 function statusAtu() {
-    (ficha.status)
     const vidaPer = (ficha.status.vida / ficha.status.vidaMax) * 100;
     const mpPer = (ficha.status.pontosDeMagia / ficha.status.pontosDeMagiaMax) * 100;
     const spPer = (ficha.status.medo / ficha.status.medoMax) * 100
@@ -1588,12 +1606,24 @@ function statusAtu() {
     statusList["pontosDeMagia"].text.innerHTML = ficha.status.pontosDeMagia + "/" + ficha.status.pontosDeMagiaMax;
     statusList["medo"].text.innerHTML = ficha.status.medo + "/" + ficha.status.medoMax;
 
-    if (ficha.customStatus.length != 0) {
-        ficha.customStatus.forEach(Cstatus => {
-            Cstatus.fill.style.width = Cstatus.value >= Cstatus.max? "100%" :(Cstatus.value / Cstatus.max) * 100 + "%"
-            Cstatus.text.innerHTML = Cstatus.value + "/" + Cstatus.max;
-        })
-    }
+if (ficha.customStatus.length != 0) {
+
+    ficha.customStatus.forEach(Cstatus => {
+
+        // Sincroniza com save
+        Cstatus.value = ficha.status[Cstatus.id];
+
+        Cstatus.max = ficha.status[Cstatus.id + "Max"];
+
+        const percent =(Cstatus.value / Cstatus.max) * 100;
+
+        Cstatus.fill.style.width = percent >= 100 ? "100%" : percent + "%";
+
+        Cstatus.text.innerHTML = Cstatus.value + "/" + Cstatus.max;
+
+    });
+
+}
     verifyAutoSave()
 }
 
@@ -1663,12 +1693,14 @@ function load() {
 
     ficha = mergeFicha(loadedFicha);
 
+    /* 
     if (saveUpdated) {
         const notification = document.getElementById('update-notification');
         if (notification) {
             notification.style.display = 'block';
         }
     }
+    */
 
     CarregarFicha()
 
@@ -1824,9 +1856,17 @@ setWallpaper(ficha.options.wallpaper)
 
 function setWallpaper(value) {
 
+    if (value == 'custom') {
+        setCustomWallpaper(ficha.customWallpaper)
+        return;
+    }
+
     if (!(0 < value <= backgrounds.length)) return;
 
     ficha.options.wallpaper = value
+    if(window.innerWidth < 500) {
+        document.getElementById("pericias-display-block").style.backgroundImage = 'url(img/backgrounds/'+backgrounds[value]+')'
+    }
     document.querySelector('body').style.backgroundImage = 'url(img/backgrounds/'+backgrounds[value]+')'
     const root = document.documentElement;
     const bgr =  backgroundsRoots[value]
@@ -1838,9 +1878,31 @@ function setWallpaper(value) {
     root.style.setProperty ('--ter-clr', bgr.ter);
     root.style.setProperty ('--un-tab-clr', bgr.uTb);
     root.style.setProperty ('--slider-clr', bgr.sc);
-
     
-    (bgr)
+    verifyAutoSave()
+}
+
+function setCustomWallpaper(settings) {
+
+    ficha.options.wallpaper = 'custom';
+    ficha.customWallpaper = settings;
+
+    if(window.innerWidth < 500) {
+        document.getElementById("pericias-display-block").style.backgroundImage = 'url('+backgrounds[value]+')'
+    }
+    document.querySelector('body').style.backgroundImage = 'url(' + settings.bg + ')'
+
+    const root = document.documentElement;
+
+    root.style.setProperty ('--main-clr', settings.main);
+    root.style.setProperty ('--sec-clr', settings.sec);
+    root.style.setProperty ('--btn-bg', settings.btnBg);
+    root.style.setProperty ('--btn-hvr', settings.btnHvr);
+    root.style.setProperty ('--btn-tx', settings.btnTx);
+    root.style.setProperty ('--ter-clr', settings.ter);
+    root.style.setProperty ('--un-tab-clr', settings.uTb);
+    root.style.setProperty ('--slider-clr', settings.sc);
+
     verifyAutoSave()
 }
 
@@ -2029,23 +2091,12 @@ function applyMod(mod) {
 
     mod.statuses.forEach(status => {
 
-        if (
-            ficha.status[status.id] === undefined
-        ) {
-
-            ficha.status[status.id] =
-                status.default || 0;
-
+        if (ficha.status[status.id] === undefined) {
+            ficha.status[status.id] = status.value || 0;
         }
 
-        if (
-            ficha.status[status.id + "Max"]
-            === undefined
-        ) {
-
-            ficha.status[status.id + "Max"] =
-                status.max || 100;
-
+        if ( ficha.status[status.id + "Max"] === undefined ) {
+            ficha.status[status.id + "Max"] = status.max || 100;
         }
 
     });
@@ -2320,10 +2371,7 @@ function openModDetails(mod) {
     // OPTIONS
     // =====================
 
-    if (
-        mod.options &&
-        Object.keys(mod.options).length > 0
-    ) {
+    if (mod.options && Object.keys(mod.options).length > 0) {
 
         html += `
             <h2 class="title">
@@ -2361,7 +2409,6 @@ function openModDetails(mod) {
 
     ficha.customStatus.forEach(status => {
 
-
         if (status.modId == mod.id) {
 
             html += `
@@ -2381,13 +2428,17 @@ function openModDetails(mod) {
 
     });
 
+    if (mod.backgrounds && mod.backgrounds.length > 0) { 
+        html += `<h2 class="title">Backgrounds</h2>`;
+        Object.keys(mod.backgrounds).forEach(background => {
+            console.log(background, )
+            html += `<button class='btn' onclick='setCustomWallpaper(${JSON.stringify(mod.backgrounds[background])})'>${mod.backgrounds[background].name}</button>`
+        }); 
+    }
+
 
     // PRIMEIRO abre o painel
-    panelOpen(
-        null,
-        mod.name,
-        html
-    );
+    panelOpen(null,mod.name,html);
 
     // DEPOIS adiciona os listeners
     ficha.customStatus.forEach(status => {
@@ -2400,7 +2451,7 @@ function openModDetails(mod) {
 
                 input.addEventListener("change", function () {
 
-                    status.max = input.value;
+                    ficha.status[status.id + "Max"]  = input.value;
                     console.log(input.value)
 
                     verifyAutoSave();
@@ -2482,67 +2533,89 @@ function removeMod(modId) {
 
 function renderCustomStatuses() {
 
-    const container = document.getElementById('custom-status-container');
-    
+    const container =
+        document.getElementById(
+            'custom-status-container'
+        );
+
     if (!container) return;
-    
+
     container.innerHTML = '';
-    
+
+    // LIMPA antes de recriar
+    ficha.customStatus = [];
+
     ficha.mods.forEach(mod => {
-        
+
         mod.statuses.forEach(status => {
-            
-            const id = status.id
-            const name = status.name
-            const value = status.value
-            const max = status.max
+
+            const id = status.id;
+
+            const name = status.name;
+
+            // Garante valores salvos
+            console.log(ficha.status[id])
+            if (ficha.status[id] === undefined) {
+                ficha.status[id] = status.value;
+            }
+
+            if ( ficha.status[id + "Max"] === undefined ) {
+                ficha.status[id + "Max"] = status.max;
+            }
+
+            const currentValue = ficha.status[id];
+
+            const currentMax = ficha.status[id + "Max"];
+
             const box = document.createElement('div');
-            const fillColor = status.fillColor
-            
-            
+
             box.className = 'custom-status-card';
-            
             box.innerHTML = `      
             <div class="barBlock">
                 <div id="${id}Bar" class="bar">
                     <div id="${id}AfterBar" class="customAfterBar"></div>
-                    <div class="barDiv">
+                    <div class="barDiv"> 
                         <p id="${id}Value"></p>
                     </div>
                     <div id="${id}BarFill" class="barFill"></div>
                 </div>
+
                 <div class='statusBtns'>
-                    <button class="barBtn" onclick="changeStatusValue('-', '${name}', true)"><</button>
-                    <button class="barBtn" onclick="changeStatusValue('+', '${name}', true)">></button>
+                    <button class="barBtn" onclick="changeStatusValue('-', '${name}', true)"> < </button>
+                    <button class="barBtn" onclick="changeStatusValue('+', '${name}', true)"> > </button>
                 </div>
             </div>
-            `
-            
+            `;
+
             container.appendChild(box);
-            const bar = document.getElementById(id + "Bar")
-            const barFill = document.getElementById(id + "BarFill")
-            const afterBar = document.getElementById(id + "AfterBar")
 
-            afterBar.style.backgroundImage = `url(${status.background})`
-            barFill.style.backgroundColor = fillColor;
+            const barFill =
+                document.getElementById( id + "BarFill");
 
+            const afterBar =
+                document.getElementById( id + "AfterBar" );
+
+            afterBar.style.backgroundImage = `url(${status.background})`;
+
+            barFill.style.backgroundColor = status.fillColor;
 
             ficha.customStatus.push({
-                name: name, 
-                id: id, 
-                fill: barFill, 
-                text: document.getElementById(id + "Value"),
-                value: value,
-                max: max , 
+                name: name,
+                id: id,
+                fill: barFill,
+                text: document.getElementById( id + "Value" ),
+                value: currentValue,
+                max: currentMax,
                 modId: mod.id
             });
+
         });
+
     });
 
-    statusAtu()
-    verifyAutoSave()
-}
+    statusAtu();
 
+}
 
 // =========================
 // RELOAD MODS AFTER LOAD()
@@ -2601,6 +2674,19 @@ function downloadExampleMod() {
             }
 
         ],
+
+        backgrounds: [{
+            "name": "Teste",
+            "bg": "img/backgrounds/wallpaperSangue.png",
+            "main":"white",
+            "sec": "black",
+            "btnBg": "rgb(239, 239, 239)",
+            "btnHvr": "rgb(205, 205, 205)",
+            "btnTx": "black",
+            "ter": "#c1c1c1",
+            "uTb": "",
+            "sc": "#CB0E09"
+        }],
 
         options: {}
 

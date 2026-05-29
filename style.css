@@ -1201,6 +1201,11 @@ img.reverse {
     box-sizing: border-box;
 }
 
+.habilidades-content::-webkit-scrollbar, .magias-content::-webkit-scrollbar {
+    display: none;
+}
+
+
 #options-content {
     flex-direction: column;
     height: 100%;
@@ -1550,6 +1555,12 @@ img.reverse {
     justify-content: center;
     align-items: center;
     height: stretch;
+    overflow-y: auto;
+}
+#createItem::-webkit-scrollbar,
+#createWeapon::-webkit-scrollbar,
+#createMunition::-webkit-scrollbar {
+    display: none;
 }
 
 .item-card.equipped {
@@ -2025,6 +2036,7 @@ img.reverse {
     position: absolute;
     top: 3px;
     transform: rotate(180deg);
+    transition: 0.2s ease-in-out
 }
 
 #MobileMTBtn.active {
@@ -2118,6 +2130,25 @@ img.reverse {
         flex-direction: row;
         width: 100%;
         margin-top: 10px;
+    }
+
+    #categoriesGroup section button {
+        width: -webkit-fill-available;
+    }
+
+    #createItem, #createWeapon, #createMunition {
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0;
+        padding-top: 20px;
+    }
+
+    #pericias-display .pBlock {
+        background-color: transparent;
+    }
+    .p-card {
+        border: solid rgba(255, 255, 255, 0.216) 1px;
+        background-color: transparent;
     }
 }
 
@@ -2351,7 +2382,7 @@ img.reverse {
 }
 
 
-    .habilidades-content {
+    .habilidades-content, .magias-content {
         grid-template-columns: auto;
     }
 
@@ -2418,7 +2449,7 @@ img.reverse {
     border-radius: 5px;
     border: 1px solid var(--ter-clr);
     z-index: 1001;
-    display: flex;
+    display: none;
     align-items: center;
     gap: 15px;
 }
