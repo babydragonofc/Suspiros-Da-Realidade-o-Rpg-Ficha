@@ -80,6 +80,10 @@ var ficha = {
     options: {
       wallpaper: 0,
       chEdit: false,
+      perForDices: false,
+      translucidPer: false,
+      blurPer: false,
+      blurPerValue: 5,
       autoSave: false
     },
     mods :[],

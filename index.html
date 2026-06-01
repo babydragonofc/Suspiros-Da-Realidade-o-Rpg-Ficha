@@ -14,8 +14,10 @@
         <img src="img/logo.svg" alt="" class="logo">
         <button class="btn" onclick="abrirCriadorDeFicha()">Criar Ficha</button>
         <button class="btn" onclick="load()">Carregar</button>
-        <button class="btn" onclick="openDiceRoller()">Rolar Dados</button>
-        <input type="file" id="arquivoJSON" accept=".json" >
+        <section class="file-upload-wrapper">
+            <input type="file" id="arquivoJSON" class="btn" style="display: none;" accept=".json">
+            <label for="arquivoJSON" class="btn btn-personalizado">Importar Ficha</label>
+        </section>
 
         <button class="btn" onclick="agradecimentos()" style="display: none;">Agradecimentos</button>
         <!--<button class="btn" onclick="irParaJogo()">Ir para o Jogo (Debug)</button>-->
@@ -38,26 +40,6 @@
 
 
                 </p>
-        </div>
-    </div>
-    <div id="diceRollerArea" class="panel" style="display: none;">
-        <div class="box">
-            <p class="exit-box" onclick="closeDiceRoller()">x</p>
-            <h3 class="title" ">Rolagem de Perícia</h3>
-            <div class="dice-roller-content">
-                <p class="text">Valor da Perícia</p>
-                <input type="number" id="periciaValue" class="input" min="1" max="20">
-                
-                <button class="btn" id="rollPericiaBtn">Rolar Dado</button>
-                
-                <hr style="margin: 20px 0;">
-                
-                <p class="text">Valor Pré-definido</p>
-                <input type="number" id="presetRollValue" class="input" min="1" max="20">
-                <button class="btn" id="presetRollBtn">Verificar Sucesso</button>
-                
-                <div id="rollResult" style="margin-top: 20px;"></div>
-            </div>
         </div>
     </div>
 
@@ -772,7 +754,21 @@
                 <p>Interface</p>
                 <div class="flex">
                     <button class="btn" onclick="turnStatusMod()">Modificador Status</button>
+                    <button class="btn" onclick="turnPerForDices()">Pericias para Dados</button>
+                    <button class="btn" onclick="turnPerTranslucid()">Pericias translucidas</button>
                 </div>
+                <p>Personalização</p>
+                <div class="flex">
+                    <div class="testeDiv">
+                        <button class="btn" onclick="turnPerBlur()" id="blurPerBtn">Blur nas pericias (off)</button>
+                        <button class="btn" style="padding: 2px; margin: 0;" onclick="document.getElementById('perBlurOpt').style.display = 'flex'">☰</button>
+                        <div class="teste" id="perBlurOpt">
+                            <input type="range" name="" id="perBlurInput" min="1" max="15">
+                            <button id="blurInputBack" onclick="document.getElementById('perBlurOpt').style.display = 'none'">></button>
+                        </div>
+                    </div>
+                </div>
+                <br>
                 <p>Imagem</p>
                 <div>
                     <input class="input" type="text" id="image-field">

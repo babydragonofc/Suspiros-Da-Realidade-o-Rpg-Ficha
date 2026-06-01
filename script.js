@@ -1165,7 +1165,7 @@ function FichaEnd() {
 
 }
 
-function displayPericias() {
+function displayPericias(forDice=false) {
     const periciasContainer = document.getElementById('pericias-display');
     if (!periciasContainer) return;
     periciasContainer.innerHTML = ''; 
@@ -1207,19 +1207,32 @@ function displayPericias() {
 
                 const valueSpan = document.createElement('span');
                 valueSpan.className = 'p-count';
+                if (forDice) valueSpan.style.maxWidth = "none"
                 valueSpan.textContent = pericia.value;
+                if(forDice) {
+                    if (pericia.value == 0) valueSpan.textContent = "--"; 
+                    else {
+                        const Normal = tabelaPericia[pericia.value].N != null ? tabelaPericia[pericia.value].N : "--"
+                        const Bom = tabelaPericia[pericia.value].B != null ? tabelaPericia[pericia.value].B : "--"
+                        const Extremo = tabelaPericia[pericia.value].E != null ? tabelaPericia[pericia.value].E : "--"
+    
+                        valueSpan.textContent = Normal + " | " + Bom + " | " + Extremo;
+                    }
+                }
                 valueSpan.id = "D-" + periciaName + "-value";
                 
                 nbrDiv.appendChild(valueSpan);
 
-                const rollBtn = document.createElement('button');
-                rollBtn.className = 'btn roll-pericia-btn base';
-                rollBtn.textContent = 'Rolar';
-                rollBtn.onclick = () => {
-                    diceInput.value = `1d20`;
-                    rollDice(pericia.value);
+                if (!forDice) {
+                    const rollBtn = document.createElement('button');
+                    rollBtn.className = 'btn roll-pericia-btn base';
+                    rollBtn.textContent = 'Rolar';
+                    rollBtn.onclick = () => {
+                        diceInput.value = `1d20`;
+                        rollDice(pericia.value);
+                    }
+                    nbrDiv.appendChild(rollBtn);
                 }
-                nbrDiv.appendChild(rollBtn);
                 
                 periciaElement.appendChild(nbrDiv);
                 pBlock.appendChild(periciaElement);
@@ -1459,78 +1472,3 @@ window.addEventListener('resize', () => {
     }
 
 });
-
-// ====================== DICE ROLLER ======================
-
-const diceRollerArea = document.getElementById('diceRollerArea');
-const periciaValueInput = document.getElementById('periciaValue');
-const rollPericiaBtn = document.getElementById('rollPericiaBtn');
-const presetRollValueInput = document.getElementById('presetRollValue');
-const presetRollBtn = document.getElementById('presetRollBtn');
-const rollResult = document.getElementById('rollResult');
-
-function openDiceRoller() {
-    diceRollerArea.style.display = 'flex';
-}
-
-function closeDiceRoller() {
-    diceRollerArea.style.display = 'none';
-}
-
-rollPericiaBtn.addEventListener('click', () => {
-    const pericia = parseInt(periciaValueInput.value);
-    if (isNaN(pericia) || pericia < 1 || pericia > 20) {
-        rollResult.innerHTML = `<p class="text" style="color: red;">Por favor, insira um valor de perícia válido (1-20).</p>`;
-        return;
-    }
-
-    const roll = getRandomNumber(1, 20);
-    const result = verificarResultado(roll, pericia);
-
-    displayRollResult(result);
-});
-
-presetRollBtn.addEventListener('click', () => {
-    const pericia = parseInt(periciaValueInput.value);
-    if (isNaN(pericia) || pericia < 1 || pericia > 20) {
-        rollResult.innerHTML = `<p class="text" style="color: red;">Por favor, insira um valor de perícia válido (1-20).</p>`;
-        return;
-    }
-
-    const presetValue = parseInt(presetRollValueInput.value);
-    if (isNaN(presetValue) || presetValue < 1 || presetValue > 20) {
-        rollResult.innerHTML = `<p class="text" style="color: red;">Por favor, insira um valor de rolagem pré-definido válido (1-20).</p>`;
-        return;
-    }
-
-    const result = verificarResultado(presetValue, pericia);
-    displayRollResult(result);
-});
-
-function displayRollResult(result) {
-    let color = 'white';
-    switch (result.type) {
-        case 'Extremo':
-            color = 'purple';
-            break;
-        case 'Bom':
-            color = 'green';
-            break;
-        case 'Normal':
-            color = 'white';
-            break;
-        case 'Falha':
-            color = 'gray';
-            break;
-    }
-     if (result.value === 1) {
-        result.type = "Desastre";
-        color = 'red';
-    }
-
-    rollResult.innerHTML = `
-        <p class="text">Resultado da Rolagem: <span style="color: ${color}; font-weight: bold;">${result.value}</span></p>
-        <p class="text">Sucesso: <span style="color: ${color}; font-weight: bold;">${result.type}</span></p>
-    `;
-}
-

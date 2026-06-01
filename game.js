@@ -1864,7 +1864,7 @@ function setWallpaper(value) {
     if (!(0 < value <= backgrounds.length)) return;
 
     ficha.options.wallpaper = value
-    if(window.innerWidth < 500) {
+    if(window.innerWidth < 500 && ficha.options.translucidPer) {
         document.getElementById("pericias-display-block").style.backgroundImage = 'url(img/backgrounds/'+backgrounds[value]+')'
     }
     document.querySelector('body').style.backgroundImage = 'url(img/backgrounds/'+backgrounds[value]+')'
@@ -1909,15 +1909,39 @@ function setCustomWallpaper(settings) {
 const chEdit = document.getElementById('chEdit')
 
 function turnStatusMod() {
-    if (chEdit.style.display  == "flex") {
-        chEdit.style.display  = "none"
-        ficha.options.chEdit = false
-    } else {
-        chEdit.style.display  = "flex"
-        ficha.options.chEdit = true
-    }
-    (chEdit.style.display )
+    ficha.options.chEdit = !ficha.options.chEdit 
+    chEdit.style.display = ficha.options.chEdit? "flex": "none"
+    verifyAutoSave()
 }
+
+function turnPerForDices() {
+    ficha.options.perForDices = !ficha.options.perForDices
+    displayPericias(ficha.options.perForDices)
+    verifyAutoSave()
+}
+
+function turnPerTranslucid() {
+    ficha.options.translucidPer = !ficha.options.translucidPer
+    document.getElementById('pericias-display-block').classList.toggle('translucid')
+    verifyAutoSave()
+}
+
+function turnPerBlur() {
+    ficha.options.blurPer = !ficha.options.blurPer
+    document.getElementById('pericias-display-block').classList.toggle('blur')
+    const blurPerOp = ficha.options.blurPer? "(on)": "(off)"
+    document.getElementById('blurPerBtn').innerHTML = "Blur nas pericias " + blurPerOp;
+ 
+    verifyAutoSave()
+}
+
+document.getElementById('perBlurInput').addEventListener('change', function() {
+    console.log(this.value)
+    ficha.options.blurPerValue = this.value
+    const root = document.documentElement;
+    root.style.setProperty ('--blur-per', ficha.options.blurPerValue + "px");
+    verifyAutoSave()
+})
 
 function valueCEdit(value) {
     valueChanger = value
@@ -1926,11 +1950,31 @@ function valueCEdit(value) {
 }
 
 function loadUserOptions() {
+    if(!ficha.options.blurPer) ficha.options.blurPer = 5
+
+    document.getElementById('perBlurInput').value = ficha.options.blurPerValue;
+    const blurPerOp = ficha.options.blurPer? "(on)": "(off)"
+    document.getElementById('blurPerBtn').innerHTML = "Blur nas pericias " + blurPerOp
+
+    const root = document.documentElement;
+    root.style.setProperty ('--blur-per', ficha.options.blurPerValue + "px");
+
     if (ficha.options.chEdit) {
         chEdit.style.display = 'flex'
     }else {
         chEdit.style.display = "none"
     }
+    if (ficha.options.perForDices) {
+        displayPericias(true)
+    }
+    if(ficha.options.translucidPer) {
+        document.getElementById('pericias-display-block').classList.add('translucid')
+    }
+    if(ficha.options.blurPer) {
+        document.getElementById('pericias-display-block').classList.add('blur')
+    }
+
+    verifyAutoSave()
 }
 
 const changeAutoSaveBtn = document.getElementById("changeAutoSaveBtn")

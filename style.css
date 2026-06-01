@@ -23,6 +23,8 @@
     --un-tab-clr: rgba(255, 255, 255, 0.5);
 
     --slider-clr: #2196F3;
+
+    --blur-per: 5px;
 }
 
 body {
@@ -1063,8 +1065,35 @@ img.reverse {
     box-sizing: border-box;
     background-color: #111;
     border: 1px solid var(--ter-clr);
+    position: relative;
+    min-height: 100%;
 }
 
+#pericias-display-block.translucid {
+    background-color: transparent;
+}
+
+#pericias-display-block.translucid.blur {
+    backdrop-filter: blur(var(--blur-per));
+}
+
+/*
+#pericias-display-block.translucid.blur::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(calc(var(--blur-per) * 1.5));
+    z-index: -1;
+    inset: 0;
+}
+*/
 #pericias-display-block::-webkit-scrollbar {
     display: none;
 }
@@ -1095,6 +1124,15 @@ img.reverse {
     background-color: #222;
     border: 1px solid var(--ter-clr);
     padding: 10px;
+}
+
+#pericias-display-block.translucid #pericias-display .pBlock {
+    background-color: transparent;
+}
+
+#pericias-display-block.translucid #pericias-display .pBlock .p-card {
+    border: solid rgba(255, 255, 255, 0.216) 1px;
+    background-color: transparent;
 }
 
 #pericias-display .pBlock .text {
@@ -1156,6 +1194,7 @@ img.reverse {
     border-top: none;
     color: var(--un-tab-clr);
     cursor: pointer;
+    transition: 0.3s;
 }
 
 #multiTask header .mTBtn:last-child {
@@ -2104,6 +2143,8 @@ img.reverse {
         top: 0;
         left: 0;
         z-index: 10000000;
+        background-position: center center;
+        background-size: cover;
     }
 
     .close-btn-per {
@@ -2143,13 +2184,7 @@ img.reverse {
         padding-top: 20px;
     }
 
-    #pericias-display .pBlock {
-        background-color: transparent;
-    }
-    .p-card {
-        border: solid rgba(255, 255, 255, 0.216) 1px;
-        background-color: transparent;
-    }
+
 }
 
 /* Responsividade geral */
@@ -2736,3 +2771,91 @@ img.reverse {
     background-color: #67c367;
 }
 
+
+.testeDiv {
+    position: absolute;
+    display: flex;
+}
+
+.teste {
+    display: none;
+    height: 100%;
+    width: 100%;
+    background: #111;
+    border: 2px solid #1e1e1e;
+    position: absolute;
+    top: 0;
+}
+
+#blurInputBack {
+    background-color: #111;
+    border: none;
+    border-left: 2px solid #1e1e1e;
+    color: white;
+    transition: 0.3s ease-in-out;
+}
+
+#blurInputBack:hover {
+    background-color: #272727;
+}
+
+/*********** Baseline, reset styles ***********/
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+  margin: 10px;
+}
+
+/* Removes default focus */
+input[type="range"]:focus {
+  outline: none;
+}
+
+/******** Chrome, Safari, Opera and Edge Chromium styles ********/
+/* slider track */
+input[type="range"]::-webkit-slider-runnable-track {
+  background-color: #1e1e1e;
+  border-radius: 0rem;
+  height: 0.5rem;
+}
+
+/* slider thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  margin-top: -4px; /* Centers thumb on the track */
+  background-color: white;
+  border-radius: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+input[type="range"]:focus::-webkit-slider-thumb {
+  outline: 3px solid white;
+  outline-offset: 0.125rem;
+}
+
+/*********** Firefox styles ***********/
+/* slider track */
+input[type="range"]::-moz-range-track {
+  background-color: grey;
+  border-radius: 0rem;
+  height: 0.5rem;
+}
+
+/* slider thumb */
+input[type="range"]::-moz-range-thumb {
+  background-color: white;
+  border: none; /*Removes extra border that FF applies*/
+  border-radius: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+input[type="range"]:focus::-moz-range-thumb{
+  outline: 3px solid white;
+  outline-offset: 0.125rem;
+}
