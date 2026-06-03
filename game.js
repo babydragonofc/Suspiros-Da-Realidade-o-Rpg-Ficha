@@ -1923,6 +1923,9 @@ function turnPerForDices() {
 function turnPerTranslucid() {
     ficha.options.translucidPer = !ficha.options.translucidPer
     document.getElementById('pericias-display-block').classList.toggle('translucid')
+    if (!ficha.options.translucidPer) document.getElementById("pericias-display-block").style.backgroundImage = "" ;
+    const translucidPerOp = ficha.options.translucidPer? "(on)": "(off)"
+    document.getElementById('translucidPerBtn').innerHTML = "Pericias translucidas " + translucidPerOp;
     verifyAutoSave()
 }
 
@@ -1955,6 +1958,8 @@ function loadUserOptions() {
     document.getElementById('perBlurInput').value = ficha.options.blurPerValue;
     const blurPerOp = ficha.options.blurPer? "(on)": "(off)"
     document.getElementById('blurPerBtn').innerHTML = "Blur nas pericias " + blurPerOp
+    const translucidPerOp = ficha.options.translucidPer? "(on)": "(off)"
+    document.getElementById('translucidPerBtn').innerHTML = "Pericias translucidas " + translucidPerOp;
 
     const root = document.documentElement;
     root.style.setProperty ('--blur-per', ficha.options.blurPerValue + "px");
@@ -1968,7 +1973,11 @@ function loadUserOptions() {
         displayPericias(true)
     }
     if(ficha.options.translucidPer) {
+        document.getElementById("pericias-display-block").style.backgroundImage = document.querySelector('body').style.backgroundImage ;
         document.getElementById('pericias-display-block').classList.add('translucid')
+    }
+    else {
+        document.getElementById("pericias-display-block").style.backgroundImage = "" ;
     }
     if(ficha.options.blurPer) {
         document.getElementById('pericias-display-block').classList.add('blur')
