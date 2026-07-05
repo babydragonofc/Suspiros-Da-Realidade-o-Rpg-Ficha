@@ -2,362 +2,11 @@ function pS() {
     console.log("opening prefabSave");
     document.getElementById('arquivoJSON').value = 'ficha_save (1).json';}
 
-// ====================== TOOLTIP ======================
-
-const tooltipDictionary = { 
-    Pericia: { 
-        Lábia: { descricao: "Convence pessoas com palavras." },
-        Aparência: { descricao: "Usa charme e beleza." },
-        Intimidar: { descricao: "Assusta para impor respeito." },
-        Poder: { descricao: "Força de influência." },
-        Sorte: { descricao: "Boa fortuna em situações aleatórias." },
-        Força: { descricao: "Capacidade de força física." },
-        Corpo: { descricao: "Controle corporal geral." },
-        Constituição: { descricao: "Resistência física e vitalidade." },
-        Destreza: { descricao: "Agilidade e precisão motora." },
-        Inteligência: { descricao: "Capacidade analítica e lógica." },
-        Percepção: { descricao: "Atenção aos detalhes e sentidos." },
-        Estabilidade: { descricao: "Controle emocional e mental." },
-        ArmasBrancas: { descricao: "Uso de facas e espadas." },
-        Pistolas: { descricao: "Armas de fogo de curto alcance." },
-        Rifles: { descricao: "Armas de fogo de médio alcance." },
-        LongoAlcance: { descricao: "Arcos, bestas e similares." },
-        Arremeçar: { descricao: "Lançar objetos com precisão." },
-        Movimento: { descricao: "Sua mobilidade em combate"},
-        Furtividade: { descricao: "Sua habilidade de pasar despercebido"},
-        Esquiva: { descricao: "Capacidade de se desviar de ataques"},
-        Acrobacia: { descricao: "Capacidade de executar e performar manobras"},
-        ContraAtaque:{ descricao: "Habilidade de revidar ataques"},
-        Magia: { descricao: "Manipulação de energias mágicas." },
-        Alquimia: { descricao: "Preparação de poções e elixires." },
-        Ocultismo: { descricao: "Conhecimento do sobrenatural." },
-        História: { descricao: "Conhecimento histórico." },
-        Mecanica: { descricao: "Reparo e engenharia prática." },
-        UsarComputadores: { descricao: "Uso de computadores." },
-        Sobrevivência: { descricao: "Habilidades de campo e mato." },
-        Música: { descricao: "Uso artístico de instrumentos e voz." },
-        ConhecimentosGerais: { descricao: "Cultura ampla e variada." },
-        Linguas: { descricao: "Comunicação em outros idiomas." },
-        Medicina: { descricao: "Cuidado com ferimentos e doenças." },
-        Ciência: { descricao: "Conhecimento científico." },
-        Aprendizado: { descricao: "Facilidade em aprender"} 
-    },
-    Raça: {},
-    Atributo: {
-        Social: { descricao: "Relacionamento interpessoal.", pericias: ["Lábia", "Aparência", "Intimidar", "Poder", "Sorte"] },
-        Fisico: { descricao: "Força, agilidade e vitalidade.", pericias: ["Força", "Corpo", "Constituição", "Destreza"] },
-        Intelecto: { descricao: "Pensamento e raciocínio lógico.", pericias: ["Inteligência", "Percepção", "Estabilidade"] },
-        Combate: { descricao: "Habilidades marciais.", pericias: ["ArmasBrancas", "Pistolas", "Rifles", "LongoAlcance", "Arremeçar"] },
-        Habilidades: { descricao: "Capacidades físicas e de movimento.", pericias: ["Movimento", "Furtividade", "Esquiva", "Acrobacia", "ContraAtaque"] },
-        Magia: { descricao: "Energia arcana e estudos ocultos.", pericias: ["Magia", "Alquimia", "Ocultismo"] },
-        Conhecimento: { descricao: "Estudos e erudição.", pericias: ["História", "Mecanica", "Sobrevivência", "Música", "ConhecimentosGerais", "Linguas", "Medicina", "Ciência", "Aprendizado", "UsarComputadores"] } },
-    Habilidades: {
-        ConhecimentoAnatômico: {
-            descricao: 'Gastando 5 de Medo e um turno, você é capaz de identificar o ponto fraco de um alvo. Todos que souberem dessa fraqueza causarão +50% de dano contra ele durante 1D3 turnos.'
-        },
-        UsoDeRemédios: {
-            descricao: 'Você pode gastar um kit médico completo para curar um Ferimento Grave em meia hora.'
-        },
-        ProficiênciaEmHardware: {
-            descricao: 'Você identifica falhas, vulnerabilidades e brechas em aparelhos eletrônicos com facilidade.'
-        },
-        ProficiênciaEmSoftware: {
-            descricao: 'Com uma rodada de Usar Computadores, você pode invadir sistemas avançados e obter acesso privilegiado.'
-        },
-        Reconstruir: {
-            descricao: 'Com uma rodada de Mecânica, você pode desmontar um objeto e criar outro semelhante a partir de suas peças.'
-        },
-        Enganar: {
-            descricao: 'Gastando 5 de Medo, você pode substituir qualquer teste de Perícia por uma rolagem de Lábia ou Aparência.'
-        },
-        Blefe: {
-            descricao: 'Gastando 10 de Medo, você passa automaticamente em um teste de Lábia, sem necessidade de rolagem.'
-        },
-        SacrifícioProtetor: {
-            descricao: 'Ao realizar um teste de Destreza antes que um aliado receba dano, você pode intervir e receber o dano em seu lugar.'
-        },
-        TécnicaDeCombate: {
-            descricao: 'Com uma rolagem de Força e gastando 10 de Medo, você causa o dobro de dano em um ataque físico.'
-        },
-        TiroCerto: {
-            descricao: 'Ao atacar de forma furtiva, você pode causar o dobro de dano com um tiro preciso.'
-        },
-        AbrirFogo: {
-            descricao: 'Você pode efetuar três disparos em um mesmo turno, sofrendo apenas duas desvantagens.'
-        },
-        Imobilizar: {
-            descricao: 'Gastando 5 de Medo (uma vez a cada meia hora), você pode imobilizar um alvo por 1D4 turnos.'
-        },
-        Proteger: {
-            descricao: 'Você concede +3 de armadura a um aliado atrás de você, além de deixá-lo em estado furtivo.'
-        },
-        EquipamentosDeLaboratório: {
-            descricao: 'Você recebe vantagem ao analisar pequenos objetos utilizando ferramentas e equipamentos de laboratório.'
-        },
-        MétodosExperimentais: {
-            descricao: 'Você domina procedimentos experimentais, podendo realizar testes e análises detalhadas, como remoção de tinta e rastreamento de resíduos.'
-        },
-        ReagentesMísticos: {
-            descricao: 'Você é capaz de criar reações químicas ou místicas únicas utilizando reagentes especiais.'
-        },
-        ControleDeSubstânciasQuímicas: {
-            descricao: 'Sua habilidade em misturar e manipular substâncias químicas previne acidentes e aumenta a eficácia dos resultados.'
-        },
-        LeituraCrítica: {
-            descricao: 'Gastando 5 de Medo, você obtém vantagem em testes de Inteligência e Percepção ao analisar textos, documentos ou situações complexas.'
-        },
-        ConhecimentoEspecializado: {
-            descricao: 'Você possui domínio teórico aprofundado, recebendo vantagem em testes de História e Aprendizado.'
-        },
-        ArteVisual: {
-            descricao: 'Sua arte pode influenciar emoções, transmitir mensagens complexas ou criar disfarces convincentes.'
-        },
-        MúsicaOuPerformance: {
-            descricao: 'Você é capaz de cativar, inspirar ou manipular o público através da música, atuação ou outras formas de performance.'
-        },
-        MovimentosLeves: {
-            descricao: 'Você se move com leveza e precisão, recebendo vantagem em testes de Furtividade e Esquiva.'
-        },
-        ReconhecimentoRápidoDeTerreno: {
-            descricao: 'Gastando 10 de Medo, você identifica brechas, caminhos ocultos e pontos estratégicos no ambiente ao seu redor.'
-        },
-        Ocultismo: {
-            descricao: 'Seu conhecimento sobre o oculto permite reconhecer criaturas, rituais e artefatos sobrenaturais. Gastando 20 de Medo, você recebe duas vantagens em qualquer teste de Ocultismo.'
-        },
-        LeituraDeSímbolosAntigos: {
-            descricao: 'Você é capaz de decifrar símbolos e rituais antigos que seriam incompreensíveis para a maioria das pessoas.'
-        },
-        Entrevistas: {
-            descricao: 'Gastando 5 de Medo e realizando um teste de Lábia, você pode fazer uma pergunta certeira que revela uma informação valiosa ou secreta.'
-        },
-        RedeDeContatos: {
-            descricao: 'Você conhece pessoas influentes e bem posicionadas, podendo recorrer a elas para obter informações, favores ou recursos.'
-        },
-        PreparoDeAbrigo: {
-            descricao: 'Você domina técnicas de sobrevivência, sendo capaz de encontrar ou construir abrigos seguros em ambientes hostis ou urbanos.'
-        },
-        Manual: {
-            descricao: 'Você executa tarefas práticas e manuais com precisão, sendo capaz de improvisar soluções com poucos recursos.'
-        },
-        Preparo: {
-            descricao: 'Gastando 15 de Medo, você prepara um explosivo com perfeição, garantindo o dano máximo possível.'
-        }
-    },
-    Origem: {
-        Medico: { descricao: "Você era um profissional da saúde como um enfermeiro, farmacêutico, médico, psicólogo ou socorrista, treinado no atendimento e cuidado de pessoas. " },
-        TI: { descricao: "Programador, engenheiro de software ou simples-mente “o cara da T.I.”, você tem treinamento e ex-periência para lidar com sistemas informatizados." },
-        Mecânico: { descricao: "Enquanto os acadêmicos estão preocupados com teorias, você colocar a mão na massa, seja como en- genheiro proﬁssional, seja como inventor de garagem." },
-        Negociador: { descricao: "Você trabalhou em alguma posição de grande importância, a qual precissava negociar coisas importantes"},
-        Combatente: { descricao: "Você sempre gostou de estar na frente das brigas e aprendeu a ser mais forte com elas"},
-        Atirador: { descricao: "Você frequentava clubes de tiro e sabe manusear armas longas como parte do seu corpo."},
-        Policial: { descricao: "Você fez parte de uma força de segurança pública, civil ou militar."},
-        Cientista: { descricao: "Você estudou por anos sobre a vida e o funcionamento do mundo."},
-        Alquimista: { descricao: "Você conheceu de perto a verdade sobre a magia e começou a estudar sobre a alquimia."},
-        Acadêmico: { descricao: "Você era um pesquisador ou professor universitário."},
-        Artista: { descricao: "Você era um ator, músico, escritor, dançarino, influenciador. "},
-        Atleta: { descricao: "Você competia em um esporte individual ou por equipe, como natação ou futebol."},
-        Ocultista: { descricao: "Você de algum modo entrou em um grupo ocultista, porém hoje busca entender como pará-los de alguma forma usando suas habilidades ocultas."},
-        Jornalista: { descricao: "Você é um jornalista, tendo já escrito e participado de diversas matérias que te levaram a conhecer e vivenciar muitas das situações mais estranhas e inusitadas que alguém jamais imaginaria viver. Porém, nada disso te impediu se sempre ir atrás de mais uma aventura para consegui um furo de noticias."},
-        Mochileiro: { descricao: "Você viajou por todo o mundo, tendo tido inúmeras vivências incríveis, conhecendo povos por todo o globo e participando das mais imagináveis celebrações. Graças a isso, está pronto para participar de qualquer aventura ou loucura que te chamarem, afinal um dia ruim acaba sempre virando uma boa história."},
-        ExpecialistaEmExplosivos: { descricao: "Você viveu em meio a turbulencias e fez do fogo e do caus seu refugio."} },
-        MagiaFicha: {
-            ConhecimentoMagico: { descricao: "Seu conhecimento sobre a performace de magias", descricaoExtra: "Serve para"},
-            Elementos : {descricao: "Os elementos são as forças matrizes do mundo, divididos em simples e avançados.", descricaoExtra: "Simples: Fogo, Água, Gelo, Terra, Eletricidade, Planta e Vento; Avançados: Escuridão, Luz e Hipnose,"}
-        },
-        Status: {
-            Vida: { descricao: "Sua força de vigor e vitalidade"},
-            PontosDeMagia: {descricao: "A energia vital usada para conjurar magias de todos os tipos"},
-            Medo: { descricao: "Sua resistencia a pressão e medo"}
-    }
-};
-
-
-
-// Tooltip principal
-const tooltip = document.getElementById("tooltip");
-
-// Tooltip lateral (lista de perícias)
-const rightTooltip = document.createElement("div");
-rightTooltip.id = "right-tooltip";
-document.body.appendChild(rightTooltip);
-
-// Tooltip flutuante de perícia individual
-const periciaTooltip = document.createElement("div");
-periciaTooltip.id = "pericia-tooltip";
-document.body.appendChild(periciaTooltip);
-
-let rightTooltipOpen = false;
-let activeTooltipTrigger = null; // Guarda o elemento que acionou o tooltip
-let hideTooltipTimer = null; // Guarda o timer para esconder o tooltip
-
-function hideAllTooltips() {
-  tooltip.style.display = "none";
-  rightTooltip.style.display = "none";
-  periciaTooltip.style.display = "none";
-  rightTooltipOpen = false;
-  activeTooltipTrigger = null;
-}
-
-// Lógica para esconder os tooltips quando o mouse sai deles
-const allTooltips = [tooltip, rightTooltip, periciaTooltip];
-allTooltips.forEach(tt => {
-    tt.addEventListener("mouseleave", () => {
-        hideTooltipTimer = setTimeout(() => {
-            const isHoveringAny = allTooltips.some(t => t.matches(':hover')) || (activeTooltipTrigger && activeTooltipTrigger.matches(':hover'));
-            if (!isHoveringAny) {
-                hideAllTooltips();
-            }
-        }, 150);
-    });
-});
-
-
-// Função para inicializar tooltips em qualquer "short"
-function initTooltips(scope = document) {
-    scope.querySelectorAll("short").forEach(el => {
-        el.onmouseenter = null;
-        el.onmouseleave = null;
-
-        el.addEventListener("mouseenter", (ev) => {
-            clearTimeout(hideTooltipTimer); // Cancela qualquer timer pendente para esconder
-            activeTooltipTrigger = el; // Define o gatilho ativo
-            const classes = Array.from(el.classList);
-            const categoria = classes[0];
-            const conteudo = classes[1];
-
-            const data = tooltipDictionary[categoria]?.[conteudo] || {};
-            const descricao = data.descricao || `Informações adicionais sobre ${conteudo}.`;
-
-            (data, tooltipDictionary[categoria][conteudo])
-            if (categoria === 'Pericia' && scope === rightTooltip) {
-                periciaTooltip.textContent = descricao;
-                const rect = el.getBoundingClientRect();
-                periciaTooltip.style.display = 'block';
-                periciaTooltip.style.left = rect.right + 5 + 'px';
-                periciaTooltip.style.top = rect.top + 'px';
-                return; // Não mostra o tooltip principal para perícias na lista
-            }
-
-            tooltip.querySelector(".title").textContent = conteudo.replace(/([a-z])([A-Z])/g, '$1 $2');
-            tooltip.querySelector(".title").className = "title " + categoria;
-            tooltip.querySelector(".subtitle").textContent = categoria;
-            tooltip.querySelector(".text").textContent = descricao;
-            tooltip.querySelector(".text.sm").textContent = data.descricaoExtra? data.descricaoExtra: "";
-
-            // Remove o botão de perícias se já existir
-            const existingBtn = tooltip.querySelector('.pericias-btn');
-            if (existingBtn) {
-                existingBtn.remove();
-            }
-
-            if (categoria === 'Atributo' && data.pericias) {
-                const periciasBtn = document.createElement('button');
-                periciasBtn.className = 'btn pericias-btn';
-                periciasBtn.textContent = 'Perícias';
-                tooltip.querySelector('div:last-child').appendChild(periciasBtn);
-
-                periciasBtn.addEventListener('click', () => {
-                    if (rightTooltipOpen) {
-                        rightTooltip.style.display = 'none';
-                        rightTooltipOpen = false;
-                        return;
-                    }
-
-                    rightTooltip.innerHTML = '';
-                    const periciasList = document.createElement('div');
-                    periciasList.className = 'pericias-list';
-                    
-                    data.pericias.forEach(p => {
-                        const shortEl = document.createElement('short');
-                        shortEl.className = `Pericia ${p}`;
-                        shortEl.textContent = p.replace(/([a-z])([A-Z])/g, '$1 $2');
-                        periciasList.appendChild(shortEl);
-                    });
-
-                    rightTooltip.appendChild(periciasList);
-                    initTooltips(rightTooltip); // Re-inicializa os tooltips para as novas pericias
-
-                    const tooltipRect = tooltip.getBoundingClientRect();
-                    rightTooltip.style.display = 'block';
-                    rightTooltip.style.left = tooltipRect.right + 5 + 'px';
-                    rightTooltip.style.top = tooltipRect.top + 'px';
-                    rightTooltipOpen = true;
-                });
-            }
-
-            if (scope !== rightTooltip) {
-                rightTooltip.style.display = "none";
-                rightTooltip.innerHTML = "";
-                rightTooltipOpen = false;
-            }
-
-            const rect = el.getBoundingClientRect();
-            let left = rect.left;
-
-            tooltip.style.display = "block";
-            const ttRect = tooltip.getBoundingClientRect();
-
-            const prefersTop = el.classList.contains('top');
-            const fitsBottom = rect.bottom + ttRect.height < window.innerHeight;
-            const fitsTop = rect.top - ttRect.height > 0;
-
-            let top;
-
-            if (prefersTop) {
-                if (fitsTop) {
-                    top = rect.top - ttRect.height - 10;
-                } else if (fitsBottom) {
-                    top = rect.bottom;
-                } else {
-                    top = 10; // Fallback
-                }
-            } else {
-                if (fitsBottom) {
-                    top = rect.bottom;
-                } else if (fitsTop) {
-                    top = rect.top - ttRect.height - 10;
-                } else {
-                    top = 10; // Fallback
-                }
-            }
-
-            // Adjust horizontally
-            if (left + ttRect.width > window.innerWidth) {
-                left = window.innerWidth - ttRect.width - 10;
-            }
-            if (left < 0) {
-                left = 10;
-            }
-
-            tooltip.style.left = left + window.scrollX + "px";
-            tooltip.style.top = top + window.scrollY + "px";
-        });
-
-        el.addEventListener("mouseleave", () => {
-            if (scope === rightTooltip) {
-                periciaTooltip.style.display = 'none';
-            }
-            // A mesma lógica de timeout para esconder
-            hideTooltipTimer = setTimeout(() => {
-                const isHoveringAny = allTooltips.some(t => t.matches(':hover')) || (el && el.matches(':hover'));
-                if (!isHoveringAny) {
-                    hideAllTooltips();
-                }
-            }, 150);
-        });
-    });
-}
-
-// Inicializa tooltips para elementos já existentes
-initTooltips(document);
-
 // ====================== FICHA ======================
 
 const nameInput = document.getElementById("name");
 const dateInput = document.getElementById("date");
 const ageInput = document.getElementById("age");
-const heightInput = document.getElementById("height");
-const weightInput = document.getElementById("weight");
 const sexButtons = document.querySelectorAll('.sex-btn');
 let selectedSex = null;
 
@@ -372,11 +21,45 @@ const foco = document.getElementById("foco");
 const elementos = document.getElementById("elementos");
 const Pr = document.getElementById("Pr");
 
-
 const RsBox = document.getElementById("Rs-box");
 
+//Documento Ordo
+const docOrdoName = document.querySelector("#ordoDoc .name");
+const docOrdoBirth = document.querySelector("#ordoDoc .birth")
 
+nameInput.addEventListener("change", async () => {
 
+    await eraseText(docOrdoName, 100);
+
+    await delay(300);
+
+    await writeText(docOrdoName, nameInput.value, 100);
+
+    await delay(500);
+
+    await overshadowText(docOrdoName, 0.2, 200, 100);
+
+});
+
+dateInput.addEventListener("change", async () => {
+
+    await eraseText(docOrdoBirth, 100);
+
+    await delay(300);
+
+    const partes = dateInput.value.split("-"); // ["2026", "06", "28"]
+
+    const ano = partes[0]; // 2026
+    const mes = partes[1]; // 06
+    const dia = partes[2]; // 28
+
+    await writeText(docOrdoBirth, partes[2]+"/"+partes[1]+"/"+partes[0], 100);
+
+    await delay(500);
+
+    await overshadowText(docOrdoBirth, 0.2, 100, 100);
+
+});
 // Função para abrir criador
 function abrirCriadorDeFicha() {
     main.style.display = "none";
@@ -386,7 +69,7 @@ function abrirCriadorDeFicha() {
 
 // Inputs
 const proximoBtn1 = document.querySelector("#p1");
-const inputs1 = [nameInput, dateInput, ageInput, heightInput, weightInput];
+const inputs1 = [nameInput, dateInput, ageInput];
 let a1 = false;
 
 sexButtons.forEach(button => {
@@ -428,8 +111,6 @@ function abrirPagina2() {
     Rs.style.display = "flex";
     RsBox.style.display = "grid";
 
-    ficha.altura = parseFloat(heightInput.value) || 0;
-    ficha.peso = parseFloat(weightInput.value) || 0;
     ficha.sexo = selectedSex;
     ficha.dataNascimento = dateInput.value;
 }
@@ -485,6 +166,8 @@ function raceChose(rs) {
 
     ficha.pontos = raças[rs].pts
 
+    console.log('Possivel Erro?')
+    //Verificar existencia de rs talvez resolva
     ficha.raça = rs
 
     (ficha.pontos)
@@ -501,23 +184,142 @@ function raceChose(rs) {
 const OgContainer = document.getElementById('origens');
 
 const origens = [
-    { id: 1, nome: "Médico", descricao: "Você era um profissional da saúde como um enfermeiro, farmacêutico, médico, psicólogo ou socorrista, treinado no atendimento e cuidado de pessoas. ", bonus: "", pericias: ["Medicina", "Ciência"], habilidades: ["ConhecimentoAnatômico", "UsoDeRemédios"] },
-    { id: 2, nome: "Técnico de Informática", descricao: "Programador, engenheiro de software ou simples-mente “o cara da T.I.”, você tem treinamento e ex-periência para lidar com sistemas informatizados.", bonus: "", pericias: ["UsarComputadores", "Inteligência"], habilidades: ["ProficiênciaEmHardware", "ProficiênciaEmSoftware"] },
-    { id: 3, nome: "Mecânico", descricao: "Enquanto os acadêmicos estão preocupados com teorias, você colocar a mão na massa, seja como en- genheiro proﬁssional, seja como inventor de garagem.", bonus: "", pericias: ["Mecanica", "Aprendizado", "ConhecimentosGerais"], habilidades: ["Reconstruir", ] },
-    { id: 4, nome: "Negociador", descricao: "Você trabalhou em alguma posição de grande importancia, a qual precissava negociar coisas importantes", bonus: "", pericias: ["Lábia", "Aparência"], habilidades: ["Enganar", "Blefe"] },
-    { id: 5, nome: "Combatente", descricao: "Você sempre gostou de estar na frente das brigas e aprendeu a ser mais forte com elas", bonus: "", pericias: ["ArmasBrancas", "Constituição", "Força"], habilidades: ["SacrificioProtetor", "TecnicaDeCombate"] },
-    { id: 6, nome: "Atirador", descricao: "Você frequentava clubes de tiro e sabe manusear armas longas como parte do seu corpo.", bonus: "", pericias: ["Rifles", "LongoAlcance", "Pistolas"], habilidades: ["TiroCerto", "AbrirFogo"] },
-    { id: 7, nome: "Policial", descricao: "Você fez parte de uma força de segurança pública, civil ou militar.", bonus: "", pericias: ["Pistolas", "Estabilidade", "Sobrevivência"], habilidades: ["Imobilizar", "Proteger"] },
-    { id: 8, nome: "Cientista", descricao: "Você estudou por anos sobre a vida e o funcionamento do mundo.", bonus: "", pericias: ["Ciência", "Magia"], habilidades: ["Equipamentos de Laboratório", "Métodos Experimentais"] },
-    { id: 9, nome: "Alquimista", descricao: "Você conheceu de perto a verdade sobre a magia e começou a estudar sobre a alquimia.", bonus: "", pericias: ["Alquimia", "Magia"], habilidades: ["Reagentes Místicos", "ControleDeSubstânciasQuímicas"] },
-    { id: 10, nome: "Acadêmico", descricao: "Você era um pesquisador ou professor universitário.", bonus: "", pericias: ["História", "Aprendizado"], habilidades: ["LeituraCrítica", "ConhecimentoEspecializado"] },
-    { id: 11, nome: "Artista", descricao: "Você era um ator, músico, escritor, dançarino, influenciador. ", bonus: "", pericias: ["Música", "ConhecimentosGerais"], habilidades: ["ArteVisual", "MúsicaOuPerformance"] },
-    { id: 12, nome: "Atleta", descricao: "Você competia em um esporte individual ou por equipe, como natação ou futebol.", bonus: "", pericias: ["Acrobacia", "Destreza"], habilidades: ["MovimentosLeves", "ReconhecimentoRápidoDeTerreno"] },
-    { id: 13, nome: "Ocultista", descricao: "Você de algum modo entrou em um grupo ocultista, porem hoje busca entender como paralos de alguma forma ussando suas habilidades ocultas.", bonus: "", pericias: ["Ocultismo", "Poder"], habilidades: ["Ocultismo", "LeituraDeSímbolosAntigos"] },
-    { id: 14, nome: "Jornalista", descricao: "Você é um jornalista, tendo já escrito e participado de diversas matérias que te levaram a conhecer e vivenciar muitas das situações mais estranhas e inusitadas que alguém jamais imaginaria viver. Porém, nada disso te impediu se sempre ir atrás de mais uma aventura para consegui um furo de noticias.", bonus: "", pericias: ["Lábia", "Aparência"], habilidades: ["Entrevistas", "RedeDeContatos"] },
-    { id: 15, nome: "Mochileiro", descricao: "Você viajou por todo o mundo, tendo tido inúmeras vivências incríveis, conhecendo povos por todo o globo e participando das mais imagináveis celebrações. Graças a isso, está pronto para participar de qualquer aventura ou loucura que te chamarem, afinal um dia ruim acaba sempre virando uma boa história.", bonus: "", pericias: ["Sobrevivência", "Constituição", "Aprendizado"], habilidades: ["PreparoDeAbrigo", "Manual"] },
-    { id: 16, nome: "Expecialista em Explosivos", descricao: "Você viveu em meio a turbulencias e fez do fogo e do caus seu refugio.", bonus: "", pericias: ["Arremeçar", "Destreza"], habilidades: ["Preparo"] },
-    { id: 17, nome: "Investigador", descricao: "Você é que realiza pesquisas e investigações para apurar crimes ou outros factos. Suas funções principais incluem a coleta de evidências e provas em cenas de crime.", bonus: "", pericias: ["Percepção", "Inteligência"], habilidades: [] }
+    {
+        id: 1,
+        nome: "Médico",
+        descricao: "Você era um profissional da saúde como um enfermeiro, farmacêutico, médico, psicólogo ou socorrista, treinado no atendimento e cuidado de pessoas.",
+        bonus: "",
+        pericias: ["medicina", "ciencias"],
+        habilidades: ["ConhecimentoAnatômico", "UsoDeRemédios"]
+    },
+    {
+        id: 2,
+        nome: "Técnico de Informática",
+        descricao: "Programador, engenheiro de software ou simplesmente 'o cara da T.I.', você tem treinamento e experiência para lidar com sistemas informatizados.",
+        bonus: "",
+        pericias: ["tecnologia", "inteligencia"],
+        habilidades: ["ProficiênciaEmHardware", "ProficiênciaEmSoftware"]
+    },
+    {
+        id: 3,
+        nome: "Mecânico",
+        descricao: "Enquanto os acadêmicos estão preocupados com teorias, você coloca a mão na massa, seja como engenheiro profissional, seja como inventor de garagem.",
+        bonus: "",
+        pericias: ["mecanica", "inteligencia", "atualidades"],
+        habilidades: ["Reconstruir"]
+    },
+    {
+        id: 4,
+        nome: "Negociador",
+        descricao: "Você trabalhou em alguma posição de grande importância, a qual precisava negociar coisas importantes.",
+        bonus: "",
+        pericias: ["labia", "psicologia"],
+        habilidades: ["Enganar", "Blefe"]
+    },
+    {
+        id: 5,
+        nome: "Combatente",
+        descricao: "Você sempre gostou de estar na frente das brigas e aprendeu a ser mais forte com elas.",
+        bonus: "",
+        pericias: ["armas_brancas", "constituição", "força"],
+        habilidades: ["SacrificioProtetor", "TecnicaDeCombate"]
+    },
+    {
+        id: 6,
+        nome: "Atirador",
+        descricao: "Você frequentava clubes de tiro e sabe manusear armas longas como parte do seu corpo.",
+        bonus: "",
+        pericias: ["rifle", "longo_alcance", "pistolas"],
+        habilidades: ["TiroCerto", "AbrirFogo"]
+    },
+    {
+        id: 7,
+        nome: "Policial",
+        descricao: "Você fez parte de uma força de segurança pública, civil ou militar.",
+        bonus: "",
+        pericias: ["pistolas", "vontade", "sobrevivencia"],
+        habilidades: ["Imobilizar", "Proteger"]
+    },
+    {
+        id: 8,
+        nome: "Cientista",
+        descricao: "Você estudou por anos sobre a vida e o funcionamento do mundo.",
+        bonus: "",
+        pericias: ["ciencias", "magia"],
+        habilidades: ["Equipamentos de Laboratório", "Métodos Experimentais"]
+    },
+    {
+        id: 9,
+        nome: "Alquimista",
+        descricao: "Você conheceu de perto a verdade sobre a magia e começou a estudar sobre a alquimia.",
+        bonus: "",
+        pericias: ["ciencias", "magia"],
+        habilidades: ["Reagentes Místicos", "ControleDeSubstânciasQuímicas"]
+    },
+    {
+        id: 10,
+        nome: "Acadêmico",
+        descricao: "Você era um pesquisador ou professor universitário.",
+        bonus: "",
+        pericias: ["historia", "inteligencia"],
+        habilidades: ["LeituraCrítica", "ConhecimentoEspecializado"]
+    },
+    {
+        id: 11,
+        nome: "Artista",
+        descricao: "Você era um ator, músico, escritor, dançarino ou influenciador.",
+        bonus: "",
+        pericias: ["profissão", "atualidades"],
+        habilidades: ["ArteVisual", "MúsicaOuPerformance"]
+    },
+    {
+        id: 12,
+        nome: "Atleta",
+        descricao: "Você competia em um esporte individual ou por equipe, como natação ou futebol.",
+        bonus: "",
+        pericias: ["acrobacia", "destreza"],
+        habilidades: ["MovimentosLeves", "ReconhecimentoRápidoDeTerreno"]
+    },
+    {
+        id: 13,
+        nome: "Ocultista",
+        descricao: "Você de algum modo entrou em um grupo ocultista, porém hoje busca entender como pará-los de alguma forma usando suas habilidades ocultas.",
+        bonus: "",
+        pericias: ["ocultismo", "magia"],
+        habilidades: ["Ocultismo", "LeituraDeSímbolosAntigos"]
+    },
+    {
+        id: 14,
+        nome: "Jornalista",
+        descricao: "Você é um jornalista, tendo já escrito e participado de diversas matérias que te levaram a conhecer e vivenciar muitas das situações mais estranhas e inusitadas que alguém jamais imaginaria viver.",
+        bonus: "",
+        pericias: ["labia", "psicologia"],
+        habilidades: ["Entrevistas", "RedeDeContatos"]
+    },
+    {
+        id: 15,
+        nome: "Mochileiro",
+        descricao: "Você viajou por todo o mundo, tendo tido inúmeras vivências incríveis.",
+        bonus: "",
+        pericias: ["sobrevivencia", "constituição", "inteligencia"],
+        habilidades: ["PreparoDeAbrigo", "Manual"]
+    },
+    {
+        id: 16,
+        nome: "Especialista em Explosivos",
+        descricao: "Você viveu em meio a turbulências e fez do fogo e do caos seu refúgio.",
+        bonus: "",
+        pericias: ["pontaria", "destreza"],
+        habilidades: ["Preparo"]
+    },
+    {
+        id: 17,
+        nome: "Investigador",
+        descricao: "Você realiza pesquisas e investigações para apurar crimes ou outros fatos.",
+        bonus: "",
+        pericias: ["percepção", "inteligencia"],
+        habilidades: []
+    }
 ];
 
 function renderOrigens() {
@@ -534,7 +336,7 @@ function renderOrigens() {
             if (bonus != "") bonus += " , "
 
             const displayName = pericia.replace(/([a-z])([A-Z])/g, '$1 $2');
-            bonus += `<short class="Pericia ${pericia}">${displayName}</short>`
+            bonus += `<short class="Pericia" data-key="${pericia}">${displayName}</short>`
 
         });
 
@@ -542,7 +344,7 @@ function renderOrigens() {
 
             if (Habilidades != "") Habilidades += " , "
             const displayName = habilidade.replace(/([a-z])([A-Z])/g, '$1 $2');
-            Habilidades += `<short class="Habilidades ${habilidade}">${displayName}</short>`
+            Habilidades += `<short class="Habilidades" data-key="${habilidade}">${displayName}</short>`
 
         });
 
@@ -614,24 +416,25 @@ function selectOrigin(button, id) {
 function originNext() {
     if (ficha.origem.length === 2) {
         Og.style.display = "none";
-        Mg.style.display = "flex";
+        Pr.style.display = "flex";
 
         ficha.origem.forEach(o => {
             origens[o].pericias.forEach(pericia => {
-                    ficha.pericias[pericia].value += 5
-                    ficha.pericias[pericia].min += 5
+                ficha.bonus.push(pericia)
+                const bonusPerEl = document.querySelector('[aria-value="'+pericia+'"]');
+                bonusPerEl.style.color = "yellow"
+                bonusPerEl.style.boxShadow = '0 0 10px inset #ffff0042;'
             });
             origens[o].habilidades.forEach(habilidade => {
                 const habilidadeData = tooltipDictionary.Habilidades[habilidade];
                 const nome = habilidade.replace(/([a-z])([A-Z])/g, '$1 $2');
                 if (habilidadeData) {
-                    addHabilidade(nome, habilidadeData.descricao, null);
+                    createAbility(nome, habilidadeData.descricao, null);
                 }
             });
         });
     }
 }
-
 
 // ====================== TIPOS ======================
 
@@ -678,7 +481,7 @@ function typeConfirmF() {
         ficha.pericias.Aprendizado.min += 5
     }
     if (ficha.tipo == 1) {
-        ficha.status.pontosDeMagiaMax += 3
+        ficha.status.magiaMax += 3
         ficha.pericias.Magia.value += 2
         ficha.pericias.Magia.min += 2
     }
@@ -726,12 +529,6 @@ function focoChose(id){
 
     if(id == 2) typeElements.style.display = "flex"
     else typeElements.style.display = "none"
-}
-
-function aa() {
-    IB.style.display = "none";
-    Rs.style.display = "block";
-    ("aa")
 }
 
 function putMagicPt(){
@@ -791,7 +588,7 @@ function focoClose(){
         elementPoints.innerHTML = focos[2].value
         updateElementSelectability();
     }else {
-        Pr.style.display = "flex";
+        FichaEnd()
     }
     
 }
@@ -971,6 +768,7 @@ function elementChose(id) {
     checkElementSelection();
 }
 
+
 function elementNext() {
     const selectedCards = document.querySelectorAll('.element-card.selected');
     ficha.elementos = []; // Limpa o array antes de adicionar os novos elementos
@@ -980,159 +778,8 @@ function elementNext() {
     });
 
     if (ficha.elementos.length = 0) return;
-
-
     
-    foco.style.display = "none";
-    Mg.style.display = "none";
-    Pr.style.display = "flex";
-    (ficha)
-    setTimeout(() => {
-        perAtu()
-    }, 1000);
-}
-
-//
-
-const pId = document.getElementsByClassName("p-card")
-
-const perIdList = {
-    Lábia: pId[0],
-    Aparência: pId[1],
-    Intimidar: pId[2],
-    Poder: pId[3],
-    Sorte: pId[4],
-    Força: pId[5],
-    Corpo: pId[6],
-    Constituição: pId[7],
-    Destreza: pId[8],
-    Inteligência: pId[9],
-    Percepção: pId[10],
-    Estabilidade: pId[11],
-    ArmasBrancas: pId[12],
-    Pistolas: pId[13],
-    Rifles: pId[14],
-    LongoAlcance: pId[15],
-    Arremeçar: pId[16],
-    Movimento: pId[17],
-    Furtividade: pId[18],
-    Esquiva: pId[19],
-    Acrobacia: pId[20],
-    ContraAtaque: pId[21],
-    Magia: pId[22],
-    Alquimia: pId[23],
-    Ocultismo: pId[24],
-    História: pId[25],
-    Mecanica: pId[26],
-    Sobrevivência: pId[27],
-    Sobrevivência: pId[28],
-    Música: pId[29],
-    ConhecimentosGerais: pId[30],
-    Línguas: pId[31],
-    Medicina: pId[32],
-    Ciência: pId[33],
-    Aprendizado: pId[34]
-
-}
-
-function addPerPoint(btn, id) {
-
-    rid = id - 1;
-    const perV = getValueByIndex(ficha.pericias, rid);
-
-    if (ficha.pontos <= 0) return;
-
-    if (perV.value >= perV.max) return;
-    
-    if (!perV.editable) return;
-
-    ficha.pontos -= 1;
-    perV.value += 1;
-
-    perAtu()
-}
-
-function removePerPoint(btn, id) {
-    rid = id - 1;
-    const perV = getValueByIndex(ficha.pericias, rid);
-
-    if (perV.value <= perV.min) return;
-
-    if (!perV.editable) return;
-
-    ficha.pontos += 1;
-    perV.value -= 1;
-
-    perAtu()
-}
-
-const titleBox = document.getElementsByClassName("pr-title")
-const prType = document.getElementsByClassName("pr-type")
-const prNextBtn = document.getElementById("pr-next-btn")
-
-function calcularPericiaCorpo() {
-    // altura : 177; peso: 76// alt: 13; peso: 14 ; 27 ; 
-    const pesoBase = 62;
-    const alturaBase = 165;
-
-    const pesoExtra = ficha.peso - pesoBase;
-    const alturaExtra = ficha.altura - alturaBase;
-
-    const corpoBase = pesoExtra + alturaExtra;
-
-    // Garante que o valor da perícia não seja negativo e arredonda o valor.
-    // O divisor foi ajustado para um valor intermediário.
-    ficha.pericias.Corpo.value = Math.max(1, Math.floor(corpoBase / 4));
-}
-
-function perAtu() {
-
-    (ficha)
-    document.getElementById("ptsDisplay").innerHTML = ficha.pontos
-
-    const perList = ficha.pericias;
-    
-    calcularPericiaCorpo();
-    perList.Movimento.value = Math.floor((perList.Constituição.value + perList.Destreza.value + perList.Força.value) / 2 + 1);
-    perList.ContraAtaque.value =  Math.floor((perList.Destreza.value + perList.Força.value + perList.Percepção.value) / 2 + 1);
-    perList.Esquiva.value = Math.floor((perList.Percepção.value + perList.Destreza.value) /2 + 3);
-    perList.Furtividade.value = Math.floor((perList.Constituição.value + perList.Destreza.value + perList.Estabilidade.value) /2 + 2);
-
-    for (let i = 0; i < Object.keys(ficha.pericias).length; i++) {
-        const pElement = pId[i];
-        const p = getValueByIndex(ficha.pericias, i);
-        
-        pElement.getElementsByClassName("p-count")[0].innerHTML = p.value;
-    }
-
-    if (ficha.pontos <= 0) {
-        prNextBtn.style.display = "block"
-    }
-}
-
-function perShow(id, skillName) {
-    // Find category
-    let categoryName = "Perícia"; // Default
-    for (const category in tooltipDictionary.Atributo) {
-        if (tooltipDictionary.Atributo[category].pericias.includes(skillName)) {
-            categoryName = category;
-            break;
-        }
-    }
-
-    // Find description
-    const skillData = tooltipDictionary.Pericia[skillName] || {};
-    const description = skillData.descricao || "";
-
-    // Select elements to update
-    const prTitleEl = document.querySelector("#Pr .pr-title");
-    const prCategoryEl = document.querySelector(".pr-type");
-    const prDescriptionEl = document.querySelector("#pr-description");
-
-    // Update elements
-    if(prTitleEl) prTitleEl.innerHTML = skillName.replace(/([a-z])([A-Z])/g, '$1 $2');
-    if(prCategoryEl) prCategoryEl.innerHTML = categoryName;
-    if(prDescriptionEl) prDescriptionEl.innerHTML = description;
+    FichaEnd()
 
 }
 
@@ -1141,108 +788,19 @@ function getValueByIndex(obj, index) {
   return values[index];
 }
 
-game = document.getElementById("game")
+const game = document.getElementById("game")
 
 function FichaEnd() {
-    Pr.style.display = "none";
-    elementos.style.display = "none";
-    cF.style.display = "none";
-    game.style.display = "flex";
-
-    
-    displayPericias();
-    ficha.status.vidaMax = ficha.status.vidaMax + (ficha.pericias.Corpo.value + ficha.pericias.Constituição.value)*3 + 5
-    ficha.status.vida = ficha.status.vidaMax;
-
-    ficha.status.pontosDeMagiaMax = 8 + ficha.pericias.Magia.value*3 + ficha.status.pontosDeMagiaMax + Math.ceil(ficha.pericias.Ocultismo.value);
-    ficha.status.pontosDeMagia = ficha.status.pontosDeMagiaMax;
-    (ficha.status.pontosDeMagiaMax)
-
-    ficha.status.medoMax = ficha.status.medoMax + (ficha.pericias.Estabilidade.value*5) + 30
-    ficha.status.medo = ficha.status.medoMax;
-    (ficha.status.medoMax)
-
-
-}
-
-function displayPericias(forDice=false) {
-    const periciasContainer = document.getElementById('pericias-display');
-    if (!periciasContainer) return;
-    periciasContainer.innerHTML = ''; 
-
-    const categories = tooltipDictionary.Atributo;
-
-    for (const categoryName in categories) {
-        const categoryData = categories[categoryName];
-        
-        // Create category block
-        const pBlock = document.createElement('div');
-        pBlock.className = 'pBlock';
-
-        // Create title
-        const pbTitle = document.createElement('div');
-        pbTitle.className = 'pb-title';
-        const titleText = document.createElement('p');
-        titleText.className = 'text';
-        titleText.style.fontWeight = 'bold';
-        titleText.style.fontSize = '1.2em';
-        titleText.textContent = categoryName;
-        pbTitle.appendChild(titleText);
-        pBlock.appendChild(pbTitle);
-
-        // Add skills for the category
-        categoryData.pericias.forEach(periciaName => {
-            if (ficha.pericias[periciaName]) {
-                const pericia = ficha.pericias[periciaName];
-                const periciaElement = document.createElement('div');
-                periciaElement.className = 'p-card';
-
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = periciaName.replace(/([a-z])([A-Z])/g, '$1 $2');
-                
-                periciaElement.appendChild(nameSpan);
-
-                const nbrDiv = document.createElement('div');
-                nbrDiv.className = 'nbr';
-
-                const valueSpan = document.createElement('span');
-                valueSpan.className = 'p-count';
-                if (forDice) valueSpan.style.maxWidth = "none"
-                valueSpan.textContent = pericia.value;
-                if(forDice) {
-                    if (pericia.value == 0) valueSpan.textContent = "--"; 
-                    else {
-                        const Normal = tabelaPericia[pericia.value].N != null ? tabelaPericia[pericia.value].N : "--"
-                        const Bom = tabelaPericia[pericia.value].B != null ? tabelaPericia[pericia.value].B : "--"
-                        const Extremo = tabelaPericia[pericia.value].E != null ? tabelaPericia[pericia.value].E : "--"
-    
-                        valueSpan.textContent = Normal + " | " + Bom + " | " + Extremo;
-                    }
-                }
-                valueSpan.id = "D-" + periciaName + "-value";
-                
-                nbrDiv.appendChild(valueSpan);
-
-                if (!forDice) {
-                    const rollBtn = document.createElement('button');
-                    rollBtn.className = 'btn roll-pericia-btn base';
-                    rollBtn.textContent = 'Rolar';
-                    rollBtn.onclick = () => {
-                        diceInput.value = `1d20`;
-                        rollDice(pericia.value);
-                    }
-                    nbrDiv.appendChild(rollBtn);
-                }
-                
-                periciaElement.appendChild(nbrDiv);
-                pBlock.appendChild(periciaElement);
-            }
-        });
-
-        periciasContainer.appendChild(pBlock);
-    }
-
     statusAtu()
+    displayPericias()
+    loadScream(3, 3)
+
+    setTimeout(() => {
+        prDiv = Pr
+        cF.remove()
+        game.style.display = "flex";
+    }, 3000);
+    
 }
 
 function irParaJogo() {
@@ -1252,14 +810,11 @@ function irParaJogo() {
     const main = document.querySelector("main");
 
     main.style.display = "none";
-    cF.style.display = "none";
+    cF.style.display = "flex";
     game.style.display = "flex";
 
-    // Se a função displayPericias existir, chame-a
-    if (typeof displayPericias === 'function') {
-        displayPericias();
-    }
-
+    
+    displayPericias();
 }
 
 function renderPersonagem() {
@@ -1290,65 +845,6 @@ function renderPersonagem() {
     });
 }
 
-document.getElementById('editarPericiasBtn').addEventListener('click', () => {
-    const editorBox = document.getElementById('periciasEditorBox');
-    
-    const editor = document.getElementById('periciasEditor');
-    const statusEditor = document.getElementById('statusMaxEditor');
-    
-    if (editorBox.classList.contains('hidden')) {
-        renderPericiasEditor();
-        renderStatusMaxEditor();
-        editorBox.classList.remove('hidden');
-        statusEditor.classList.remove('hidden');
-        editarPericiasBtn.textContent = "Salvar Edição";
-    } else {
-        salvarPericiasEditadas();
-        salvarStatusMaxEditados();
-        editorBox.classList.add('hidden');
-        statusEditor.classList.add('hidden');
-        editarPericiasBtn.textContent = "Editar Perícias";
-    }
-});
-
-function renderPericiasEditor() {
-    const editor = document.getElementById('periciasEditor');
-    editor.innerHTML = '';
-
-    for (const [nome, dados] of Object.entries(ficha.pericias)) {
-        const linha = document.createElement('div');
-        linha.className = 'pericia-edit';
-        
-        const label = document.createElement('p');
-        label.textContent = nome;
-        
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.min = dados.min;
-        input.max = dados.max;
-        input.value = dados.value;
-        input.dataset.nome = nome;
-
-        linha.appendChild(label);
-        linha.appendChild(input);
-        editor.appendChild(linha);
-    }
-}
-
-function salvarPericiasEditadas() {
-    const inputs = document.querySelectorAll('#periciasEditor input');
-    console.log("salvando pericias")
-    inputs.forEach(input => {
-        const nome = input.dataset.nome;
-        const valor = parseInt(input.value) || 0;
-        ficha.pericias[nome].value = valor;
-        const span = document.getElementById("D-" + input.dataset.nome + "-value"); //retorna o span do valor da pericia
-        span.innerHTML = valor; // atualiza o valor do span
-    });
-    document.getElementById('periciasEditorBox').classList.add('hidden');
-    alert('Perícias atualizadas!');
-}
-
 // ===================== STATUS MÁXIMOS =====================
 
 function renderStatusMaxEditor() {
@@ -1357,7 +853,7 @@ function renderStatusMaxEditor() {
 
     const statusList = [
         { key: 'vidaMax', label: 'Vida Máx.' },
-        { key: 'pontosDeMagiaMax', label: 'MP Máx.' },
+        { key: 'magiaMax', label: 'MP Máx.' },
         { key: 'medoMax', label: 'Medo Máx.' }
     ];
 
@@ -1388,41 +884,10 @@ function salvarStatusMaxEditados() {
     });
 }
 
-function enableTooltipsMobile() {
-    const tooltipElems = document.querySelectorAll('short');
-
-    tooltipElems.forEach(el => {
-        el.addEventListener('click', (e) => {
-            const tooltip = document.getElementById(el.dataset.tooltipId);
-            if (tooltip.style.display === 'block') {
-                tooltip.style.display = 'none';
-            } else {
-                tooltip.style.display = 'block';
-                // opcional: posicionar perto do click
-                const rect = el.getBoundingClientRect();
-                tooltip.style.top = (rect.bottom + window.scrollY + 5) + 'px';
-                tooltip.style.left = (rect.left + window.scrollX) + 'px';
-            }
-        });
-    });
-
-    // Fechar tooltip ao clicar fora
-    document.addEventListener('click', (e) => {
-        tooltipElems.forEach(el => {
-            const tooltip = document.getElementById(el.dataset.tooltipId);
-            if (tooltip && !el.contains(e.target) && !tooltip.contains(e.target)) {
-                tooltip.style.display = 'none';
-            }
-        });
-    });
-}
-
-// Chame ao iniciar o site
-enableTooltipsMobile();
 
 const mobileMTBtn = document.getElementById('MobileMTBtn');
 const mtMenu = document.getElementById('mt-menu');
-const mMTImage = document.getElementById('mMTImage');
+const mMTImage = document.getElementsByClassName('mMTImage')[0];
 
 if (mobileMTBtn) {
     mobileMTBtn.addEventListener('click', () => {
@@ -1457,18 +922,575 @@ window.addEventListener('resize', () => {
         if (mobileMTBtn) {
             mobileMTBtn.classList.remove('active');
         }
+
+        perPlaces.appendChild(prNextBtn)
+        perListsPlacesGen(false)
+    } else {
+        perListsPlacesGen(false)
+        prContent.appendChild(prNextBtn)
     }
 
     if(window.innerWidth > 400) {
-        document.getElementById("pericias-display-block").style.display = "block"
+        periciasDisplayer.style.display = "block"
     }
 
     if(window.innerWidth > 500) {
-        document.getElementById("pericias-display-block").style.backgroundImage = ""
+        periciasDisplayer.style.backgroundImage = ""
     }
 
-    if(window.innerWidth < 500) {
-        document.getElementById("pericias-display-block").style.backgroundImage = document.querySelector("body").style.backgroundImage
+    if(window.innerWidth < 500 && ficha.options.translucidPer) {
+        periciasDisplayer.style.backgroundImage = document.querySelector("body").style.backgroundImage
     }
 
 });
+
+class PerlinDissolve {
+
+    constructor(element, resolution = 512) {
+
+        this.element = element;
+        this.size = resolution;
+
+        this.canvas = document.createElement("canvas");
+        this.canvas.width = resolution;
+        this.canvas.height = resolution;
+
+        this.ctx = this.canvas.getContext("2d", {
+            willReadFrequently: true
+        });
+
+        this.currentProgress = 0;
+
+        this.element.style.display = "none";
+        this.element.style.pointerEvents = "none";
+        this.element.setAttribute("aria-hidden", "true");
+
+        this.noise = this.generateNoise();
+
+        this.setProgress(0, true);
+    }
+
+    generateNoise() {
+
+        const values = new Float32Array(
+            this.size * this.size
+        );
+
+        const octaves = [
+            { size: 4, weight: 1.0 },
+            { size: 8, weight: 0.5 },
+            { size: 16, weight: 0.25 },
+            { size: 32, weight: 0.125 }
+        ];
+
+        const lerp = (a, b, t) =>
+            a + (b - a) * t;
+
+        const smoothstep = t =>
+            t * t * (3 - 2 * t);
+
+        for (const octave of octaves) {
+
+            const grid = [];
+
+            for (let y = 0; y <= octave.size; y++) {
+
+                grid[y] = [];
+
+                for (let x = 0; x <= octave.size; x++) {
+
+                    grid[y][x] = Math.random();
+
+                }
+            }
+
+            for (let y = 0; y < this.size; y++) {
+
+                for (let x = 0; x < this.size; x++) {
+
+                    const fx =
+                        (x / this.size) *
+                        octave.size;
+
+                    const fy =
+                        (y / this.size) *
+                        octave.size;
+
+                    const x0 = Math.floor(fx);
+                    const y0 = Math.floor(fy);
+
+                    const x1 = x0 + 1;
+                    const y1 = y0 + 1;
+
+                    const tx =
+                        smoothstep(fx - x0);
+
+                    const ty =
+                        smoothstep(fy - y0);
+
+                    const n00 = grid[y0][x0];
+                    const n10 = grid[y0][x1];
+                    const n01 = grid[y1][x0];
+                    const n11 = grid[y1][x1];
+
+                    const nx0 =
+                        lerp(n00, n10, tx);
+
+                    const nx1 =
+                        lerp(n01, n11, tx);
+
+                    const value =
+                        lerp(nx0, nx1, ty);
+
+                    values[
+                        y * this.size + x
+                    ] +=
+                        value *
+                        octave.weight;
+                }
+            }
+        }
+
+        let min = Infinity;
+        let max = -Infinity;
+
+        for (const v of values) {
+
+            if (v < min) min = v;
+            if (v > max) max = v;
+
+        }
+
+        const range = max - min;
+
+        for (let i = 0; i < values.length; i++) {
+
+            values[i] =
+                (values[i] - min) /
+                range;
+
+        }
+
+        return values;
+    }
+
+    setProgress(progress, isHide = false) {
+
+        progress = Math.max(
+            0,
+            Math.min(1, progress)
+        );
+
+        this.currentProgress = progress;
+
+        if (progress <= 0.001) {
+
+            this.element.style.pointerEvents =
+                "none";
+
+            this.element.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+        } else {
+
+            this.element.style.pointerEvents =
+                "auto";
+
+            this.element.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+        }
+
+        if (progress >= 0.999 && !isHide) {
+
+            this.element.style.transition = "opacity 0.2s"
+            this.element.style.opacity = 1
+
+            setTimeout(() => {
+                this.element.style.maskImage = "none";
+                this.element.style.webkitMaskImage = "none";
+            }, 200);
+
+            return;
+        }
+
+        const imageData =
+            this.ctx.createImageData(
+                this.size,
+                this.size
+            );
+
+        const edge = 0.18;
+
+        for (
+            let i = 0;
+            i < this.noise.length;
+            i++
+        ) {
+
+            const noise =
+                this.noise[i];
+
+
+            let alpha =
+                (progress - noise + edge) /
+                (edge * 2);
+
+            alpha = Math.max(0, Math.min(1, alpha));
+
+            // Smoothstep
+            alpha = alpha * alpha * (3 - 2 * alpha);
+            const p = i * 4;
+
+            imageData.data[p] = 255;
+            imageData.data[p + 1] = 255;
+            imageData.data[p + 2] = 255;
+            imageData.data[p + 3] =
+                Math.floor(alpha * 255);
+        }
+
+        this.ctx.putImageData(
+            imageData,
+            0,
+            0
+        );
+
+        const url =
+            this.canvas.toDataURL(
+                "image/png"
+            );
+
+        this.element.style.maskImage =
+            `url(${url})`;
+
+        this.element.style.webkitMaskImage =
+            `url(${url})`;
+
+        this.element.style.maskSize =
+            "100% 100%";
+
+        this.element.style.webkitMaskSize =
+            "100% 100%";
+
+        this.element.style.maskRepeat =
+            "no-repeat";
+
+        this.element.style.webkitMaskRepeat =
+            "no-repeat";
+    }
+
+    animateTo(
+        target,
+        duration = 1500,
+        isHide = false
+    ) {
+
+        target = Math.max(
+            0,
+            Math.min(1, target)
+        );
+
+        const start =
+            this.currentProgress;
+
+        const startTime =
+            performance.now();
+
+        const easeOutCubic = t =>
+            1 - Math.pow(
+                1 - t,
+                3
+            );
+
+        const animate = now => {
+
+            const t = Math.min(
+                (now - startTime) /
+                duration,
+                1
+            );
+
+            const eased =
+                easeOutCubic(t);
+
+            const value =
+                start +
+                (target - start) *
+                eased;
+
+            this.setProgress(
+                value,
+                isHide
+            );
+
+            if (t < 1) {
+
+                requestAnimationFrame(
+                    animate
+                );
+
+            } else {
+
+                if (target === 0) {
+
+                    this.element.style.display =
+                        "none";
+
+                    this.element.style.pointerEvents =
+                        "none";
+
+                    this.element.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+                }
+            }
+        };
+
+        requestAnimationFrame(
+            animate
+        );
+    }
+
+    show(duration = 1500) {
+
+        this.element.style.display = "";
+
+        this.element.style.pointerEvents =
+            "auto";
+
+        this.element.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        this.animateTo(
+            1,
+            duration,
+            false
+        );
+    }
+
+    hide(duration = 1500) {
+
+        this.animateTo(
+            0,
+            duration,
+            true
+        );
+    }
+}
+
+const loadScreamDissolve = new PerlinDissolve( document.querySelector("#loadingScream"), 1024);
+
+function loadScream(seconds, animationTime=2) {
+    
+    loadScreamDissolve.show(animationTime*1000)
+
+    setTimeout(() => {
+        loadScreamDissolve.hide(animationTime*1000)
+    }, seconds * 1000 + animationTime * 1000)
+    
+} 
+
+//Ofuscamento 
+
+const GLITCH_CHARS =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?<>[]{}+-=*/\\|";
+
+const GLITCH_FONTS = [
+    "monospace",
+    "serif",
+    "sans-serif",
+    "cursive",
+    "fantasy"
+];
+
+function eraseText(element, speed = 40, glitchLength = 6) {
+
+    const original = element.textContent;
+    let remaining = original.length;
+
+    const escapeHTML = str =>
+        str.replaceAll("&", "&amp;")
+           .replaceAll("<", "&lt;")
+           .replaceAll(">", "&gt;");
+
+    return new Promise(resolve => {
+
+        const interval = setInterval(() => {
+
+            if (remaining <= 0) {
+                clearInterval(interval);
+                element.textContent = "";
+                resolve();
+                return;
+            }
+
+            remaining--;
+
+            const safe = original.slice(0, remaining);
+
+            let html = escapeHTML(safe);
+
+            const end = Math.min(glitchLength, original.length - remaining);
+
+            for (let i = 0; i < end; i++) {
+
+                const char =
+                    GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+
+                const font =
+                    GLITCH_FONTS[Math.floor(Math.random() * GLITCH_FONTS.length)];
+
+                html += `<span style="font-family:${font};">${char}</span>`;
+            }
+
+            element.innerHTML = html;
+
+        }, speed);
+
+    });
+
+}
+
+function writeText(element, text, speed = 40, glitchLength = 6) {
+
+    let written = 0;
+
+    const escapeHTML = str =>
+        str.replaceAll("&", "&amp;")
+           .replaceAll("<", "&lt;")
+           .replaceAll(">", "&gt;");
+
+    return new Promise(resolve => {
+
+        const interval = setInterval(() => {
+
+            if (written > text.length) {
+                clearInterval(interval);
+                element.textContent = text;
+                resolve();
+                return;
+            }
+
+            let html = escapeHTML(text.slice(0, written));
+
+            const remaining = text.length - written;
+            const glitchCount = Math.min(glitchLength, remaining);
+
+            for (let i = 0; i < glitchCount; i++) {
+
+                const char =
+                    GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+
+                const font =
+                    GLITCH_FONTS[Math.floor(Math.random() * GLITCH_FONTS.length)];
+
+                html += `<span style="font-family:${font};">${char}</span>`;
+            }
+
+            element.innerHTML = html;
+
+            written++;
+
+        }, speed);
+
+    });
+
+}
+
+
+
+function overshadowText(
+    element,
+    intensity = 0.3,
+    duration = 1000,
+    speed = 40
+) {
+
+    return new Promise(resolve => {
+
+        const original = element.textContent;
+
+        const escapeHTML = str =>
+            str.replaceAll("&", "&amp;")
+               .replaceAll("<", "&lt;")
+               .replaceAll(">", "&gt;");
+
+        clearInterval(element._overshadowInterval);
+
+        element._overshadowInterval = setInterval(() => {
+
+            let html = "";
+
+            for (const char of original) {
+
+                // Mantém espaços
+                if (char === " ") {
+                    html += " ";
+                    continue;
+                }
+
+                if (Math.random() < intensity) {
+
+                    const randomChar =
+                        GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+
+                    const randomFont =
+                        GLITCH_FONTS[Math.floor(Math.random() * GLITCH_FONTS.length)];
+
+                    html += `
+                        <span style="
+                            font-family:${randomFont};
+                            display:inline-block;
+                        ">
+                            ${randomChar}
+                        </span>
+                    `;
+
+                } else {
+
+                    html += escapeHTML(char);
+
+                }
+
+            }
+
+            element.innerHTML = html;
+
+        }, speed);
+
+        setTimeout(() => {
+
+            clearInterval(element._overshadowInterval);
+            element.textContent = original;
+            resolve();
+
+        }, duration);
+
+    });
+
+}
+
+function startOvershadow(element, amount = 6, speed = 40) {
+
+    stopGlitch(element);
+
+    element._glitchInterval = setInterval(() => {
+        glitchText(element, amount);
+    }, speed);
+}
+
+function stopOvershadow(element) {
+
+    clearInterval(element._glitchInterval);
+
+    if (element.dataset.originalText) {
+        element.textContent = element.dataset.originalText;
+    }
+}

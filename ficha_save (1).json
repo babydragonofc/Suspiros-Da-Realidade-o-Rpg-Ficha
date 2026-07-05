@@ -17,7 +17,7 @@
     "pontosDeMagia": 27,
     "medo": 85,
     "vidaMax": 35,
-    "pontosDeMagiaMax": 27,
+    "magiaMax": 27,
     "medoMax": 90
   },
   "pericias": {
@@ -386,7 +386,7 @@
   },
   "options": {
     "wallpaper": 0,
-    "chEdit": true,
+    "statusModifier": true,
     "autoSave": false
   },
   "sexo": "masculino",

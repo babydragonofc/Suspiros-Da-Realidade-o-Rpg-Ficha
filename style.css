@@ -46,7 +46,15 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 3em;
+    gap: 2em;
+}
+
+main footer {
+    display: flex;
+    width: 100dvw;
+    position: absolute;
+    bottom: 0;
+    justify-content: center;
 }
 
 main::-webkit-scrollbar {
@@ -56,6 +64,74 @@ main::-webkit-scrollbar {
 .logo {
     filter: brightness(0) invert(1);
     width: 90%;
+}
+
+#ordoDoc-wrap {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 310px;
+
+    perspective: 1000px;
+    perspective-origin: center;
+
+    z-index: -1;
+}
+
+#ordoDoc {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: url(img/ordoDoc.webp) center/contain no-repeat;
+
+    transform: rotateX(21deg) rotateY(-27deg) rotateZ(13deg);
+    transform-style: preserve-3d;
+
+    filter: brightness(0.6);
+}
+
+#ordoDoc .name {
+    position: relative;
+    top: 234px;
+    left: 20px;
+    font-size: 39px;
+}
+
+#ordoDoc .birth {
+    font-size: 21px;
+    position: absolute;
+    top: 144px;
+    left: 235px;
+    font-style: italic;
+}
+
+.textBtn {
+    color: white;
+}
+
+.textBtn:hover {
+    text-decoration: underline;
+}
+
+.notion {
+    display: flex;
+    gap: 2px;
+}
+.notion::after {
+    content: '!';
+    height: 20px;
+    width: 20px;
+    background-color: red;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 25px;
 }
 
 .btn {
@@ -141,6 +217,12 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+.sex-btn {
+    width: 50px;    
+    padding: 0;
+    margin-left: 10px;
+}
+
 .sex-btn.selected {
     background-color: #a0a0a0;
     color: var(--main-clr);
@@ -167,11 +249,26 @@ input:checked + .slider:before {
     transition: 0.2s ease-in; 
 }
 
+.small-title {
+    font-family: 'DDC', sans-serif;
+    font-weight: 300;
+    margin: 4px;
+    font-size: 58px;
+    color: var(--main-clr);
+}
 .title {
     font-family: 'DDC', sans-serif;
     font-weight: 300;
     margin: 4px;
     font-size: 80px;
+    color: var(--main-clr);
+}
+
+.big-title {
+    font-family: 'DDC', sans-serif;
+    font-weight: 300;
+    margin: 4px;
+    font-size: 120px;
     color: var(--main-clr);
 }
 
@@ -183,9 +280,13 @@ input:checked + .slider:before {
     display: none;
 }
 
-#IB {
+#IB, #Rs {
     display: none;
     flex-direction: column;
+}
+
+#IB .text {
+    margin: 1.5em 0 0.5em 0;
 }
 
 .pBtn {
@@ -200,11 +301,6 @@ input:checked + .slider:before {
     color: rgb(0, 0, 0);
     border: none;
     
-}
-
-#Rs {
-    display: none;
-    flex-direction: column;
 }
 
 #Rs-box {
@@ -512,10 +608,15 @@ short {
   mask: var(--svg-icon) no-repeat center / contain; 
 }
 
+
 hr {
   border: none;
   border-top: 1px solid #666;
   margin: 4px 0;
+}
+
+hr.marker {
+    border-top: 3px solid #666;
 }
 
 hr.small {
@@ -931,28 +1032,197 @@ img.reverse {
 }
 
 #Pr {
+    width: 100%;
     display: none;
-    width: 600px;
-    gap: 2em;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    height: 100dvh;
+    
 }
 
-#Pr .pr-block {
-
-    width: 50%;
-    height: 100%;
-    color: var(--main-clr);
+#Pr header {
+    display: flex;
+    width: -webkit-fill-available;
+    box-sizing: border-box;
+    justify-content: space-between;
 }
 
-#Pr .pr-block #pericias {
+#Pr header .big-title, #lvSelect {
+    margin: 0;
+}
+
+#Pr-Content {
+    flex-direction: column;
+    height: 90dvh;
+    overflow: hidden;
+}
+
+#perLists {
     display: flex;
     flex-direction: column;
+    gap: 0.5em;
+    overflow-y: auto;
+} 
+    
+#perLists::-webkit-scrollbar {
+    display: none;
+}
+
+#perLists header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#pr-next-btn {
+    margin: 0 20px;
+}
+
+.itemPlace {
+    height: 7dvh;
+}
+
+.pr-block {
+    width: 100%;
+}
+
+#lvSelect {
+    position: relative;
+    top: 8px;
+}
+
+#lvSelectContent {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+#lvSelectNumber {
+    color: white;
+    font-size: 33px;
+    margin: 0;
+    width: 12px;
+    display: flex;
     justify-content: center;
-    width: 300px;
-    background-color: #222;
-    border: 1px solid var(--ter-clr);
-    max-height: 550px;
-    justify-content: flex-start;
-    overflow: auto;
+}
+
+#perGrid {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#perPlaces {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#perLists {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.perLine {
+    display: flex;
+}
+
+.perUselessPlace, .perUsefullPlace {
+    position: relative;
+    transition: 0.4s;
+}
+
+.perUselessPlace::after, .perUsefullPlace::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    transition: 0.4s;
+}
+
+.perUselessPlace::after {
+    box-shadow: inset 0 0 10px rgb(255, 53, 53);
+}
+
+.perUsefullPlace::after {
+    box-shadow: 0 0 10px inset white;
+}
+
+.perLine .perLineTitle {
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e6e6e6;
+    background-color: #272727;
+}
+
+.perLine .perLineTitle.white {
+    background-color: #e6e6e6e6;
+    color: #272727;
+}
+
+
+.item {
+    position: absolute;
+    user-select: none;
+    cursor: grab;
+    transition: scale 0.3s;
+    width: 120px;
+    height: 70px;
+    background-color: #2c2c2c;
+    border: 1px solid black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item h2 {
+    text-align: center;
+}
+
+.item.small-text h2 {
+    font-size: 127%;
+}
+
+.item:active {
+    cursor: grabbing;
+    scale: 1.2;
+}
+
+.item:not(.free) {
+    position: static;
+}
+
+.drag-placeholder{
+    border:2px dashed #999;
+    opacity:.5;
+    box-sizing: border-box;
+}
+
+.place {
+    width: 120px;
+    height: 70px;
+    background-color: transparent;
+    border: 1px solid black;
+}
+
+.place .item {
+    border: none;
+}
+
+.itemPlace {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.5em;
+    border: 1px solid black;
+    width: auto;
+    height: 70px;
 }
 
 #ptsDisplay {
@@ -968,6 +1238,7 @@ img.reverse {
 }
 
 #Pr .pr-block #pericias .pBlock {
+
     margin: 10px;
     background-color: #111;
     border: 1px solid var(--ter-clr);
@@ -1055,7 +1326,7 @@ img.reverse {
 }
 
 
-#pericias-display-block {
+#periciasDisplayer {
     width: 258px;
     height: 100%;
     overflow-y: auto;
@@ -1067,16 +1338,16 @@ img.reverse {
     min-height: 100%;
 }
 
-#pericias-display-block.translucid {
+#periciasDisplayer.translucid {
     background-color: transparent;
 }
 
-#pericias-display-block.translucid.blur {
+#periciasDisplayer.translucid.blur {
     backdrop-filter: blur(var(--blur-per));
 }
 
 /*
-#pericias-display-block.translucid.blur::before {
+#periciasDisplayer.translucid.blur::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1092,7 +1363,7 @@ img.reverse {
     inset: 0;
 }
 */
-#pericias-display-block::-webkit-scrollbar {
+#periciasDisplayer::-webkit-scrollbar {
     display: none;
 }
 
@@ -1101,6 +1372,8 @@ img.reverse {
     color: var(--main-clr);
     text-align: center;
 }
+
+
 
 .pericias-list-display {
     display: flex;
@@ -1122,19 +1395,43 @@ img.reverse {
     background-color: #222;
     border: 1px solid var(--ter-clr);
     padding: 10px;
+    color: white;
 }
 
-#pericias-display-block.translucid #pericias-display .pBlock {
+#pericias-display .pBlock header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+}
+
+#pericias-display .pBlock header .hideNShowBtn{
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+    border: none;
+    position: relative;
+    width: 85px;
+}
+
+#pericias-display .pBlock .perDisplayBlockInt{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#pericias-display .pBlock .perDisplayBlockInt .perDisplayBlock {
+    display: flex;
+    justify-content: space-between;
+}
+
+#periciasDisplayer.translucid #pericias-display .pBlock {
     background-color: transparent;
 }
 
-#pericias-display-block.translucid #pericias-display .pBlock .p-card {
+#periciasDisplayer.translucid #pericias-display .pBlock .p-card {
     border: solid rgba(255, 255, 255, 0.216) 1px;
     background-color: transparent;
-}
-
-#pericias-display .pBlock .text {
-    color: white;
 }
 
 #pericias-display .pb-title .text {
@@ -1154,7 +1451,8 @@ img.reverse {
 #multiTask {
     width: calc(100% - 258px);
     min-width: calc(100% - 258px);
-    height: 97%;
+    flex: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     border:var(--main-clr) 1px solid;
@@ -1211,14 +1509,18 @@ img.reverse {
 
 .mt-content {
     width: 100%;
+    flex: 1;
+    min-height: 0;
+    overflow-y: hidden;
 }
 
 #magias-content {
     display: flex;
     flex-direction: column;
     gap: 1em;
-    justify-content: center;
     align-items: center;
+    height: 100%;
+    min-height: 0;
 }
 
 #magias-content .title {
@@ -1226,16 +1528,21 @@ img.reverse {
 }
 
 .magias-content {
-    width: 80%;
-    height: 405px;
+    width: 90%;
+
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
+
     grid-auto-rows: min-content;
     gap: 1em;
-    border: 1px solid var(--ter-clr);
     overflow-y: auto;
+
+    height: 67dvh;
+    max-height: 67dvh;
+
     padding: 1em;
     box-sizing: border-box;
+    border: 1px solid var(--ter-clr);
 }
 
 .habilidades-content::-webkit-scrollbar, .magias-content::-webkit-scrollbar {
@@ -1268,13 +1575,8 @@ img.reverse {
     margin-bottom: 0;
 }
 
-#exportBtn {
-    position: absolute;
-    bottom: 0;
-}
-
 .panel {
-    display: none;
+    display: flex;
     position: absolute;
     top: 0;
     left: 0;
@@ -1296,29 +1598,38 @@ img.reverse {
     justify-content: center;
     background-color: #111;
     border: 1px solid var(--ter-clr);
-    width: 80%;
+    width: 90%;
     max-width: 800px;
     height: auto;
-    min-height: 400px;
-    padding: 20px;
+    min-height: 420px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease-in-out;
 }
 
+.panel .box.changeLogBox {
+    overflow-y: auto;
+    max-height: 600px
+}
+
+.panel .box.changeLogBox::-webkit-scrollbar {
+    display: none;
+}
+
 .exit-box {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 15px;
+    right: 15px;
     color: white;
     background-color: #222;
     cursor: pointer;
     user-select: none;
-    width: 14px;
-    height: 14px;
+    width: 23px;
+    height: 23px;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1;
+    margin: 0;
 }
 
 .panel .box div {
@@ -1344,16 +1655,121 @@ img.reverse {
     height: 100px;
 }
 
-.magic-card, .ability-card{
+.magic-card, .ability-card {
     position: relative;
+    display: flex;
+    height: 200px;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.magic-card-inner, .ability-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.magic-card.hover .magic-card-inner, .ability-card.hover .ability-card-inner{
+  transform: rotateY(180deg);
+}
+
+.magic-card-front,
+.magic-card-back,
+.ability-card-front,
+.ability-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border: 1px solid var(--ter-clr);
+    padding: 1em;
+    box-sizing: border-box;
+}
+
+.magic-card-front, .ability-card-front {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: #111;
-    border: 1px solid var(--ter-clr);
-    height: 130px;
-    
+}
+
+.magic-card-back, .ability-card-back {
+    display: flex;
+    justify-content: space-between;
+    background: #333;
+    color: white;
+    transform: rotateY(180deg);
+}
+
+.magicDesc, .abilityDesc {
+    margin: 0 10px 0 0;
+    overflow-y: auto;
+}
+
+.magicDesc::-webkit-scrollbar, .abilityDesc::-webkit-scrollbar{
+    display: none;
+}
+
+.scroll-container {
+    position: relative;
+    overflow: auto;
+    max-height: 300px;
+    transition: opacity 5s ease-in-out;
+}
+
+.scroll-container::before,
+.scroll-container::after {
+    content: "";
+    display: flex;
+    position: sticky;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .2s ease;
+    z-index: 10;
+}
+
+.scroll-container::before {
+    top: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,.40),
+        transparent
+    );
+}
+
+.scroll-container::after {
+    bottom: 0;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,.40),
+        transparent
+    );
+}
+
+.scroll-container.has-top-shadow::before {
+    opacity: 1;
+}
+
+.scroll-container.has-bottom-shadow::after {
+    opacity: 1;
+} 
+
+.btns-div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min-content;
+}
+
+.btns-div button {
+    width: -webkit-fill-available;
+    height: 30px;
 }
 
 .trauma-card {
@@ -1379,7 +1795,7 @@ img.reverse {
 }
 
 .habilidades-content {
-    width: 80%;
+    width: 90%;
     height: 405px;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1389,6 +1805,9 @@ img.reverse {
     overflow-y: auto;
     padding: 1em;
     box-sizing: border-box;
+    height: 67dvh;
+    max-height: 67dvh;
+
 }
 
 #habilidades-content h3.title {
@@ -1418,14 +1837,16 @@ img.reverse {
     display: flex;
     gap: 1em;
     align-items: center;
-    height: 563px;
+    height: 100%;
     width: 100%;
     align-items: flex-start;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 #inventario-content .inv-side {
     width: 50%;
-    height: 600px;
+    height: 100%;
 }
 
 #inventario-content .inv-side:first-child {
@@ -1436,14 +1857,15 @@ img.reverse {
     display: flex;
     flex-direction: column;
     gap: 10px; /* Add gap between items */
-    height: calc(83% - 2em - 2px);
+    height: calc(100% - 2em - 2px);
     width: 250px;
     border: 1px solid var(--ter-clr);
     overflow-y: auto;
     padding: 1em;
+    margin-bottom: 16px;
     box-sizing: border-box;
-    margin: 1em;
     margin-top: 0;
+    margin-right: 1em;
 }
 
 #inventory::-webkit-scrollbar {
@@ -1456,8 +1878,10 @@ img.reverse {
     color: white;
     padding: 10px;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    transition: 0.2s;
     border-radius: 4px;
+    height: 19px;
+    overflow-y: hidden;
 }
 
 .item-card:hover {
@@ -1469,7 +1893,12 @@ img.reverse {
     justify-content: space-between;
 }
 
-.item-content {
+.item-card.active .item-content {
+    display: flex;
+}
+
+.item-card .item-content {
+    display: none;
     justify-content: space-between;
 }
 
@@ -1510,13 +1939,8 @@ img.reverse {
     background-color: #333;
 }
 
-.invAddBtn {
-    width: 250px;
-    margin-left:16px;
-}
-
 #useInput {
-    height: 200px;
+    height: -webkit-fill-available;
     width: 98%;
     border: var(--ter-clr) 1px solid;
     background-color: #99999917;
@@ -1537,6 +1961,11 @@ img.reverse {
     background-position: 0 0, 0 0, 100% 0, 0 100%;
     background-repeat: no-repeat;
     user-select: none;
+}
+
+.arma-area .text:first {
+    font-size: 25px;
+    margin-bottom: 0;
 }
 
 .arma-area .pre {
@@ -1596,7 +2025,7 @@ img.reverse {
     background-color: #222;
 }
 
-#createItem, #createWeapon, #createMunition {
+#createItemMenu, #createWeaponMenu, #createMunitionMenu {
     display: none;
     gap: 30px;
     justify-content: center;
@@ -1604,9 +2033,9 @@ img.reverse {
     height: stretch;
     overflow-y: auto;
 }
-#createItem::-webkit-scrollbar,
-#createWeapon::-webkit-scrollbar,
-#createMunition::-webkit-scrollbar {
+#createItemMenu::-webkit-scrollbar,
+#createWeaponMenu::-webkit-scrollbar,
+#createMunitionMenu::-webkit-scrollbar {
     display: none;
 }
 
@@ -1641,7 +2070,7 @@ img.reverse {
     display: flex;
     flex-direction: column;
     gap: 10px; /* Add gap between items */
-    height: calc(91% - 2em - 2px);
+    height: 100%;
     width: 250px;
     border: 1px solid var(--ter-clr);
     overflow-y: auto;
@@ -1653,10 +2082,6 @@ img.reverse {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-}
-
-.inv-side.d .text, .inv-side.d #guardados {
-    margin-right: 1em;
 }
 
 #ItemInfo, #ItemCreate {
@@ -1724,7 +2149,7 @@ img.reverse {
     background: linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
 }
 
-#nmbW {
+#rollResultTypeBackText {
     opacity: 0;
     transition: 1s ease-in-out;
 
@@ -1757,7 +2182,7 @@ img.reverse {
     background-size: cover;
 }
 
-#perTop #chEdit {
+#perTop #statusModifierEdit {
     position: relative;
     display: flex;
     width: 100%;
@@ -1969,8 +2394,6 @@ img.reverse {
 .personagem-biografia {
     display: flex;
     flex-direction: column;
-    max-height: 80dvh;
-    min-height: 80dvh;
     overflow: auto;
 }
 
@@ -2009,12 +2432,83 @@ img.reverse {
 
 #periciasEditorBox #periciasEditor,
 #statusEditor {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(9, 1fr);
-    grid-column-gap: 14px;
-    grid-row-gap: 14px;
+    display: block;
+    padding: 20px 30px;
 
+}
+
+.pericias-pyramid-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.pericias-editor-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.pericias-editor-level {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pericias-editor-level span {
+    min-width: 28px;
+    color: white;
+    font-size: 32px;
+    text-align: center;
+}
+
+.pericias-editor-level .btn {
+    padding: 0 10px 0 10px;
+}
+
+.pericias-editor-content {
+    display: flex;
+    flex-direction: column;
+}
+
+#periciasEditorPlaces,
+#periciasEditorGrid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#periciasEditorLists {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 65dvh;
+    overflow-y: auto;
+}
+
+#periciasEditorLists header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pericias-editor-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#periciasEditor .itemPlace {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 70px;
+    border-color: #b4b4b4;
+}
+
+#periciasEditor .place {
+    flex: 0 0 auto;
+    border-color:#b4b4b4;
 }
 
 .periciasEditorBoxContent {
@@ -2042,26 +2536,29 @@ img.reverse {
 #statusEditor div {
     
     position: relative;
-    height: 40px;
+    min-height: 44px;
     display: flex;
     background-color: #444;
     font-family: "Crimson Text", serif;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 10px;
 
 }
 
 
-.pericia-edit input {
+.pericia-edit input,
+.pericia-edit select {
     border: 4px solid #444444;
-    height: 100%;
-    position: absolute;
-    right: 10px;
+    min-height: 36px;
+    max-width: 110px;
 }
 
 #statusMaxEditor {
     display: flex;
     justify-content: space-around;
-    margin-top: 28px;
+    margin: 28px 0 28px 0;
 }
 
 /* Mobile: troca hover por click */
@@ -2083,7 +2580,7 @@ img.reverse {
     cursor: pointer;
 }
 
-#mMTImage{
+.mMTImage{
     position: absolute;
     top: 3px;
     transform: rotate(180deg);
@@ -2148,7 +2645,7 @@ img.reverse {
         width: 90dvw;
     }
 
-    #pericias-display-block {
+    #periciasDisplayer {
         position: absolute;
         width: 100%;
         height: 100dvh;
@@ -2159,7 +2656,7 @@ img.reverse {
         background-size: cover;
     }
 
-    #pericias-display-block.translucid {
+    #periciasDisplayer.translucid {
         background-color: #111;
     }
 
@@ -2224,10 +2721,6 @@ img.reverse {
         border-radius: 13px;
     }
 
-    #exportBtn {
-        position: relative;
-        bottom: auto;
-    }
 }
 
 /* Responsividade geral */
@@ -2244,9 +2737,32 @@ img.reverse {
         padding: 10px;
     }
 
-    #Pr, #periciasEditorBox, #game {
+    #Pr header {
+        display: flex;
+        width: 100dvw;
+        justify-content: space-between;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    #lvSelect {
+        position: relative;
+        top: 8px;
+        margin-right: 5dvw;
+    }
+
+    .itemPlace {
+        height: 7dvh;
+        margin: 0 20px;
+    }
+
+    #periciasEditorBox, #game {
         width: 100%;
         overflow-x: auto;
+    }
+
+    #Pr header .big-title {
+        margin-left: 5dvw;
     }
 
     .btn, .input {
@@ -2258,9 +2774,6 @@ img.reverse {
         max-width: 350px;
     }
 
-    #sex-div .btn {
-        padding: 0 20px;
-    }
     #Rs-div {
         justify-content: center;
     }
@@ -2354,11 +2867,6 @@ img.reverse {
 
 @media (max-width: 768px) {
 
-
-    .statusBtns {
-        
-    }
-
     #multiTask header {
         position: relative;
     }
@@ -2448,20 +2956,14 @@ img.reverse {
     width: 90%;
 }
 
-#rollResult {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid var(--ter-clr);
-    background-color: #222;
-    border-radius: 5px;
-    width: 90%;
-    box-sizing: border-box;
-    text-align: center;
-}
-
-
     .habilidades-content, .magias-content {
         grid-template-columns: auto;
+    }
+
+    .btns-div button {
+        height: 30px;
+        width: 50px;
+        padding: 0;
     }
 
     .ability-card .title {
@@ -2481,23 +2983,29 @@ img.reverse {
         font-size: 12px;
         color: #9f9f9f;
     }
-    
-    #Pr {
-        flex-direction: column;
-        height: 90dvh;
-        overflow: hidden;
+
+
+    .place, .item {
+        width: 16dvw;
+        height: 7dvh;
+        font-size: 2dvw;
     }
 
-    .pr-block {
-        width: 100%;
-    }
 
     .personagem-biografia, #bio-content, #other-content {
         overflow: hidden;
     }
 
     #periciasEditorBox #periciasEditor {
-        grid-template-columns: repeat(3, 1fr);
+        padding: 14px;
+    }
+
+    #periciasEditorLists {
+        max-height: none;
+    }
+
+    #statusMaxEditor .title{
+        font-size: 44px;
     }
 }
 
@@ -2613,34 +3121,31 @@ img.reverse {
     display: none;
 }
 
-    .arma-area .btn-container {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-        flex-direction: column;
-        position: absolute;
-        scale: 0.5;
-        right: -24px;
-        top: -17px;
-        
-    }
+.arma-area .btn-container {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    position: absolute;
+    scale: 0.5;
+    right: -24px;
+}
 
 .item-content {
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 5px;
 }
 
-.magic-card.favorited,
-.ability-card.favorited,
+.magic-card-front.favorited,
+.ability-card-front.favorited,
 .item-card.favorited,
 .trauma-card.favorited {
     border: 2px solid gold; /* Or any other visual indicator */
     background-color: #333;
 }
 
-.ability-card .favorite-star,
-.magic-card .favorite-star,
+.ability-card-front .favorite-star,
+.magic-card-front .favorite-star,
 .trauma-card .favorite-star{
     position: absolute;
     color: gold;
@@ -2665,7 +3170,7 @@ img.reverse {
     color: white;
 }
 
-.chEBtn {
+.diceModiferBtn {
     height: 40px;
     width: 40px;
     padding: 0;
@@ -2674,7 +3179,7 @@ img.reverse {
     transition: 0.3s;
 }
 
-.chEBtn:hover {
+.diceModiferBtn:hover {
     background-color: #555;
 }
 
@@ -2901,4 +3406,135 @@ input[type="range"]::-moz-range-thumb {
 input[type="range"]:focus::-moz-range-thumb{
   outline: 3px solid white;
   outline-offset: 0.125rem;
+}
+
+#loadingScream {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100dvw;
+    height: 100dvh;
+    background-color: #111;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000001;
+}
+
+#loadingScreamIcon {
+    position: relative;
+    transform: rotateY(45deg);
+    animation: rotateAnimation 3s linear infinite;
+}
+
+@keyframes rotateAnimation {
+    from {
+        transform: rotateY(45deg);
+    }
+    to {
+        transform: rotateY(405deg);
+    }
+}
+
+
+.dissolve-card{
+    width:600px;
+    height:400px;
+
+    padding:40px;
+    box-sizing:border-box;
+
+    background:#2c2c2c;
+    color:white;
+
+    border-radius:12px;
+
+    mask-repeat:no-repeat;
+    -webkit-mask-repeat:no-repeat;
+
+    mask-size:100% 100%;
+    -webkit-mask-size:100% 100%;
+}
+
+#changeLog {
+    display: none;
+    flex-direction: column;
+}
+
+#changeLog header {
+    display: flex;
+    /* align-content: flex-end; */
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+#changeLog header span.sos {
+    margin: 0;
+    position: relative;
+    top: -17px;
+}
+
+#changeLog .title {
+    position: relative;
+    z-index: 1;
+}
+
+hr.cL {
+    position: relative;
+    top: -18px;
+    border: none;
+    border-top: 3px solid #afafaf;
+    margin: 4px 0;
+}
+
+
+.versionPanel {
+    display: flex;
+    flex-direction: column;
+    
+    header {
+        display: flex;
+        justify-content: space-between;
+
+        .small-title {
+            margin: 0;
+        }
+        section {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            top: -7px;
+            align-items: flex-end;
+
+            span {
+                margin: 0;
+            }
+        }
+    }
+
+    .changesContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        border: 1px #afafaf solid;
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    .changesContainer .addition {
+        color: rgb(7, 206, 7);
+        font-family: monospace;
+    }
+
+    .changesContainer .removal {
+        color: red;
+        font-family: monospace;
+    }
+
+    .changesContainer .fixes {
+        color: yellow;
+        font-family: monospace;
+    }
 }

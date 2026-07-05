@@ -1,61 +1,39 @@
 var ficha = { 
+    assinatura: "FichaSuspirosDaRealidade",
+    versão: siteVersion,
     imagem: "",
     nome: "",
     idade: 0,
+    sexo: "",
+    dataNascimento: "",
 
     ConhecimentoMagico: 0,
     origem: [],
+
     tipo: 0,
     raça: 0,
-    peso: 62,
-    altura: 165,
     elementos: [],
     status: {
         vida: 0,
-        pontosDeMagia: 0,
+        magia: 0,
         medo: 0,
         
         vidaMax: 0,
-        pontosDeMagiaMax: 0,
+        magiaMax: 0,
         medoMax: 0
     },
-    pericias: {
-        Lábia: {value: 1, min: 0, max: 16, editable: true},
-        Aparência: {value: 1, min: 0, max: 16, editable: true},
-        Intimidar: {value: 1, min: 0, max: 16, editable: true},
-        Poder: {value: 1, min: 0, max: 16, editable: true},
-        Sorte: {value: 1, min: 0, max: 16, editable: true},
-        Força: {value: 1, min: 0, max: 16, editable: true},
-        Corpo: {value: 1, min: 0, max: 16, editable: false},
-        Constituição: {value: 1, min: 0, max: 16, editable: true},
-        Destreza: {value: 1, min: 0, max: 16, editable: true},
-        Inteligência: {value: 1, min: 0, max: 16, editable: true},
-        Percepção: {value: 1, min: 0, max: 16, editable: true},
-        Estabilidade: {value: 1, min: 0, max: 16, editable: true},
-        ArmasBrancas: {value: 1, min: 0, max: 16, editable: true},
-        Pistolas: {value: 1, min: 0, max: 16, editable: true},
-        Rifles: {value: 1, min: 0, max: 16, editable: true},
-        LongoAlcance: {value: 1, min: 0, max: 16, editable: true},
-        Arremeçar: {value: 1, min: 0, max: 16, editable: true},
-        Movimento: {value: 1, min: 0, max: 16, editable: false},
-        Furtividade: {value: 1, min: 0, max: 16, editable: false},
-        Esquiva: {value: 1, min: 0, max: 16, editable: false},
-        Acrobacia: {value: 1, min: 0, max: 16, editable: true},
-        ContraAtaque: {value: 1, min: 0, max: 16, editable: false},
-        Magia: {value: 1, min: 0, max: 16, editable: true},
-        Alquimia: {value: 1, min: 0, max: 16, editable: true},
-        Ocultismo: {value: 1, min: 0, max: 16, editable: true},
-        História: {value: 1, min: 0, max: 16, editable: true},
-        Mecanica: {value: 1, min: 0, max: 16, editable: true},
-        UsarComputadores: {value: 1, min: 0, max: 16, editable: true},
-        Sobrevivência: {value: 1, min: 0, max: 16, editable: true},
-        Música: {value: 1, min: 0, max: 16, editable: true},
-        ConhecimentosGerais: {value: 1, min: 0, max: 16, editable: true},
-        Linguas: {value: 1, min: 0, max: 16, editable: true},
-        Medicina: {value: 1, min: 0, max: 16, editable: true},
-        Ciência: {value: 1, min: 0, max: 16, editable: true},
-        Aprendizado: {value: 1, min: 0, max: 16, editable: true}
-    },
+    pericias: [
+        [], //0
+        [], //1
+        [], //2
+        [], //3
+        [], //4
+        []  //5
+    ],
+
+    bonus: [],
+
+
     pontos: 0,
     habilidades: [],
     magias: [],
@@ -79,7 +57,7 @@ var ficha = {
     },
     options: {
       wallpaper: 0,
-      chEdit: false,
+      statusModifier: false,
       perForDices: false,
       translucidPer: false,
       blurPer: false,
@@ -90,6 +68,10 @@ var ficha = {
     customStatus: [],
     customWallpaper: {},
 };
+
+// PUTA QUE PARIU QUE NOTIFICAÇÃO ARROMBADA
+
+const notionText = "Seu save foi atualizado para a versão mais recente " + ficha.versão + "!Verifique a lista de updates";
 
 const defaultFicha = JSON.parse(JSON.stringify(ficha));
 let saveUpdated = false;
@@ -109,14 +91,7 @@ function mergeFicha(loadedFicha) {
                     }
                 } else {
                     target[key] = source[key];
-                    saveUpdated = true;
                 }
-            }
-        }
-
-        for (const key in target) {
-            if (target.hasOwnProperty(key) && !source.hasOwnProperty(key)) {
-                saveUpdated = true;
             }
         }
     }
@@ -185,19 +160,31 @@ if (inputArquivo) {
     const arquivo = event.target.files[0]; // Pega o primeiro arquivo selecionado
 
     if (arquivo) {
-      carregarObjetoJSON(arquivo)
-        .then((dadosCarregados) => {
-          console.log('Dados carregados:', dadosCarregados);
-          ficha = mergeFicha(dadosCarregados);
+      carregarObjetoJSON(arquivo).then((dadosCarregados) => {
+        if (!dadosCarregados.nome/* !dadosCarregados.assinatura == "FichaSuspirosDaRealidade"*/) {
+          alert("Insira um arquivo valido!")
+          return;
+        }
 
-          /*
-            if (saveUpdated) {
-                const notification = document.getElementById('update-notification');
-                if (notification) {
+        if (dadosCarregados.versão == ficha.versão) saveUpdated = true;
+        console.log('Dados carregados:', dadosCarregados, 'versão:', dadosCarregados.versão);
+        if (!dadosCarregados.versão) {
+            panelOpen(false, 'ATUALIZAÇÃO', 'o sistema de pericias foi atualizados, vá em Personagem > Editar pericias para adicionar suas pericias')
+            fichaComPericiasAntigas = true
+        }
+        ficha = mergeFicha(dadosCarregados);
+
+            if (!saveUpdated) {
+
+              setTimeout(() => {
+                  document.getElementById("update-notification-text").innerHTML = notionText
+                  const notification = document.getElementById('update-notification');
+                  if (notification) {
                     notification.style.display = 'block';
-                }
+                  }
+              }, 2000);
             }
-*/
+
             CarregarFicha()
         })
         .catch((erro) => {
@@ -208,4 +195,127 @@ if (inputArquivo) {
   });
 } else {
   console.warn('Elemento <input type="file" id="arquivoJSON"> não encontrado no HTML.');
+}
+
+// Eventos
+
+function save(ask = true) {
+
+        ficha.biografia.contatos = personagemContatos.value
+    if (localStorage.getItem('hasFichaSave')) {
+
+        if (ask) {
+            var r=confirm("Já Existe um save! nome : " + JSON.parse(localStorage.getItem('ficha')).nome + " Save criado às " + new Date(JSON.parse(localStorage.getItem('hour'))).toLocaleTimeString() + " ; Deseja Sobrescrever?");
+        } else { 
+            var r = true
+        }
+
+        if (r==true)
+        {
+            localStorage.setItem('ficha', JSON.stringify(ficha));
+            const hour = new Date();
+            localStorage.setItem('hour', JSON.stringify(hour));
+            localStorage.setItem('hasFichaSave', true)
+            if (ask) alert("Ficha salva!");
+            ("save")
+            return;
+        }
+        else
+        {
+            if (ask) alert('Ficha não salva!');
+            return;
+        }
+
+    }
+
+    
+    localStorage.setItem('ficha', JSON.stringify(ficha));
+    const hour = new Date();
+    localStorage.setItem('hour', JSON.stringify(hour));
+    localStorage.setItem('hasFichaSave', true)
+    alert("Ficha salva!")
+    return;
+    
+}
+
+function load() {
+
+    if (!localStorage.getItem('hasFichaSave')) {
+        alert("Nenhum save encontrado!");
+        return;
+    }
+
+    let loadedFicha;
+    try {
+        loadedFicha = JSON.parse(localStorage.getItem('ficha'));
+    } catch (e) {
+        alert("Erro ao carregar o save. O arquivo pode estar corrompido.");
+        console.error("Erro ao parsear JSON do localStorage:", e);
+        return;
+    }
+
+    if (!loadedFicha) {
+        alert("Save corrompido ou vazio.");
+        return;
+    }
+
+    if (!loadedFicha.versão == ficha.versão) {
+        setTimeout(() => {
+            const notification = document.getElementById('update-notification');
+            if (notification) {
+                notification.style.display = 'block';
+            }
+        }, 2000);
+    }
+    
+    ficha = mergeFicha(loadedFicha);
+
+    CarregarFicha()
+
+}
+
+function CarregarFicha() {
+    
+    if (!debug) loadScream( localStorage.getItem('fastLogin')? 2: 4)
+
+    setTimeout(() => {
+        imageField.value = ficha.imagem
+        RenderPlayerImage()
+        reloadMods()
+        irParaJogo();
+        displayPericias();
+        renderTraumas()
+        renderTotalWeight()
+        renderWeaponArea()
+        renderGuardados()
+        renderInventory()
+        setWallpaper(ficha.options.wallpaper)
+        loadUserOptions()
+        //ficha.biografia.comportamento = ficha.biografia.contatos
+    
+        habilidadesContent.innerHTML = '';
+        magiasContent.innerHTML = '';
+    
+        if (ficha.habilidades && Array.isArray(ficha.habilidades)) {
+            ficha.habilidades.forEach(h => {
+                createAbility(h.name, h.description, h.dice, true)
+            });
+        }
+        renderHabilidades(); // Call renderHabilidades after all ability items are processed
+    
+        if (ficha.magias && Array.isArray(ficha.magias)) {
+            ficha.magias.forEach(m => {
+                magicName.value = m.name;
+                magicDescription.value = m.description;
+                magicDice.value = m.dice;
+                createMagic(true)
+            });
+        }
+    
+    
+        prDiv = Pr
+        cF.remove()
+        renderMagias(); // Call renderMagias after all magic items are processed
+        statusAtu()
+    }, debug? 0:2000)
 }

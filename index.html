@@ -9,8 +9,207 @@
     
 </head>
 <body>
-    <main>
+
+<div class="panel" id="main-panel">
+    <div class="box">
+        <p class="exit-box" onclick="panelClose()">x</p>
+
+        <div id="changeLog">
+            <header>
+                <h2 class="title">Atualizações</h2>
+                <span class="ver text sos"></span>
+            </header>
+            <hr class="cL marker">
+        </div>
+
+        <div id="ModsPanel" style="display: none; flex-direction: column; gap: 10px;">
+
+            <section style="display: flex; justify-content: space-between;">
+                <h2 class="title">
+                    Mods
+                </h2>
+            
+                <section style="display: flex; flex-direction: column; gap: 10px;">
+                    <section class="file-upload-wrapper">
+                        <input type="file" id="modFileInput" accept=".json" class="input" hidden onchange="document.getElementsByClassName('btn-personalizado')[0].classList.toggle('preenchido', this.value.length > 0)">
+                
+                        <label for="modFileInput" class="btn btn-personalizado"> Selecionar Arquivo </label>
+                    </section>
+                
+                    <button class="btn" onclick="importMod()">Importar Mod</button>
+                
+                    <button class="btn" onclick="downloadExampleMod()" hidden> Baixar Mod Exemplo </button>
+                </section>
+            </section>
+
+        <section id="mods-list"></section>
+
+        </div>
+
+        <!-- ================= MAGIA ================= -->
+        <div id="MagicCreate">
+            <section>
+            <p class="text white">Nome</p>
+            <input type="text" id="magicName" class="input">
+
+            <p class="text white">Descrição</p>
+            <textarea id="magicDescription" class="input" style="resize: none;"></textarea>
+
+            <p class="text white">Dado</p>
+            <input type="text" id="magicDice" class="input dice">
+            <br>
+            <button class="btn" onclick="createMagic()">Criar</button>
+            </section>
+        </div>
+
+        <!-- ================= HABILIDADE ================= -->
+        <div id="AbilityCreate" style="display: none;">
+            <section>
+            <p class="text white">Nome</p>
+            <input type="text" id="abilityName" class="input">
+
+            <p class="text white">Descrição</p>
+            <textarea id="abilityDescription" class="input" style="resize: none;"></textarea>
+
+            <p class="text white">Dado</p>
+            <input type="text" id="abilityDice" class="input dice">
+                <br>
+            <button class="btn" onclick="createAbility()">Criar</button>
+            </section>
+        </div>
+        <!-- ================= ITEM ================= -->
+        <div id="ItemCreate" style="display: none;">
+            <h1 class="title">Criar Item</h1>
+            <section >
+                <section id="infoGroup">
+                    <section class="infoBlock">
+                        <section class="createItemInfo">
+                            <p class="text white">Nome</p>
+                            <input type="text" id="itemName" class="input">
+                        </section>
+                        
+                        <section class="createItemInfo">
+                            <p class="text white">Peso</p>
+                            <input type="number" id="itemWeight" class="input">
+                        </section>
+
+                        <section class="createItemInfo">
+                            <p class="text white">Local</p>
+                            <select class="input" style="width:100%;" id="itemLocal" class="input">
+                                <option value="inventario">Inventário</option>
+                                <option value="guardado">Guardado</option>
+                            </select>
+                        </section>
+                    </section>
+                    <section class="infoBlock">
+                        <section class="createItemInfo" style="height: -webkit-fill-available;">
+                            <p class="text white">Descrição</p>
+                            <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
+                        </section>
+                    </section>
+                </section>
+            
+                <hr>
+
+                <section id="categoriesDefinitions">
+                    <section id="categoriesGroup">
+                        <section>
+                            <button onclick="createItemCategory('item')" id="btnCategoryItem" class="active">Item</button>
+                        </section>
+                        <section>
+                            <button onclick="createItemCategory('arma')" id="btnCategoryWeapon">Arma</button>
+                        </section>
+                        <section>
+                            <button onclick="createItemCategory('municao')" id="btnCategoryMunition">Munição</button>
+                        </section>
+                    </section>
         
+                    <section id="createItemDefinitions">
+                        <section id="createItemMenu">
+                            <p class="text white">Dado</p>
+                            <input type="text" id="itemCreateDice" class="input dice">
+                            <section>
+                                <p class="text white">Tipo</p>
+                                <select class="input" style="width:100%;" name="tipo" id="itemCreateType">
+                                    <option value="objeto">Objeto</option>
+                                    <option value="documento">Documento</option>
+                                    <option value="vestimenta">Vestimenta</option>
+                                    <option value="artefato">Artefato</option>
+                                </select>
+                            </section>
+                        </section>
+                        <section id="createWeaponMenu">
+                            <section>
+                                <p class="text white" style="margin-top: 0;">Tipo</p>
+                                <select class="input" style="width:100%;" name="tipo" id="weaponCreateType">
+                                    <option value="branca">Branca</option>
+                                    <option value="pistola">Pistola</option>
+                                    <option value="rifle">Rifle</option>
+                                    <option value="longo_alcance">Longo Alcance</option>
+                                </select>
+                                <p class="text white" style="margin-top: 0;">Munição</p>
+                                <input class="input" type="number" id="weaponCreateMMO">
+                            </section>
+                            <section>
+                                <p class="text white">Dano</p>
+                                <input class="input" type="text" id="weaponCreateDamage">
+                                <p class="text white">Dano Critico</p>
+                                <input class="input" type="text" id="weaponCreateCritical">
+                            </p>
+                            </section>
+                        </section>
+                        <section id="createMunitionMenu">
+                            <section>
+                                <p class="text white" style="margin-top: 0;">Arma</p>
+                                <select class="input" style="width:100%;" name="tipo" id="mmoCreateWeapon">
+                                    <option value="pistola">Pistola</option>
+                                    <option value="rifle">Rifle</option>
+                                    <option value="longo_alcance">Longo Alcance</option>
+                                </select>
+                                <p class="text white" style="display: none;">Quantidade</p>
+                                <input class="input" type="number" style="display: none;" id="mmoCreateQuantity">
+                            </section>
+                            <section>
+                                <p class="text white" style="margin-top: 0;">Tipo</p>
+                                <select class="input" style="width:100%;" name="tipo" id="mmoCreateType">
+                                    <option value="bala">Bala Solta</option>
+                                    <option value="cartucho">Cartucho</option>
+                                </select>
+                            </section>
+                        </section>
+                    </section>
+                    <br>
+                </section>
+            </section>
+            <br>
+            <button class="btn" onclick="createItem()">Criar</button>
+        </div>
+
+        <!-- ================= TRAUMA ================= -->
+        <div id="TraumaCreate" style="display: none;">
+            <section>
+            <p class="text white">Nome</p>
+            <input type="text" id="traumaName" class="input">
+
+            <p class="text white">Descrição</p>
+            <textarea id="traumaDescription" class="input" style="resize: none;"></textarea>
+
+            <p class="text white">Dado</p>
+            <input type="text" id="traumaDice" class="input dice">
+
+            <p class="text white">Tempo</p>
+            <input type="text" id="traumaTime" class="input">
+
+            <p class="text sm">Em caso de trauma permanente, coloque 'PER'</p>
+            <br>
+            <button class="btn" onclick="createTrauma()">Criar</button>
+            </section>
+        </div>
+
+    </div>
+  </div>
+
+    <main>
         <img src="img/logo.svg" alt="" class="logo">
         <button class="btn" onclick="abrirCriadorDeFicha()">Criar Ficha</button>
         <button class="btn" onclick="load()">Carregar</button>
@@ -19,10 +218,11 @@
             <label for="arquivoJSON" class="btn btn-personalizado">Importar Ficha</label>
         </section>
 
-        <button class="btn" onclick="agradecimentos()" style="display: none;">Agradecimentos</button>
         <!--<button class="btn" onclick="irParaJogo()">Ir para o Jogo (Debug)</button>-->
-
-
+        
+        <footer>
+            <p class="textBtn" onclick='panelOpen("changeLog", null, null, true)' id="changeLogBtn">Change Log</p>
+        </footer>
     </main>
 
     <div id="agradecimentos" class="panel" style="display: none;">
@@ -30,6 +230,7 @@
             <p class="exit-box" onclick="closeAgradecimentos()">x</p>
             <h3 class="title" >Agradecimentos</h3>
             <p>Muito obrigado às pessoas incriveis que fizeram esse sonho real:<br>
+                <h4>Jogadores</h4><br>
                 Allícia Fleishman - Allícia Fleishman <br>
                 Heitor - Anthony, Astre, Roy <br>
                 Sara Yasmin - <br>
@@ -37,39 +238,43 @@
                 Rodrigo Miguel - <br>
                 Debora Santos - Hadassa Santos, Amber <br>
                 Lilian Gomes - Irina<br>
-
-
                 </p>
         </div>
     </div>
 
     <div id="cF">
-        <div>
-        </div>
-
         <div id="IB">
-            <h3 class="title" ">Informacoes</h3>
+            <div id="ordoDoc-wrap">
+                <div id="ordoDoc">
+                    <span class="name">???</span>
+                    <span class="birth">??/??/????</span>
+                </div>
+            </div>
+            <h3 class="big-title">Informacoes</h3>
             <hr>
             <p class="text">Nome</p>
-            <input type="text" name="" id="name" class="input">
+            <input type="text" id="name" class="input">
             <p class="text">Data de Nascimento</p>
-            <input type="date" name="" id="date" class="input">
-            <p class="text">Idade</p>
-            <input type="number" name="" id="age" class="input">
-            <p class="text">Sexo</p>
-            <div id="sex-div"> 
-                <button class="btn sex-btn" data-sex="masculino">Masculino</button>
-                <button class="btn sex-btn" data-sex="feminino">Feminino</button>
+            <input type="date" id="date" class="input">
+            <div style="display: flex;">
+                <div>
+                    <p class="text">Idade</p>
+                    <input type="number" id="age" class="input">
+                </div>
+                <div>
+                    <p class="text">Sexo</p>
+                    <div style="display: flex;"> 
+                        <button class="btn sex-btn" data-sex="masculino"><img src="img/mas.svg" alt=""></button>
+                        <button class="btn sex-btn" data-sex="feminino"><img src="img/fem.svg" alt=""></button>
+                    </div>
+                </div>
             </div>
-            <p class="text">Altura</p>
-            <input type="number" name="" id="height" class="input">
-            <p class="text">Peso</p>
-            <input type="number" name="" id="weight" class="input">
-            
             <button class="pBtn" id="p1">Proximo</button>
         </div>
         <div id="Rs">
-            <h3 class="title" ">Raças</h3>
+            <h3 class="title">Raças</h3>
+            <p class="text">(Descrições incorretas, se informe o mestre)</p>
+            <p class="text"(Atualização em desenvolvimento)></p>
             <hr>
             <div id="Rs-box">
                 <div class="race-card">
@@ -83,7 +288,7 @@
                         </div>
                         <h2 class="title">HUMANO</h2>
                         <p>Versáteis e adaptáveis, os humanos são a raça mais comum, capazes de se destacar em qualquer caminho que escolherem.</p>
-                                                <div class="race-skills">
+                            <div class="race-skills">
                             <h4>Perícias de Raça:</h4>
                             <ul>
                                 <li>+1 em quaisquer dois atributos</li>
@@ -104,7 +309,7 @@
                         </div>
                         <h2 class="title">ZOMANO</h2>
                         <p>Lentos mas implacáveis, os zomanos possuem uma resiliência sobrenatural e uma força que desafia a morte.</p>
-                                                <div class="race-skills">
+                            <div class="race-skills">
                             <h4>Perícias de Raça:</h4>
                             <ul>
                                 <li>Resistência a dano físico</li>
@@ -277,305 +482,143 @@
             </div>
         </div>
         <div id="Pr">
-            <div class="pr-block" style="display: flex; flex-direction: column; justify-content: space-between;">
-                <div>
-                    <div class="title-box">
-                        <h3 class="pr-title title mx"></h3>
-                        <hr>
-                        <p class="text sm pr-type"></p>
+            <header>
+                <h2 class="big-title">Pericias</h2>
+                <div id="lvSelect">
+                    <p class="title" style="height: 49px; font-size: 65px; text-align: end;">Nível</p>
+                    <div id="lvSelectContent">
+                        <button onclick="levelSelect('-')">-</button>
+                        <p id="lvSelectNumber">1</p>
+                        <button onclick="levelSelect('+')">+</button>
                     </div>
-                    <p class="text" id="pr-description"></p>
                 </div>
-                <div id="elementos-ficha"></div>
-                <button class="btn" id="pr-next-btn" style="display: none;" onclick="FichaEnd()">Proximo</button>
-            </div>
+            </header>
 
-            <div class="pr-block">
-                <div id="ptsDisplay">0</div>
-<div id="pericias-tabs-container" style="display: none;"><div id="pericias-tabs"></div></div>
-            <div id="pericias">
-              <div class="pBlock">
-                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Social</p></div>
-                  <div onclick="perShow(1, 'Lábia')" class="p-card">Lábia <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,1 )" class="pc-btn">-</button><button onclick="addPerPoint(this,1 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(2, 'Aparência')" class="p-card">Aparência <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,2 )" class="pc-btn">-</button><button onclick="addPerPoint(this,2 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(3, 'Intimidar')" class="p-card">Intimidar <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,3 )" class="pc-btn">-</button><button onclick="addPerPoint(this,3 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(4, 'Poder')" class="p-card">Poder <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,4 )" class="pc-btn">-</button><button onclick="addPerPoint(this,4 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(5, 'Sorte')" class="p-card">Sorte <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,5 )" class="pc-btn">-</button><button onclick="addPerPoint(this,5 )" class="pc-btn">+</button></div></div></div>
-              </div>
-              <div class="pBlock">
-                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Físico</p></div>
-                  <div onclick="perShow(6, 'Força')" class="p-card">Força <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,6 )" class="pc-btn">-</button><button onclick="addPerPoint(this,6 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(7, 'Corpo')" class="p-card">Corpo <div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,7 )" class="pc-btn">-</button><button onclick="addPerPoint(this,7 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(8, 'Constituição')" class="p-card">Constituição <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,8 )" class="pc-btn">-</button><button onclick="addPerPoint(this,8 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(9, 'Destreza')" class="p-card">Destreza <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,9 )" class="pc-btn">-</button><button onclick="addPerPoint(this,9 )" class="pc-btn">+</button></div></div></div>
-              </div>
-              <div class="pBlock">
-                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Intelecto</p></div>
-                  <div onclick="perShow(10, 'Inteligência')" class="p-card">Inteligência <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,10 )" class="pc-btn">-</button><button onclick="addPerPoint(this,10 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(11, 'Percepção')" class="p-card">Percepção <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,11 )" class="pc-btn">-</button><button onclick="addPerPoint(this,11 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(12, 'Estabilidade')" class="p-card">Estabilidade <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,12 )" class="pc-btn">-</button><button onclick="addPerPoint(this,12 )" class="pc-btn">+</button></div></div></div>
-              </div>
-              <div class="pBlock">
-                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Combate</p></div>
-                  <div onclick="perShow(13, 'ArmasBrancas')" class="p-card">ArmasBrancas <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,13 )" class="pc-btn">-</button><button onclick="addPerPoint(this,13 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(14, 'Pistolas')" class="p-card">Pistolas <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,14 )" class="pc-btn">-</button><button onclick="addPerPoint(this,14 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(15, 'Rifles')" class="p-card">Rifles <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,15 )" class="pc-btn">-</button><button onclick="addPerPoint(this,15 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(16, 'LongoAlcance')" class="p-card">Longo Alcance <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,16 )" class="pc-btn">-</button><button onclick="addPerPoint(this,16 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(17, 'Arremeçar')" class="p-card">Arremeçar <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,17 )" class="pc-btn">-</button><button onclick="addPerPoint(this,17 )" class="pc-btn">+</button></div></div></div>
-              </div>
-              <div class="pBlock">
-                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Habilidades</p></div>
-                  <div onclick="perShow(18, 'Movimento')" class="p-card">Movimento <div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,18 )" class="pc-btn">-</button><button onclick="addPerPoint(this,18 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(19, 'Furtividade')" class="p-card">Furtividade <div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,19 )" class="pc-btn">-</button><button onclick="addPerPoint(this,19 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(20, 'Esquiva')" class="p-card">Esquiva <div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,20 )" class="pc-btn">-</button><button onclick="addPerPoint(this,20 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(21, 'Acrobacia')" class="p-card">Acrobacia <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,21 )" class="pc-btn">-</button><button onclick="addPerPoint(this,21 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(22, 'ContraAtaque')" class="p-card">Contra-Ataque<div class="nbr"><span class="p-count">0</span><div class="p-btns ineditavel"><button onclick="removePerPoint(this,22 )" class="pc-btn">-</button><button onclick="addPerPoint(this,22 )" class="pc-btn">+</button></div></div></div>
-              </div>
-              <div class="pBlock">
-                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Magia</p></div>
-                  <div onclick="perShow(23, 'Magia')" class="p-card">Magia <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,23 )" class="pc-btn">-</button><button onclick="addPerPoint(this,23 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(24, 'Alquimia')" class="p-card">Alquimia <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,24 )" class="pc-btn">-</button><button onclick="addPerPoint(this,24 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(25, 'Ocultismo')" class="p-card">Ocultismo <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,25 )" class="pc-btn">-</button><button onclick="addPerPoint(this,25 )" class="pc-btn">+</button></div></div></div>
-              </div>
-              <div class="pBlock">
-                  <div class="pb-title"><p class="text" style="font-weight: bold; font-size: 1.2em;">Conhecimento</p></div>
-                  <div onclick="perShow(26, 'História')" class="p-card">História <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,26 )" class="pc-btn">-</button><button onclick="addPerPoint(this,26 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(27, 'Mecanica')" class="p-card">Mecânica <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,27 )" class="pc-btn">-</button><button onclick="addPerPoint(this,27 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(28, 'UsarComputadores')" class="p-card">Usar Comp. <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,28 )" class="pc-btn">-</button><button onclick="addPerPoint(this,28 )" class="pc-btn">+</button></div></div></div>                  
-                  <div onclick="perShow(29, 'Sobrevivência')" class="p-card">Sobrevivência <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,29 )" class="pc-btn">-</button><button onclick="addPerPoint(this,29 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(30, 'Música')" class="p-card">Música <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,30 )" class="pc-btn">-</button><button onclick="addPerPoint(this,30 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(31, 'ConhecimentosGerais')" class="p-card">Conhe. Gerais <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,31 )" class="pc-btn">-</button><button onclick="addPerPoint(this,31 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(32, 'Linguas')" class="p-card">Línguas <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,32 )" class="pc-btn">-</button><button onclick="addPerPoint(this,32 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(33, 'Medicina')" class="p-card">Medicina <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,33 )" class="pc-btn">-</button><button onclick="addPerPoint(this,33 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(34, 'Ciência')" class="p-card">Ciências <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,34 )" class="pc-btn">-</button><button onclick="addPerPoint(this,34 )" class="pc-btn">+</button></div></div></div>
-                  <div onclick="perShow(35, 'Aprendizado')" class="p-card">Aprendizado <div class="nbr"><span class="p-count">0</span><div class="p-btns"><button onclick="removePerPoint(this,35 )" class="pc-btn">-</button><button onclick="addPerPoint(this,35 )" class="pc-btn">+</button></div></div></div>
-              </div>
-          </div>
+            <div id="Pr-Content">
+                <div id="perPlaces">
+                    <div id="perGrid">
+                        <div class="perLine">
+                            <div class="perLineTitle">5</div>
+                            <div class="place" id="place1"></div>
+                            <div class="place" id="place2"></div>
+                            <div class="place" id="place3"></div>
+                            <div class="place" id="place4"></div>
+                            <div class="place" id="place5"></div>
+                        </div>
+                        <div class="perLine">
+                            <div class="perLineTitle white">4</div>
+                            <div class="place" id="place6"></div>
+                            <div class="place" id="place7"></div>
+                            <div class="place" id="place8"></div>
+                            <div class="place" id="place9"></div>
+                            <div class="place" id="place10"></div>
+                        </div>
+                        <div class="perLine">
+                            <div class="perLineTitle">3</div>
+                            <div class="place" id="place11"></div>
+                            <div class="place" id="place12"></div>
+                            <div class="place" id="place13"></div>
+                            <div class="place" id="place14"></div>
+                            <div class="place" id="place15"></div>
+                        </div>
+                        <div class="perLine">
+                            <div class="perLineTitle white">2</div>
+                            <div class="place" id="place16"></div>
+                            <div class="place" id="place17"></div>
+                            <div class="place" id="place18"></div>
+                            <div class="place" id="place19"></div>
+                            <div class="place" id="place20"></div>
+                        </div>
+                        <div class="perLine">
+                            <div class="perLineTitle">1</div>
+                            <div class="place" id="place21"></div>
+                            <div class="place" id="place22"></div>
+                            <div class="place" id="place23"></div>
+                            <div class="place" id="place24"></div>
+                            <div class="place" id="place25"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="perLists" class="perList">
+                    <header>
+                        <section style="position: relative;">
+                            <p class="text" style="position: absolute; top: -4px;">Pericias</p>
+                            <h2 class="title">Fisicas</h2>
+
+                        </section>
+
+                        <div>
+                            <button onclick="selectItemPlace(false)"><</button>
+                            <button onclick="selectItemPlace(true)">></button>
+                        </div>
+                    </header>
+
+                    <div id="perListFisicas" class="itemPlace">
+                        <div class="item" aria-value="destreza"><h2>Destreza</h2></div>
+                        <div class="item" aria-value="força"><h2>Força</h2></div>
+                        <div class="item small-text" aria-value="constituição"><h2>Constituição</h2></div>
+                        <div class="item" aria-value="luta"><h2>Luta</h2></div>
+                        <div class="item" aria-value="pontaria"><h2>Pontaria</h2></div>
+                    </div>
+                    
+                    <div id="perListArmas" class="itemPlace">
+                        <div class="item small-text" aria-value="armas_brancas"><h2>Armas Brancas</h2></div>
+                        <div class="item" aria-value="pistolas"><h2>Pistolas</h2></div>
+                        <div class="item" aria-value="rifle"><h2>Rifle</h2></div>
+                        <div class="item small-text" aria-value="longo_alcance"><h2>Longo Alcance</h2></div>
+                        
+                    </div>
+                    <div id="perListFisicas2" class="itemPlace">
+                        <div class="item" aria-value="atletismo"><h2>Atletismo</h2></div>
+                        <div class="item" aria-value="acrobacia"><h2>Acrobacia</h2></div>
+                        <div class="item small-text" aria-value="furtividade"><h2>Furtividade</h2></div>
+                        <div class="item" aria-value="pilotagem"><h2>Pilotagem</h2></div>
+                    </div>
+    
+                    <div id="perListSociais" class="itemPlace">
+                        <div class="item" aria-value="labia"><h2>Lábia</h2></div>
+                        <div class="item small-text" aria-value="intimidação"><h2>Intimidação</h2></div>
+                        <div class="item" aria-value="psicologia"><h2>Psicologia</h2></div>
+                    </div>
+        
+                    <div id="perListInvestigacao" class="itemPlace">
+                        <div class="item" aria-value="percepção"><h2>Percepção</h2></div>
+                        <div class="item" aria-value="crime"><h2>Crime</h2></div>
+                        <div class="item" aria-value="medicina"><h2>Medicina</h2></div>
+                        <div class="item" aria-value="tecnologia"><h2>Tecnologia</h2></div>
+                        <div class="item" aria-value="mecanica"><h2>Mecânica</h2></div>
+                    </div>
+        
+                    <div id="perListConhecimento" class="itemPlace">
+                        <div class="item small-text" aria-value="inteligencia"><h2>Inteligência</h2></div>
+                        <div class="item small-text" aria-value="atualidades"><h2>Atualidades</h2></div>
+                        <div class="item" aria-value="ciencias"><h2>Ciências</h2></div>
+                        <div class="item" aria-value="historia"><h2>História</h2></div>
+                        <div class="item" aria-value="profissão"><h2>Profissão</h2></div>
+                    </div>
+        
+                    <div id="perListParanormal" class="itemPlace">
+                        <div class="item" aria-value="vontade"><h2>Vontade</h2></div>
+                        <div class="item" aria-value="ocultismo"><h2>Ocultismo</h2></div>
+                        <div class="item" aria-value="magia"><h2>Magia</h2></div>
+                        <div class="item small-text" aria-value="sobrevivencia"><h2>Sobrevivência</h2></div>
+                    </div>
+                </div>
+                <button class="btn" id="pr-next-btn" style="display: none;" onclick="finishPer()">Proximo</button>
             </div>
         </div>
     </div>
     
 <div id="game">
-    <button id="enterPer" onclick="enterPer()">Abrir Pericias e Status</button>
-
-  <div class="panel" id="main-panel">
-        
-    <div class="box">
-
-        <div id="ModsPanel" style="display: none; flex-direction: column; gap: 10px;">
-
-        <section style="display: flex; justify-content: space-between;">
-            <h2 class="title">
-                Mods
-            </h2>
-        
-            <section style="display: flex; flex-direction: column; gap: 10px;">
-                <section class="file-upload-wrapper">
-                    <input type="file" id="modFileInput" accept=".json" class="input" hidden onchange="document.getElementsByClassName('btn-personalizado')[0].classList.toggle('preenchido', this.value.length > 0)">
-            
-                    <label for="modFileInput" class="btn btn-personalizado"> Selecionar Arquivo </label>
-                </section>
-            
-                <button class="btn" onclick="importMod()">Importar Mod</button>
-            
-                <button class="btn" onclick="downloadExampleMod()" hidden> Baixar Mod Exemplo </button>
-            </section>
-        </section>
-
-    <section id="mods-list"></section>
-
-</div>
-      <p class="exit-box" onclick="panelClose()">x</p>
-
-      <!-- ================= MAGIA ================= -->
-      <div id="MagicCreate">
-        <section>
-          <p class="text white">Nome</p>
-          <input type="text" id="magicName" class="input">
-
-          <p class="text white">Descrição</p>
-          <textarea id="magicDescription" class="input" style="resize: none;"></textarea>
-
-          <p class="text white">Dado</p>
-          <input type="text" id="magicDice" class="input dice">
-        <br>
-          <button class="btn" onclick="createMagic()">Criar</button>
-        </section>
-        </div>
-
-      <!-- ================= HABILIDADE ================= -->
-      <div id="AbilityCreate" style="display: none;">
-        <section>
-          <p class="text white">Nome</p>
-          <input type="text" id="abilityName" class="input">
-
-          <p class="text white">Descrição</p>
-          <textarea id="abilityDescription" class="input" style="resize: none;"></textarea>
-
-          <p class="text white">Dado</p>
-          <input type="text" id="abilityDice" class="input dice">
-            <br>
-          <button class="btn" onclick="createAbility()">Criar</button>
-        </section>
-      </div>
-      <!-- ================= ITEM ================= -->
-      <div id="ItemCreate" style="display: none;">
-        <h1 class="title">Criar Item</h1>
-        <section >
-            <section id="infoGroup">
-                <section class="infoBlock">
-                    <section class="createItemInfo">
-                        <p class="text white">Nome</p>
-                        <input type="text" id="itemName" class="input">
-                    </section>
-                    
-                    <section class="createItemInfo">
-                        <p class="text white">Peso</p>
-                        <input type="number" id="itemWeight" class="input">
-                    </section>
-
-                    <section class="createItemInfo">
-                        <p class="text white">Local</p>
-                        <select class="input" style="width:100%;" id="itemLocal" class="input">
-                            <option value="inventario">Inventário</option>
-                            <option value="guardado">Guardado</option>
-                        </select>
-                    </section>
-                </section>
-                <section class="infoBlock">
-                    <section class="createItemInfo" style="height: -webkit-fill-available;">
-                        <p class="text white">Descrição</p>
-                        <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
-                    </section>
-                </section>
-            </section>
-          
-            <hr>
-
-            <section id="categoriesDefinitions">
-                <section id="categoriesGroup">
-                    <section>
-                        <button onclick="createItemCategory('item')" id="categoriesGroupItem" class="active">Item</button>
-                    </section>
-                    <section>
-                        <button onclick="createItemCategory('arma')" id="categoriesGroupWeapon">Arma</button>
-                    </section>
-                    <section>
-                        <button onclick="createItemCategory('municao')" id="categoriesGroupMunition">Munição</button>
-                    </section>
-                </section>
-    
-                <section id="createItemDefinitions">
-                    <section id="createItem">
-                        <p class="text white">Dado</p>
-                        <input class="input" type="text" id="itemCreateDice" class="input dice">
-                        <section>
-                            <p class="text white">Tipo</p>
-                            <select class="input" style="width:100%;" name="tipo" id="itemCreateType">
-                                <option value="objeto">Objeto</option>
-                                <option value="documento">Documento</option>
-                                <option value="vestimenta">Vestimenta</option>
-                                <option value="artefato">Artefato</option>
-                            </select>
-                        </section>
-                    </section>
-                    <section id="createWeapon">
-                        <section>
-                            <p class="text white" style="margin-top: 0;">Tipo</p>
-                            <select class="input" style="width:100%;" name="tipo" id="weaponCreateType">
-                                <option value="branca">Branca</option>
-                                <option value="pistola">Pistola</option>
-                                <option value="rifle">Rifle</option>
-                                <option value="longo_alcance">Longo Alcance</option>
-                            </select>
-                            <p class="text white" style="margin-top: 0;">Munição</p>
-                            <input class="input" type="number" id="weaponCreateMMO">
-                        </section>
-                        <section>
-                            <p class="text white">Dano</p>
-                            <input class="input" type="text" id="weaponCreateDamage">
-                            <p class="text white">Dano Critico</p>
-                            <input class="input" type="text" id="weaponCreateCritical">
-                        </p>
-                        </section>
-                    </section>
-                    <section id="createMunition">
-                        <section>
-                            <p class="text white" style="margin-top: 0;">Arma</p>
-                            <select class="input" style="width:100%;" name="tipo" id="mmoCreateWeapon">
-                                <option value="pistola">Pistola</option>
-                                <option value="rifle">Rifle</option>
-                                <option value="longo_alcance">Longo Alcance</option>
-                            </select>
-                            <p class="text white" style="display: none;">Quantidade</p>
-                            <input class="input" type="number" style="display: none;" id="mmoCreateQuantity">
-                        </section>
-                        <section>
-                            <p class="text white" style="margin-top: 0;">Tipo</p>
-                            <select class="input" style="width:100%;" name="tipo" id="mmoCreateType">
-                                <option value="bala">Bala Solta</option>
-                                <option value="cartucho">Cartucho</option>
-                            </select>
-                        </section>
-                    </section>
-                </section>
-                <br>
-            </section>
-
-          <a id="weapon-options" class="hidden">
-            <p class="text white">Tipo de Arma</p>
-            <select class="input" style="width:100%;" id="itemType" class="input">
-              <option value="fisica">Física</option>
-              <option value="branca">Branca</option>
-              <option value="pistola">Pistola</option>
-              <option value="rifle">Rifle</option>
-              <option value="longo_alcance">Longo Alcance</option>
-            </select>
-            <p class="text white">Munição</p>
-            <input class="input" type="number" id="itemAmmunition">
-        </a>
-
-          <a id="munition-options" class="hidden">
-            <p class="text white">Tipo de Munição</p>
-            <select class="input" style="width:100%;" id="munitionType" class="input">
-              <option value="bala">Bala Solta</option>
-              <option value="cartucho">Cartucho</option>
-            </select>
-          </a>
-        </section>
-        <br>
-        <button class="btn" onclick="createItem()">Criar</button>
-      </div>
-
-      <!-- ================= TRAUMA ================= -->
-      <div id="TraumaCreate" style="display: none;">
-        <section>
-          <p class="text white">Nome</p>
-          <input type="text" id="traumaName" class="input">
-
-          <p class="text white">Descrição</p>
-          <textarea id="traumaDescription" class="input" style="resize: none;"></textarea>
-
-          <p class="text white">Dado</p>
-          <input type="text" id="traumaDice" class="input dice">
-
-          <p class="text white">Tempo</p>
-          <input type="text" id="traumaTime" class="input">
-
-          <p class="text sm">Em caso de trauma permanente, coloque 'PER'</p>
-          <br>
-          <button class="btn" onclick="createTrauma()">Criar</button>
-        </section>
-      </div>
-    </div>
-  </div>
+    <button id="enterPer" onclick="enterPer">Abrir Pericias e Status</button>
 
   <!-- ================= MULTI TASK ================= -->
   <div id="multiTask">
     <header>
       <button id="MobileMTBtn">
         Magias/ Rituais
-        <img src="img/menu.svg" alt="" id="mMTImage">
+        <img src="img/menu.svg" alt="" class="mMTImage">
       </button>
       <div id="mt-menu">
         <button class="mTBtn active" onclick="gameHabaSel(0, this)" style="font-size: 10px; overflow: clip;">Magias/ Rituais</button>
@@ -599,21 +642,21 @@
     <main style="height: 100%;">
       <!-- ============ MAGIAS ============ -->
       <div class="mt-content active" id="magias-content">
-        <h3 class="title" ">Magias & Rituais</h3>
+        <h3 class="title">Magias & Rituais</h3>
         <div class="magias-content"></div>
 
         <div class="central" style="justify-content: flex-end;">
-          <button class="btn" onclick="addMagic()">+</button>
+          <button class="btn" onclick="startMagicCreation()">+</button>
         </div>
       </div>
 
       <!-- ============ HABILIDADES ============ -->
       <div class="mt-content" id="habilidades-content" style="display: none;">
-        <h3 class="title" ">Habilidades</h3>
+        <h3 class="title">Habilidades</h3>
         <div class="habilidades-content"></div>
 
         <div class="central">
-          <button class="btn" onclick="addAbility()">+</button>
+          <button class="btn" onclick="startAbilityCreation()">+</button>
         </div>
       </div>
 
@@ -623,7 +666,7 @@
           <div style="display: flex; height: 100%; flex-direction: column;">
             <p class="text" style="margin-left: 1em;">Inventário</p>
             <div id="inventory"></div>
-            <button class="btn invAddBtn" onclick="addItem()">+</button>
+            <button onclick="startItemCreation()">+</button>
           </div>
 
           <div style="width: -webkit-fill-available; width: -webkit-fill-available; height: calc(97% - 2em - 2px); display: flex; flex-direction: column;">
@@ -637,7 +680,7 @@
             </div>
 
             <p class="text">Peso</p>
-            <div class="peso-area" onclick="editAdditionalWeight()">
+            <div class="peso-area" onclick="document.getElementById('additional-weight-panel').style.display = 'flex'; document.getElementById('additionalWeightInput').value = ficha.inventario.additionalWeight;">
               <p class="text sm" id="pesoAddDisplay">/0</p>
               <h2 class="title" id="pesoDisplay">0</h2>
             </div>
@@ -652,17 +695,17 @@
 
       <!-- ============ ROLAGENS ============ -->
       <div class="mt-content" id="dados-content" style="display: none;">
-          <h3 class="title" ">Rolagem de Dado</h3>
+          <h3 class="title">Rolagem de Dado</h3>
           <input type="text" id="diceInput" class="dice">
           <button class="btn" id="diceBtnRoll" onclick="rollDice()">Rolar Dado</button>        
-          <p class="text">Os padrões de escrita de dados são: 'd' para dado, 'm' para modificador, 'v' para vantagem e 'd' para desvantagem. Ex: 2d20+5, 1d12-2, 1d20+v, 1d20+d.</p>
+          <p class="text">Os padrões de escrita de dados são: 'd' para dado e '+' ou '-' para modificadores. Ex: 2d20+5, 1d12-2, 1d6+1d4.</p>
       </div>
 
       <!-- ============ PERSONAGEM ============ -->
       <div class="mt-content" id="personagem-content" style="display: none;">
           <div class="personagem-content">
               <div class="personagem-info-basica">
-                <h3 class="title" ">Personagem</h3>
+                <h3 class="title">Personagem</h3>
                 <hr style="margin-bottom: 50px;">
                 <p><strong>Nome:</strong> <span id="personagem-nome"></span></p>
                 <p><strong>Idade:</strong> <span id="personagem-idade"></span></p>
@@ -705,7 +748,7 @@
                     <label>Traumas</label>
                     <div id="traumas-content"></div>
                     <br>
-                    <button class="btn" onclick="addTrauma()">+</button>
+                    <button class="btn" onclick="startTraumaCreation()">+</button>
                         
                 </div>
             </div>
@@ -716,7 +759,7 @@
 
       
       <div class="mt-content" id="diario-content" style="display: none;align-items: center;">
-        <h3 class="title" ">Diário</h3>
+        <h3 class="title">Diário</h3>
         <p class="text">*Removido por tempo indeterminado</p>
       </div>
 
@@ -764,7 +807,7 @@
                         <button class="btn" onclick="turnPerBlur()" id="blurPerBtn">Blur nas pericias (off)</button>
                         <button class="btn" style="padding: 2px; margin: 0;" onclick="document.getElementById('perBlurOpt').style.display = 'flex'">☰</button>
                         <div class="teste" id="perBlurOpt">
-                            <input type="range" name="" id="perBlurInput" min="1" max="15">
+                            <input type="range" id="perBlurInput" min="1" max="15">
                             <button id="blurInputBack" onclick="document.getElementById('perBlurOpt').style.display = 'none'">></button>
                         </div>
                     </div>
@@ -774,27 +817,29 @@
                 <div>
                     <input class="input" type="text" id="image-field">
                 </div>
-                <p>Salvamento automatico</p>
-                <button class="btn" id="changeAutoSaveBtn" onclick="changeAutoSave()">Desligado</button>
+                
+                <p>Dados</p>
+                <button class="btn" id="changeAutoSaveBtn" onclick="changeAutoSave()">Salvamento Automatico Desligado</button>
+                <button class="btn" id="changeFastLoginBtn" onclick="changeFastLogin()">Carregamento Rápido Desligado</button>
+                <button class="btn" onclick="baixarObjetoComoJSON(ficha, 'ficha_save')">Exportar</button>
 
                 <p>Mods</p>
                 <button class="btn" onclick="openModsMenu()">Gerenciar Mods</button>
-                <button class="btn" onclick="baixarObjetoComoJSON(ficha, 'ficha_save')" id="exportBtn">Exportar</button>
             </div>
        </div>
     </main>
   </div>
 
-  <div id="pericias-display-block">
+  <div id="periciasDisplayer">
     <button class="close-btn-per" onclick="closePer()">x</button>
     <div id="perTop">
         <div id="playerImg">
         </div>
-        <div id="chEdit">
-            <button onclick="valueCEdit(1)" id="1-ch" class="chEBtn btn white on">1</button>
-            <button onclick="valueCEdit(5)" id="5-ch" class="chEBtn btn white">5</button>
-            <button onclick="valueCEdit(10)" id="10-ch" class="chEBtn btn white">10</button>
-            <button onclick="valueCEdit(50)" id="50-ch" class="chEBtn btn white">50</button>
+        <div id="statusModifierEdit">
+            <button onclick="changestatusModifier(1)" id="1-dM" class="diceModiferBtn btn white on">1</button>
+            <button onclick="changestatusModifier(5)" id="5-dM" class="diceModiferBtn btn white">5</button>
+            <button onclick="changestatusModifier(10)" id="10-dM" class="diceModiferBtn btn white">10</button>
+            <button onclick="changestatusModifier(50)" id="50-dM" class="diceModiferBtn btn white">50</button>
 
         </div>
         <div class="barBlock">
@@ -817,8 +862,8 @@
                 <div id="mpBarFill" class="barFill"></div>
             </div>
             <div class="statusBtns">
-                <button class="barBtn" onclick="changeStatusValue('-', 'pontosDeMagia')"><</button>
-                <button class="barBtn" onclick="changeStatusValue('+', 'pontosDeMagia')">></button>
+                <button class="barBtn" onclick="changeStatusValue('-', 'magia')"><</button>
+                <button class="barBtn" onclick="changeStatusValue('+', 'magia')">></button>
             </div>
         </div>
         <div class="barBlock">
@@ -865,39 +910,54 @@
 
     <div id="additional-weight-panel" class="panel" style="display: none;">
         <div class="box">
-            <p class="exit-box" onclick="closeAdditionalWeightPanel()">x</p>
+            <p class="exit-box" onclick="const panel = document.getElementById('additional-weight-panel').style.display = 'none';">x</p>
             <p class="text" style="color: white;">Editar Peso Adicional</p>
             <input type="number" id="additionalWeightInput" class="input" placeholder="Novo peso">
-            <button class="btn" onclick="updateAdditionalWeight()">Salvar</button>
+            <button class="btn" onclick="renderMaxWeight()">Salvar</button>
         </div>
     </div>
 
     <div id="dice-div" onclick="hideDiceResult()">
             <div>
-                <h1 id="nmb" class="title"></h1>
-                <span id="nbmType" class="text sm">--</span>
-                <p id="nmbW">Clique em qualquer lugar para voltar.</p>
+                <h1 id="rollResult" class="title"></h1>
+                <span id="rollResultType" class="text sm">--</span>
+                <p id="rollResultTypeBackText">Clique em qualquer lugar para voltar.</p>
             </div>
     </div>
 
-    <div id="periciasEditorBox" class="hidden">
+    <div id="periciasEditorBox">
         <div class="periciasEditorBoxContent">
             <h2 class="title">Editar Pericias</h2>
             <button class="closeBox" onclick="salvarPericiasEditadas(), salvarStatusMaxEditados()">Salvar e Voltar</button>
         </div>
             <div id="periciasEditor"></div>
-            <div id="statusMaxEditor" class="hidden"></div>
+            <div id="statusMaxEditor"></div>
     </div>
 
     <div id="update-notification" style="display: none;">
-        <p>Seu save foi atualizado para a versão mais recente. Por favor, exporte-o novamente para garantir a compatibilidade.</p>
+        <p id="update-notification-text"></p>
         <button onclick="document.getElementById('update-notification').style.display = 'none'" class="btn base">Fechar</button>
     </div>
 
 </div>
-    
+
+<div id="loadingScream" >
+    <p class="text">Carregando...</p>
+    <img src="img/medo.svg" id="loadingScreamIcon">
+</div>
+
+
+    <script src="rules.js"></script>
+    <script src="changeLog.js"></script>
+    <script src="tooltip.js"></script>
     <script src="ficha.js"></script>
+    <script src="pericias.js"></script>
     <script src="script.js"></script>
+    <script src="rolagem.js"></script>
+    <script src="listas.js"></script>
+    <script src="inventory.js"></script>
+    <script src="options.js"></script>
+    <script src="mods.js"></script>
     <script src="game.js"></script>
 </body>
 </html>
