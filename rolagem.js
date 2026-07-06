@@ -162,11 +162,12 @@ function rollDice(per, dice = false, damage = false) {
         if (lvl >= 3) DICE_QUANT = 2
         if (lvl == 2|| lvl == 4) DICE_SOM = 2
         if (lvl == 5) DICE_SOM = 7
+        
         if (ficha.bonus.includes(per)) DICE_SOM += 3
-
         if (DICE_SOM != 0) DICE_SOM = "+" + DICE_SOM
         else DICE_SOM = ""
         if (lvl == 0) DICE_SOM = "-6"
+        if (lvl == 0 && ficha.bonus.includes(per)) DICE_SOM = "+2"
 
         diceInput.value = DICE_QUANT + "d20" + DICE_SOM
         console.log(DICE_QUANT + "d20" + DICE_SOM)

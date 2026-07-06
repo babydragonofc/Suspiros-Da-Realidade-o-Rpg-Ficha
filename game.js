@@ -1,6 +1,6 @@
 window.addEventListener("message", (event) => {
     if (event.data === "GET_DATA") {
-        event.source.postMessage( localStorage.getItem(ficha), event.origin);
+        event.source.postMessage( localStorage.getItem("ficha"), event.origin);
     }
 });
 
@@ -342,6 +342,9 @@ function salvarPericiasEditadas() {
         }
     });
 
+    ficha.bonus = ficha.origem.forEach( perN=> {
+        ficha.bonus.push(origens[perN].pericias)
+    });
     ficha.pericias = periciasEditadas;
     displayPericias();
     if (typeof save === 'function' && ficha.options?.autoSave) save(false);

@@ -4,7 +4,26 @@ if (localStorage.getItem('versãoNaUltimaVezQueViuOChangeLog') != siteVersion) {
 
 let fichaComPericiasAntigas = false;
 const changeLog = [
-    {
+        {
+        title: "Pequenas correções",
+        version: "1.1.3.1",
+        release: "06/07/2026",
+        content: "Pequenas correções no codigo.",
+        changes: {
+            add: [
+
+            ],
+            remove: [
+
+            ],
+            fixes: [
+                "Correção no bonus de pericias não treinadas",
+                "Correção na bonificação de fichas antigas"
+            ]
+        },
+        notes: ""
+    }
+    ,{
         title: "Primeira Grande Atualização",
         version: "1.1.3",
         release: "04/07/2026",
