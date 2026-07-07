@@ -1,12 +1,7 @@
 window.addEventListener("message", (event) => {
-
-    console.log("URL:", location.href);
-    console.log("Origin:", location.origin);
-    console.log("LocalStorage ficha:", localStorage.getItem("ficha"));
-
     if (event.data === "GET_DATA") {
         event.source.postMessage(
-            localStorage.getItem("ficha"),
+            JSON.stringify(ficha), // usa o objeto em memória
             event.origin
         );
     }
