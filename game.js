@@ -1,7 +1,7 @@
 window.addEventListener("message", (event) => {
     if (event.data === "GET_DATA") {
         event.source.postMessage(
-            JSON.stringify(ficha), // usa o objeto em memória
+            localStorage.getItem('ficha'), // usa o objeto em memória
             event.origin
         );
     }
