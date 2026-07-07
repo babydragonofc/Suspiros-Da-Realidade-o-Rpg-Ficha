@@ -1,9 +1,9 @@
 window.addEventListener("message", (event) => {
-    if (event.data === "GET_DATA") {
-        event.source.postMessage(
-            localStorage.getItem('ficha'), // usa o objeto em memória
-            event.origin
-        );
+    if (event.data.type === "LOG_DATA") {
+        console.log(event.data.value)
+    }
+    if(event.data.type === "NEW_ITEM") {
+        ficha.origens.push(event.data.value)
     }
 });
 
