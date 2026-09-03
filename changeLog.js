@@ -4,7 +4,31 @@ if (localStorage.getItem('versãoNaUltimaVezQueViuOChangeLog') != siteVersion) {
 
 let fichaComPericiasAntigas = false;
 const changeLog = [
-        {
+    {
+        title: "Pequenas correções",
+        version: "1.1.3.2",
+        release: "22/08/2026",
+        content: "De volta às atualizações, mudanças nos mods e pequenas correções.",
+        changes: {
+            add: [
+                "Sistema de Itens personalizados",
+                "Créditos. Veja as pessoas incríveis que ajudaram nesse projeto.",
+                "Mana substituida por Energia",
+                '"pericias Paranormais" renomeadas para "pericias Mentais"'
+            ],
+            remove: [
+                "Remoção da opção de perícias para dados",
+            ],
+            fixes: [
+                "Nomes de opções de Dados corrigidos",
+                "Leitura do valor do status de Medo melhorada",
+                "Melhoria no codigo de criação de item",
+                "Correção na edição de status"
+            ]
+        },
+        notes: ""
+    },
+    {
         title: "Pequenas correções",
         version: "1.1.3.1",
         release: "06/07/2026",

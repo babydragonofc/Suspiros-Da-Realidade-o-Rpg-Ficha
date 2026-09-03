@@ -481,7 +481,7 @@ function typeConfirmF() {
         ficha.pericias.Aprendizado.min += 5
     }
     if (ficha.tipo == 1) {
-        ficha.status.magiaMax += 3
+        ficha.status.energiaMax += 3
         ficha.pericias.Magia.value += 2
         ficha.pericias.Magia.min += 2
     }
@@ -853,7 +853,7 @@ function renderStatusMaxEditor() {
 
     const statusList = [
         { key: 'vidaMax', label: 'Vida Máx.' },
-        { key: 'magiaMax', label: 'MP Máx.' },
+        { key: 'energiaMax', label: 'Energia Máx.' },
         { key: 'medoMax', label: 'Medo Máx.' }
     ];
 

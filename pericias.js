@@ -407,7 +407,7 @@ const itensPlace = [
     {name: "Sociais", id:"perListSociais"},
     {name: "Investigativas", id:"perListInvestigacao"},
     {name: "De Conhecimento", id: "perListConhecimento"},
-    {name: "Paranormais", id:"perListParanormal"}
+    {name: "Paranormais", id:"perListMentais"}
 ]
 
 let selectedItemPlace = 0
@@ -560,6 +560,7 @@ function displayPericias() {
 
                 const perElName = document.createElement('span')
                 perElName.textContent = per
+                console.log(ficha.bonus)
                 if(ficha.bonus.includes(per)) {
                     perElName.style.color = "yellow"
                     perElName.textContent += " (+3)"

@@ -1,25 +1,3 @@
-const tabelaPericia = {
-    1:  { N: 20, B: null, E: null },
-    2:  { N: 19, B: 20, E: null },
-    3:  { N: 18, B: 20, E: null },
-    4:  { N: 17, B: 19, E: null },
-    5:  { N: 16, B: 19, E: 20 },
-    6:  { N: 15, B: 18, E: 20 },
-    7:  { N: 14, B: 18, E: 20 },
-    8:  { N: 13, B: 17, E: 20 },
-    9:  { N: 12, B: 17, E: 20 },
-    10: { N: 11, B: 16, E: 19 },
-    11: { N: 10, B: 16, E: 19 },
-    12: { N: 9,  B: 15, E: 19 },
-    13: { N: 8,  B: 15, E: 19 },
-    14: { N: 7,  B: 14, E: 19 },
-    15: { N: 6,  B: 14, E: 18 },
-    16: { N: 5,  B: 13, E: 18 },
-    17: { N: 4,  B: 13, E: 18 },
-    18: { N: 3,  B: 12, E: 18 },
-    19: { N: 2,  B: 12, E: 18 },
-        20: { N: 1,  B: 11, E: 17 }
-};
 
 const rollResult = document.getElementById("rollResult");
 const rollResultTypeBackText = document.getElementById('rollResultTypeBackText');

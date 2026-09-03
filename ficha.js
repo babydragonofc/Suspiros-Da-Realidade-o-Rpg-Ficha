@@ -15,11 +15,11 @@ var ficha = {
     elementos: [],
     status: {
         vida: 0,
-        magia: 0,
+        energia: 0,
         medo: 0,
         
         vidaMax: 0,
-        magiaMax: 0,
+        energiaMax: 0,
         medoMax: 0
     },
     pericias: [
@@ -171,6 +171,10 @@ if (inputArquivo) {
         if (!dadosCarregados.versão) {
             panelOpen(false, 'ATUALIZAÇÃO', 'o sistema de pericias foi atualizados, vá em Personagem > Editar pericias para adicionar suas pericias')
             fichaComPericiasAntigas = true
+        }
+        if (dadosCarregados.versão > versionNumber("1.1.3.3") ) {
+            panelOpen(false, 'ATUALIZAÇÃO', 'o status MANA foi trocado para ENERGIA, vá em Personagem > Editar pericias para definir sua energia')
+
         }
         ficha = mergeFicha(dadosCarregados);
 

@@ -54,7 +54,7 @@ main footer {
     width: 100dvw;
     position: absolute;
     bottom: 0;
-    justify-content: center;
+    justify-content: space-around;
 }
 
 main::-webkit-scrollbar {
@@ -64,6 +64,10 @@ main::-webkit-scrollbar {
 .logo {
     filter: brightness(0) invert(1);
     width: 90%;
+}
+
+#agradecimentos span h4 {
+    margin: 0;
 }
 
 #ordoDoc-wrap {
@@ -1591,6 +1595,7 @@ img.reverse {
 }
 
 .panel .box {
+    
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1602,6 +1607,8 @@ img.reverse {
     max-width: 800px;
     height: auto;
     min-height: 420px;
+    max-height: 90dvh;
+    overflow-y: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease-in-out;
 }
@@ -1632,12 +1639,11 @@ img.reverse {
     margin: 0;
 }
 
-.panel .box div {
+.panel .box .content {
     display: flex;
     flex-direction: column;
     width: 90%;
     height: 90%;
-
 }
 
 #MagicCreate, #AbilityCreate {
@@ -1989,7 +1995,7 @@ img.reverse {
     margin-bottom: 20px;
 }
 
-#infoGroup .infoBlock .createItemInfo {
+#infoGroup .infoBlock .addItemInfo {
     display: flex;
     flex-direction: column;
 }
@@ -2020,12 +2026,12 @@ img.reverse {
     background-color: #222;
 }
 
-#createItemDefinitions {
+#addItemDefinitions {
     height: 200px;
     background-color: #222;
 }
 
-#createItemMenu, #createWeaponMenu, #createMunitionMenu {
+#addItemMenu, #createWeaponMenu, #createMunitionMenu {
     display: none;
     gap: 30px;
     justify-content: center;
@@ -2033,7 +2039,7 @@ img.reverse {
     height: stretch;
     overflow-y: auto;
 }
-#createItemMenu::-webkit-scrollbar,
+#addItemMenu::-webkit-scrollbar,
 #createWeaponMenu::-webkit-scrollbar,
 #createMunitionMenu::-webkit-scrollbar {
     display: none;
@@ -2253,8 +2259,8 @@ img.reverse {
     width: 10%;
 }
 
-#mpBarFill {
-    background-color: #1C71D8;
+#epBarFill {
+    background-color: #1cd842;
     width: 20%;
 }
 
@@ -2298,11 +2304,11 @@ img.reverse {
     color: black;
 }
 
-#mpBar::after {
+#epBar::after {
     content: '';
     height: 100%;
     width: 100%;
-    background-image: url(img/magia.png);
+    background-image: url(https://i.imgur.com/ykWerrn.png&quot;);
     position: absolute;
     left: 0;
     top: 0;
@@ -2690,7 +2696,7 @@ img.reverse {
         width: -webkit-fill-available;
     }
 
-    #createItem, #createWeapon, #createMunition {
+    #addItem, #createWeapon, #createMunition {
         flex-direction: column;
         justify-content: flex-start;
         gap: 0;
@@ -3537,4 +3543,52 @@ hr.cL {
         color: yellow;
         font-family: monospace;
     }
+}
+
+fear {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+
+    background-image: url("img/medo.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    vertical-align: -0.35em; /* Alinha com o texto */
+}
+
+#customItemList {
+    width: 100%;
+    border: 1px solid #555;
+    display: grid;
+    padding: 1em;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    box-sizing: border-box;
+}
+
+#customItemList div {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #555;
+    background-color: #222;
+    color: white;
+    justify-content: space-between;
+    padding: 0.5em;
+}
+
+#customItemList div section {
+    margin-bottom: 1em;
+}
+
+#customItemList div h4 {
+    margin: 0;
+    margin-bottom: 0.3em;
+    font-size: 20px;
+}
+
+#spValue {
+    mix-blend-mode: exclusion;
+    color: white;
 }

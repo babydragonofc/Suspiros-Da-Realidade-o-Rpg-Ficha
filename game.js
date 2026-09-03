@@ -53,6 +53,7 @@ function panelOpen(id, title, content, sm = false) {
         targetDiv.style.display = "flex";
     } else if (title && content) {
         const newContentDiv = document.createElement("div");
+        newContentDiv.classList = "content"
         newContentDiv.id = "dynamic-content";
         newContentDiv.style.display = "flex";
         newContentDiv.innerHTML = `
@@ -65,7 +66,14 @@ function panelOpen(id, title, content, sm = false) {
     }
 }
 
+
+let subPanel = false
+
 function panelClose() {
+    if (subPanel) {
+        panelChange();
+        return;
+    }
     mainPanelDissolve.hide(1400)
     const box = document.querySelector("#main-panel .box");
     const divs = box.querySelectorAll("div[id]");
@@ -79,6 +87,21 @@ function panelClose() {
     if (dynamicContent) {
         dynamicContent.remove();
     }
+}
+
+function panelChange() {
+    const box = document.querySelector("#main-panel .box");
+    const divs = box.querySelectorAll("div[id]");
+    divs.forEach(div => {
+        div.style.display = "none";
+    });
+    
+    if (subPanel) {
+        const elForOpen = document.getElementById(subPanel)
+        elForOpen.style.display = "flex"
+    }
+
+    subPanel = false
 }
 
 // Habas
@@ -109,7 +132,7 @@ var statusModifierValue = 1;
 
 var statusList = {
     "vida": {fill: document.getElementById('hpBarFill'), text: document.getElementById('hpValue')},
-    "magia": {fill: document.getElementById('mpBarFill'), text: document.getElementById('mpValue')},
+    "energia": {fill: document.getElementById('epBarFill'), text: document.getElementById('epValue')},
     "medo": {fill: document.getElementById('spBarFill'), text: document.getElementById('spValue')},
 }
 
@@ -155,11 +178,11 @@ function changeStatusValue(type, status, custom = false) {
 function statusDef() {
 
     ficha.status.vidaMax = 15 + perLvl('constituição')*5
-    ficha.status.magiaMax = 5 + perLvl('magia')*10
+    ficha.status.energiaMax = 5 + (perLvl('vontade')*2) + (perLvl('constituição')*3)
     ficha.status.medoMax = 20 + (perLvl('vontade')*10) + (perLvl('psicologia')*3)
 
     ficha.status.vida = ficha.status.vidaMax
-    ficha.status.magia = ficha.status.magiaMax
+    ficha.status.energia = ficha.status.energiaMax
     ficha.status.medo = ficha.status.medoMax
     
 }
@@ -169,7 +192,7 @@ function statusDefPreview(cons, mag, vont, psc) {
     let preview = {}
 
     preview.vida = 15 + cons*5
-    preview.magia = 5 + mag*10
+    preview.energia = 5 + mag*10
     preview.medo = 20 + vont*10 + psc*3
 
     return preview;
@@ -178,15 +201,15 @@ function statusDefPreview(cons, mag, vont, psc) {
 
 function statusAtu() {
     const vidaPer = (ficha.status.vida / ficha.status.vidaMax) * 100;
-    const mpPer = (ficha.status.magia / ficha.status.magiaMax) * 100;
+    const epPer = (ficha.status.energia / ficha.status.energiaMax) * 100;
     const spPer = (ficha.status.medo / ficha.status.medoMax) * 100
     
     statusList["vida"].fill.style.width = ficha.status.vida >= ficha.status.vidaMax? "100%" :vidaPer + "%"
-    statusList["magia"].fill.style.width = ficha.status.magia >= ficha.status.magiaMax? "100%" :mpPer + "%"
+    statusList["energia"].fill.style.width = ficha.status.energia >= ficha.status.energiaMax? "100%" :epPer + "%"
     statusList["medo"].fill.style.width = ficha.status.medo >= ficha.status.medoMax? "100%" :spPer + "%"
 
     statusList["vida"].text.innerHTML = ficha.status.vida + "/" + ficha.status.vidaMax;
-    statusList["magia"].text.innerHTML = ficha.status.magia + "/" + ficha.status.magiaMax;
+    statusList["energia"].text.innerHTML = ficha.status.energia + "/" + ficha.status.energiaMax;
     statusList["medo"].text.innerHTML = ficha.status.medo + "/" + ficha.status.medoMax;
 
 if (ficha.customStatus.length != 0) {
@@ -345,7 +368,7 @@ function salvarPericiasEditadas() {
         }
     });
 
-    ficha.bonus = ficha.origem.forEach( perN=> {
+    ficha.origem.forEach( perN=> {
         ficha.bonus.push(origens[perN].pericias)
     });
     ficha.pericias = periciasEditadas;
@@ -686,6 +709,7 @@ function renderPericiasEditorPlaces() {
         periciasNivel["vontade"] || 0,
         periciasNivel["psicologia"] || 0
     );
+
     
     const feedback = document.getElementById('periciasEditorFeedback');
     if (!feedback) return;
@@ -693,7 +717,7 @@ function renderPericiasEditorPlaces() {
     if (itensCount < min || itensCount > max || !validPyramid) {
         feedback.innerHTML = `Piramide fora da regra do nivel ${editorLevel}: use entre ${min} e ${max} pericias nas casas marcadas.<br>
         Vida: ${preview.vida}<br>
-        Magia: ${preview.magia}<br>
+        Magia: ${preview.energia}<br>
         Medo: ${preview.medo}
         `;
         feedback.style.color = '#ff7373';
@@ -761,7 +785,7 @@ function getCategoriasPericiasBase() {
         { name: 'Sociais', id: 'perListSociais', pericias: ['labia', 'intimidação', 'psicologia'] },
         { name: 'Investigativas', id: 'perListInvestigacao', pericias: ['percepção', 'crime', 'medicina', 'tecnologia', 'mecanica'] },
         { name: 'De Conhecimento', id: 'perListConhecimento', pericias: ['inteligencia', 'atualidades', 'ciencias', 'historia', 'profissão'] },
-        { name: 'Paranormais', id: 'perListParanormal', pericias: ['vontade', 'ocultismo', 'magia', 'sobrevivencia'] }
+        { name: 'Mentais', id: 'perListMentais', pericias: ['vontade', 'ocultismo', 'magia', 'sobrevivencia'] }
     ];
 }
 
@@ -818,4 +842,9 @@ function registerScrollShadows() {
 
 function isMobileDevice() {
   return window.matchMedia("(any-hover:none)").matches; 
+}
+
+
+function versionNumber(string) {
+    return Number(string.replace(/\./g, ""));
 }

@@ -42,10 +42,10 @@ function startItemCreation() {
 
     mmoCreateWeapon.value = "pistola"
     mmoCreateType.value = ""
-    createItemCategory('item')
+    addItemCategory('item')
 }
 
-function createItem() {
+function addItem() {
 
     if (itemName.value == "") {
         alert("O nome do item é obrigatório.");
@@ -76,27 +76,81 @@ function createItem() {
         location.reload();
     }
 
-    const item = {
+    createItem({
         name: itemName.value,
-        id: Date.now(), // Unique ID for the item
         description: itemDescription.value,
-        weight: parseFloat(itemWeight.value) || 0,
-        storageLocate: itemLocal.value,
-        isFavorite: false,
+        weight: itemWeight.value,
         type: itemCategorySelected,
-        data : data
+        data: data,
+    }, itemLocal.value)
+
+    renderTotalWeight();
+    panelClose();
+}
+
+/**
+ * @param {Object} item
+ * @param {string} item.name
+ * @param {string} item.description
+ * @param {number} item.weight
+ * @param {string} item.type
+ * @param {Object} item.data
+ * 
+ * ITEM
+ * 
+ * |data.dice
+ * 
+ * |data.type
+ * 
+ * |
+ * 
+ * ARMA
+ *
+ * | data.type
+ *
+ * | data.mmo
+ *
+ * |data.maxMmo
+ *
+ * |data.damage
+ *
+ * |data.critical
+ * 
+ * |
+ * 
+ * MUNIÇÃO
+ *
+ * |data.type
+ * 
+ * |data.weapon
+ * 
+ * |
+ * 
+ * @param {string} place | "gua"
+ */
+
+function createItem(item, place="inv") {
+
+    const itemForAdd = {
+        name: item.name,
+        id: crypto.randomUUID(),
+        description: item.description,
+        weight: parseFloat(item.weight) || 0,
+        isFavorite: false,
+        type: item.type,
+        data: item.data,
     }
 
-    if (item.storageLocate == 'inventario') {
-        ficha.inventario.content.push(item);
+    if (place == "inventario") {
+        ficha.inventario.content.push(itemForAdd);
         renderInventory();
     } else {
-        ficha.inventario.guardados.push(item);
+        ficha.inventario.guardados.push(itemForAdd);
         renderGuardados();
     }
 
     renderTotalWeight();
-    panelClose();
+
 }
 
 // Botões de seleção de Categoria 
@@ -105,25 +159,25 @@ const btnCategoryWeapon = document.getElementById('btnCategoryWeapon');
 const btnCategoryMunition = document.getElementById('btnCategoryMunition');
 
 // Menus das Categorias
-const createItemMenu = document.getElementById('createItemMenu');
+const addItemMenu = document.getElementById('addItemMenu');
 const createWeaponMenu = document.getElementById('createWeaponMenu');
 const createMunitionMenu = document.getElementById('createMunitionMenu');
 
 const CategoryList = {
-    "item": {opt: createItemMenu, btn: btnCategoryItem },
+    "item": {opt: addItemMenu, btn: btnCategoryItem },
     "arma": {opt: createWeaponMenu, btn: btnCategoryWeapon },
     "municao": {opt: createMunitionMenu, btn: btnCategoryMunition }
 }
 
 var itemCategorySelected = "item"
-function createItemCategory(itemCategory) {
+function addItemCategory(itemCategory) {
 
     if (itemCategory != itemCategorySelected) {
         const previusBtn = CategoryList[itemCategorySelected].btn
         previusBtn.classList.remove('active')
         itemCategorySelected = itemCategory
     }
-    createItemMenu.style.display = "none";
+    addItemMenu.style.display = "none";
     createWeaponMenu.style.display = "none";
     createMunitionMenu.style.display = "none";
 

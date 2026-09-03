@@ -220,17 +220,17 @@ function loadUserOptions() {
     }
     const changeAutoSaveBtn = document.getElementById("changeAutoSaveBtn")
     if (ficha.options.autoSave) {
-        changeAutoSaveBtn.innerHTML = "Ligado"
+        changeAutoSaveBtn.innerHTML = "Salvamento Automatico Ligado"
     } else {
-        changeAutoSaveBtn.innerHTML = "Desligado"
+        changeAutoSaveBtn.innerHTML = "Salvamento Automatico Desligado"
     }
     
 
     const changeFastLoginBtn = document.getElementById("changeFastLoginBtn")
     if (localStorage.getItem('fastLogin')) {
-        changeFastLoginBtn.innerHTML = "Ligado"
+        changeFastLoginBtn.innerHTML = "Carregamento Rápido Ligado"
     } else {
-        changeFastLoginBtn.innerHTML = "Desligado"
+        changeFastLoginBtn.innerHTML = "Carregamento Rápido Desligado"
     }
     verifyAutoSave()
 }
