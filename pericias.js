@@ -415,7 +415,7 @@ let selectedItemPlace = 0
 //Responsividade
 const perPlaces = document.getElementById('perPlaces')
 const prNextBtn = document.getElementById("pr-next-btn")
-const prContent = document.getElementById('Pr-Content')
+const prContent = document.getElementById('escolhaDePericia-Content')
 
 
 
@@ -427,7 +427,7 @@ function perListsPlacesGen(on) {
     if (!itensPlace[selectedItemPlace]) selectedItemPlace = 0;
 
     if(!on) {
-        document.querySelectorAll('#Pr-Content .itemPlace').forEach(el => {
+        document.querySelectorAll('#escolhaDePericia-Content .itemPlace').forEach(el => {
             el.style.display = "none"
         }); 
 
@@ -435,7 +435,7 @@ function perListsPlacesGen(on) {
         if (selectedList) selectedList.style.display = "flex"
         if (header) header.style.display = "flex"
     } else {
-        document.querySelectorAll('#Pr-Content .itemPlace').forEach(el => {
+        document.querySelectorAll('#escolhaDePericia-Content .itemPlace').forEach(el => {
             el.style.display = "flex"
         }); 
         if (header) header.style.display = "none"
@@ -451,7 +451,7 @@ function selectItemPlace(type) {
     const title = document.querySelector('#perLists header section h2')
     if (title) title.textContent = itensPlace[selectedItemPlace].name;
 
-    document.querySelectorAll('#Pr-Content .itemPlace').forEach(el => {
+    document.querySelectorAll('#escolhaDePericia-Content .itemPlace').forEach(el => {
         el.style.display = "none"
     }); 
 
@@ -459,9 +459,10 @@ function selectItemPlace(type) {
     if (selectedList) selectedList.style.display = "flex"
 }
 
+
 function finishPer() {
     let perValueMap = [
-        ["destreza", "força", "constituição", "luta", "pontaria", "armas_brancas", "pistolas", "rifle", "longo_alcance", "atletismo", "acrobacia", "furtividade", "pilotagem", "labia", "intimidação", "psicologia", "percepção", "crime", "medicina", "tecnologia", "mecanica", "inteligencia", "atualidades", "ciencias", "historia", "profissão", "vontade", "ocultismo", "magia", "sobrevivencia" ],
+        getCategoriasPericiasBase().flatMap(categoria => categoria.pericias),
         [],
         [],
         [],
@@ -477,7 +478,7 @@ function finishPer() {
     ]
     const rule = levelsRules[level].map
 
-    let HaveMagicPer = false
+    ficha.options.HaveMagicPer = false;
 
     for (let linha = 0; linha < rule.length; linha++) {
         for (let coluna = 0; coluna < rule[linha].length; coluna++) {
@@ -493,22 +494,21 @@ function finishPer() {
             perValueMap[5 - linha].push(value);
 
             if (value === "magia" && linha !== 0) {
-                HaveMagicPer = true;
+                ficha.options.HaveMagicPer = true;
             }
         }
     }
 
     ficha.pericias = perValueMap;
     statusDef()
-    /*
-    if (ficha.origem.includes(9) || ficha.origem.includes(13)){
-        ficha.ConhecimentoMagico += 1
     
-    }*/
-   console.log(HaveMagicPer)
-    if (HaveMagicPer) {
-        Pr.style.display = "none"
-        Mg.style.display = "flex";
+    if (ficha.ocupação.id == 9){
+        ficha.ConhecimentoMagico += 1
+    }
+   console.log(ficha.options.HaveMagicPer)
+    if (ficha.options.HaveMagicPer) {
+        escolhaDePericia.style.display = "none"
+        escolhasDeMagia.style.display = "flex";
     } else {
         FichaEnd()
     }
@@ -560,14 +560,13 @@ function displayPericias() {
 
                 const perElName = document.createElement('span')
                 perElName.textContent = per
-                console.log(ficha.bonus)
                 if(ficha.bonus.includes(per)) {
                     perElName.style.color = "yellow"
                     perElName.textContent += " (+3)"
                 } 
                 const perElBtn = document.createElement('button')
                 perElBtn.addEventListener('click', () => {
-                    rollDice(per)
+                    rollDice(per, "per")
                 })
                 perElBtn.textContent = "Rolar"
                 perElBox.appendChild(perElName)

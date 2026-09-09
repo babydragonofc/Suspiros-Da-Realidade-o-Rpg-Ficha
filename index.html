@@ -11,9 +11,6 @@
 <body>
 
 <div class="panel" id="main-panel">
-
-
-
     <div class="box">
         <p class="exit-box" onclick="panelClose()">x</p>
 
@@ -67,6 +64,16 @@
 
         </div>
 
+        <div class="content" id="knowledgeSelector">
+            <span>1 / 1 pericias escolhidas </span>
+            <button class="btn next hide">Proximo</button>
+            <button class="btn i"     >Artes</button>
+            <button class="btn ii"    >Medicina</button>
+            <button class="btn iii"   >Ciências</button>
+            <button class="btn iiii"  >História</button>
+            <button class="btn iiiii" >Burocracia</button>
+            <button class="btn iiiiii">Atualidades</button>
+        </div>
         <!-- ================= MAGIA ================= -->
         <div class="content" id="MagicCreate">
             <section>
@@ -247,21 +254,21 @@
         </footer>
     </main>
 
-    <div id="cF">
-        <div id="IB">
+    <div id="criaçãoDeFicha">
+        <div id="informaçõesBasicas">
             <div id="ordoDoc-wrap">
                 <div id="ordoDoc">
                     <span class="name">???</span>
                     <span class="birth">??/??/????</span>
                 </div>
             </div>
-            <h3 class="big-title">Informacoes</h3>
+            <h3 class="big-title">Informações</h3>
             <hr>
             <p class="text">Nome</p>
             <input type="text" id="name" class="input">
             <p class="text">Data de Nascimento</p>
             <input type="date" id="date" class="input">
-            <div style="display: flex;">
+            <div style="display: flex;" id="lastInfo">
                 <div>
                     <p class="text">Idade</p>
                     <input type="number" id="age" class="input">
@@ -276,14 +283,13 @@
             </div>
             <button class="pBtn" id="p1">Proximo</button>
         </div>
-        <div id="Rs">
+        <div id="escolhaDeRaças">
             <h3 class="title">Raças</h3>
-            <p class="text">(Descrições incorretas, se informe o mestre)</p>
-            <p class="text"(Atualização em desenvolvimento)></p>
             <hr>
-            <div id="Rs-box">
+            <span class="text">Em Suspiros da Realidade, existem 4 raças que vivem entre si em 'harmonia'</span>
+            <div id="race-box">
                 <div class="race-card">
-                    <button class="rsBtn">HUMANO</button>
+                    <button class="raceBtn">HUMANO</button>
                     <div class="race-details">
                         <div class="corner-images">
                             <img src="img/corner.svg" class="corner-image top-left" alt="">
@@ -292,19 +298,21 @@
                             <img src="img/corner.svg" class="corner-image bottom-right" alt="">
                         </div>
                         <h2 class="title">HUMANO</h2>
-                        <p>Versáteis e adaptáveis, os humanos são a raça mais comum, capazes de se destacar em qualquer caminho que escolherem.</p>
-                            <div class="race-skills">
-                            <h4>Perícias de Raça:</h4>
-                            <ul>
-                                <li>+1 em quaisquer dois atributos</li>
-                                <li>Uma perícia adicional à sua escolha</li>
-                            </ul>
-                        </div>
+                        <p> 
+                            &nbsp&nbsp&nbsp&nbspVersáteis, simples, “donos do mundo”.<br>
+                            Os humanos são a espécie mais comum e conhecida. Não possuem características físicas ou habilidades naturais muito diferentes das encontradas na nossa realidade, mas compensam essa ausência com sua capacidade de adaptação e variedade.<br>
+                            <br>
+                            Humanos podem desenvolver-se em diferentes áreas, podendo adquirir Poderes de Traumas.
+                        </p>
+                        <span>
+                            15 PV base; 5 PE base; 20 MD base; <br>
+                            3 pontos de Traços.
+                        </span>
                         <button class="btn choose-btn" onclick="raceChose(0)">Escolher</button>
                     </div>
                 </div>
                 <div class="race-card">
-                    <button class="rsBtn">ZOMANO</button>
+                    <button class="raceBtn">ZOMANO</button>
                     <div class="race-details">
                         <div class="corner-images">
                             <img src="img/corner.svg" class="corner-image top-left" alt="">
@@ -313,19 +321,21 @@
                             <img src="img/corner.svg" class="corner-image bottom-right" alt="">
                         </div>
                         <h2 class="title">ZOMANO</h2>
-                        <p>Lentos mas implacáveis, os zomanos possuem uma resiliência sobrenatural e uma força que desafia a morte.</p>
-                            <div class="race-skills">
-                            <h4>Perícias de Raça:</h4>
-                            <ul>
-                                <li>Resistência a dano físico</li>
-                                <li>Não precisa respirar</li>
-                            </ul>
-                        </div>
+                        <p> 
+                            &nbsp&nbsp&nbsp&nbspCuriosos, ágeis e versáteis.<br>
+                            Zoomanos possuem características de animais integradas ao seu corpo. Essas características variam entre indivíduos e podem incluir orelhas, caudas, pelos, escamas, pequenas asas ou outras particularidades, oferecendo diferentes possibilidades de traços e habilidades.<br>
+                                <br>
+                            São mentalmente mais frágeis que os humanos, mas também mais adaptáveis e variados. Cada Zoomano possui características próprias que refletem a espécie animal da qual descende, podendo adquirir poderes de Trauma.<br>
+                        </p>
+                        <span>
+                        20 PV base; 15 de PE base; 10 MD base.<br>
+                        4 pontos de Traços.
+                        </span>
                         <button class="btn choose-btn" onclick="raceChose(1)">Escolher</button>
                     </div>
                 </div>
                 <div class="race-card">
-                    <button class="rsBtn">VAMPIRO</button>
+                    <button class="raceBtn">VAMPIRO</button>
                     <div class="race-details">
                         <div class="corner-images">
                             <img src="img/corner.svg" class="corner-image top-left" alt="">
@@ -334,19 +344,21 @@
                             <img src="img/corner.svg" class="corner-image bottom-right" alt="">
                         </div>
                         <h2 class="title">VAMPIRO</h2>
-                        <p>Seres da noite, vampiros são ágeis, charmosos e possuem habilidades sobrenaturais ligadas ao sangue e às sombras.</p>
-                        <div class="race-skills">
-                            <h4>Perícias de Raça:</h4>
-                            <ul>
-                                <li>Visão no escuro</li>
-                                <li>Habilidades de furtividade e persuasão</li>
-                            </ul>
-                        </div>
+                        <p> 
+                            &nbsp&nbsp&nbsp&nbspÁgeis, habilidosos, perigosos.<br>
+                            Vampiros são predadores naturalmente adaptados ao combate e à sobrevivência. Possuem um par de asas semelhantes às de morcegos, que podem ser recolhidas ao longo do corpo e permitem o voo e rápida corrida. São, em sua maioria, mais teimosos, rebeldes e difíceis de se lidar, sofrendo muito preconceito.<br>
+                            <br>
+                            Sua mobilidade é superior à humana, tendo +2 de mobilidade. Entretanto, sua resistência física é inferior à humana, possuindo -3 de defesa, não podendo adquirir Poderes de Trauma.
+                        </p>
+                        <span>
+                        10 PV base; 10 de PE base; 22 MD base.<br>
+                        3 pontos de Traços.
+                        </span>
                         <button class="btn choose-btn" onclick="raceChose(2)">Escolher</button>
                     </div>
                 </div>
                 <div class="race-card">
-                    <button class="rsBtn">DEMÔNIO</button>
+                    <button class="raceBtn">DEMÔNIO</button>
                     <div class="race-details">
                         <div class="corner-images">
                             <img src="img/corner.svg" class="corner-image top-left" alt="">
@@ -355,25 +367,36 @@
                             <img src="img/corner.svg" class="corner-image bottom-right" alt="">
                         </div>
                         <h2 class="title">DEMÔNIO</h2>
-                        <p>Nascidos do fogo e do caos, demônios são poderosos e destrutivos, com afinidade para magia negra e combate brutal.</p>
-                            <div class="race-skills">
-                            <h4>Perícias de Raça:</h4>
-                            <ul>
-                                <li>Resistência a fogo</li>
-                                <li>Afinidade com magia de fogo</li>
-                            </ul>
-                        </div>
+                        <p> 
+                            &nbsp&nbsp&nbsp&nbspFortes, resistentes, ameaçadores.<br>
+                            Demônios são humanoides semelhantes aos humanos, mas possuem características físicas que os distinguem, como chifres, pele ou olhos incomuns e outras particularidades. Sua constituição é naturalmente superior, tornando-os mais resistentes e capazes de suportar situações que seriam perigosas para outras espécies.<br>
+                            <br>
+                            Também são fisicamente mais fortes, possuindo +3 de Defesa Física. Entretanto, não podem adquirir Poderes de Traumas.
+                        </p>
+                        <span>
+                        20 PV base; 15 de PE base; 20 MD base.<br>
+                        2 pontos de Traços.
+                        </span>
                         <button class="btn choose-btn" onclick="raceChose(3)">Escolher</button>
                     </div>
                 </div>
             </div>
+
         </div>
-        <div id="Og">
-            <div id="origens"></div>
-            <button class="btn" id="origin-next-btn" onclick="originNext()" style="display: none; bottom: 5px; position: fixed; ">Próximo</button>
+        <div id="escolhaDeOcupação">
+            <h1 class="big-title">Ocupações</h1>
+            <span class="text">&nbsp&nbsp&nbsp&nbspA Ocupação representa a vida, profissão ou experiência que o personagem possuía antes ou durante os acontecimentos da campanha. Cada origem concede perícias e habilidades relacionadas à sua área de conhecimento.</span>
+            <div id="ocupaçõesContainer"></div>
         </div>
-        <div id="Mg">
-            <div id="tipo">
+        <div id="escolhaDeOrigem">
+            <div>
+                <h1 class="big-title">Origens</h1>
+                <span class="text" style="font-size: 10px; max-width: 300px; margin-top: 29px; display: none;">&nbsp&nbsp&nbsp&nbspA Origem representa as circunstâncias que moldaram o personagem antes da campanha. Ela pode representar sua criação, condição de vida ou acontecimentos que marcaram sua história.<br>&nbsp&nbsp&nbsp&nbsp Além de representar o passado do personagem, a Origem pode conceder acessos, contatos e conhecimentos que façam sentido com sua história. antes da campanha. Ela pode representar sua criação, condição de vida ou acontecimentos que marcaram sua história.</span>
+            </div>
+            <div id="origensContainer"></div>
+        </div>
+        <div id="escolhasDeMagia">
+            <div id="escolhaDeTipoMagico">
                 <h3 class="title">Tipo</h3>
                 <div class="types">
                     <div class="type-card" onclick="typeChose(0)"><img src="img/alma.svg" alt=""></div>
@@ -391,7 +414,7 @@
                 </div>
 
             </div>
-            <div id="foco">
+            <div id="escolhaDeFocoMagico">
                 <div style="display: flex; justify-content: space-between;" id="focoTop">
                     <h2 class="title">Focos</h2>
                     <div style="display: flex;flex-direction: row;align-items: center;width: 47px;">
@@ -486,7 +509,7 @@
                 </div>
             </div>
         </div>
-        <div id="Pr">
+        <div id="escolhaDePericia">
             <header>
                 <h2 class="big-title">Pericias</h2>
                 <div id="lvSelect">
@@ -499,7 +522,7 @@
                 </div>
             </header>
 
-            <div id="Pr-Content">
+            <div id="escolhaDePericia-Content">
                 <div id="perPlaces">
                     <div id="perGrid">
                         <div class="perLine">
@@ -560,7 +583,6 @@
                     </header>
 
                     <div id="perListFisicas" class="itemPlace">
-                        <div class="item" aria-value="destreza"><h2>Destreza</h2></div>
                         <div class="item" aria-value="força"><h2>Força</h2></div>
                         <div class="item small-text" aria-value="constituição"><h2>Constituição</h2></div>
                         <div class="item" aria-value="luta"><h2>Luta</h2></div>
@@ -575,14 +597,14 @@
                         
                     </div>
                     <div id="perListFisicas2" class="itemPlace">
-                        <div class="item" aria-value="atletismo"><h2>Atletismo</h2></div>
+                        <div class="item" aria-value="destreza"><h2>Destreza</h2></div>
                         <div class="item" aria-value="acrobacia"><h2>Acrobacia</h2></div>
                         <div class="item small-text" aria-value="furtividade"><h2>Furtividade</h2></div>
                         <div class="item" aria-value="pilotagem"><h2>Pilotagem</h2></div>
                     </div>
     
                     <div id="perListSociais" class="itemPlace">
-                        <div class="item" aria-value="labia"><h2>Lábia</h2></div>
+                        <div class="item" aria-value="conversasão"><h2>Lábia</h2></div>
                         <div class="item small-text" aria-value="intimidação"><h2>Intimidação</h2></div>
                         <div class="item" aria-value="psicologia"><h2>Psicologia</h2></div>
                     </div>
@@ -590,17 +612,18 @@
                     <div id="perListInvestigacao" class="itemPlace">
                         <div class="item" aria-value="percepção"><h2>Percepção</h2></div>
                         <div class="item" aria-value="crime"><h2>Crime</h2></div>
-                        <div class="item" aria-value="medicina"><h2>Medicina</h2></div>
+                        <div class="item" aria-value="pesquisar"><h2>Pesquisar</h2></div>
                         <div class="item" aria-value="tecnologia"><h2>Tecnologia</h2></div>
                         <div class="item" aria-value="mecanica"><h2>Mecânica</h2></div>
                     </div>
         
                     <div id="perListConhecimento" class="itemPlace">
-                        <div class="item small-text" aria-value="inteligencia"><h2>Inteligência</h2></div>
+                        <div class="item small-text" aria-value="artes"><h2>Artes</h2></div>
                         <div class="item small-text" aria-value="atualidades"><h2>Atualidades</h2></div>
-                        <div class="item" aria-value="ciencias"><h2>Ciências</h2></div>
-                        <div class="item" aria-value="historia"><h2>História</h2></div>
-                        <div class="item" aria-value="profissão"><h2>Profissão</h2></div>
+                        <div class="item" aria-value="ciencia"><h2>Ciências</h2></div>
+                        <div class="item" aria-value="humanas"><h2>Humanas</h2></div>
+                        <div class="item" aria-value="burocracia"><h2>Burocracia</h2></div>
+                        <div class="item" aria-value="medicina"><h2>Medicina</h2></div>
                     </div>
         
                     <div id="perListMentais" class="itemPlace">
@@ -636,7 +659,7 @@
         <div class="Sline"></div>
         <button class="mTBtn" onclick="gameHabaSel(4, this)">Personagem</button>
         <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(5, this)">Diário*</button>
+        <button class="mTBtn" onclick="gameHabaSel(5, this)">Diario*</button>
         <div class="Sline"></div>
         <button class="mTBtn" onclick="save()">Salvar</button>
         <div class="line"></div>
@@ -760,34 +783,18 @@
         </div>
       </div>
 
-      <!-- ============ DIÁRIO ============ -->
+      <!-- ============ Diario ============ -->
 
       
       <div class="mt-content" id="diario-content" style="display: none;align-items: center;">
-        <h3 class="title">Diário</h3>
-        <p class="text">*Removido por tempo indeterminado</p>
+        <h3 class="title">Diario</h3>
+        <div style="display: flex;">
+            <input type="text" id="pagina-input">
+            <button class="btn" id="pagina-btn">Entrar</button>
+        </div>
+        <iframe src="" id="pagina-iframe"></iframe>
       </div>
 
-      <!--
-      REMOVIDO POR TEMPO INDETERMINADO
-        <div class="diario-toolbar">
-          <button onclick="formatDoc('bold')"><b>B</b></button>
-          <button onclick="formatDoc('italic')"><i>I</i></button>
-          <button onclick="formatDoc('underline')"><u>U</u></button>
-          <input type="color" id="diario-color-picker">
-          <button onclick="formatDoc('foreColor', document.getElementById('diario-color-picker').value)">Aplicar Cor</button>
-          <select class="input" style="width:100%;" onchange="formatDoc('fontSize', this.value)">
-            <option value="1">1 (8pt)</option>
-            <option value="2">2 (10pt)</option>
-            <option value="3" selected>3 (12pt)</option>
-            <option value="4">4 (14pt)</option>
-            <option value="5">5 (18pt)</option>
-            <option value="6">6 (24pt)</option>
-            <option value="7">7 (36pt)</option>
-          </select>
-        </div>
-        <div id="diario-editor" contenteditable="true" class="diario-editor"></div>
-      </div>-->
 
       <!-- ============ OPÇÕES ============ -->
        <div class="mt-content" id="options-content" style="display: none;">
@@ -844,7 +851,6 @@
             <button onclick="changestatusModifier(5)" id="5-dM" class="diceModiferBtn btn white">5</button>
             <button onclick="changestatusModifier(10)" id="10-dM" class="diceModiferBtn btn white">10</button>
             <button onclick="changestatusModifier(50)" id="50-dM" class="diceModiferBtn btn white">50</button>
-
         </div>
         <div class="barBlock">
             <div id="hpBar" class="bar">
@@ -859,11 +865,11 @@
             </div>
         </div>
         <div class="barBlock">
-            <div id="epBar" class="bar">
+            <div id="peBar" class="bar">
                 <div class="barDiv">
                     <p id="epValue"></p>
                 </div>
-                <div id="epBarFill" class="barFill"></div>
+                <div id="peBarFill" class="barFill"></div>
             </div>
             <div class="statusBtns">
                 <button class="barBtn" onclick="changeStatusValue('-', 'energia')"><</button>
@@ -883,6 +889,10 @@
             </div>
         </div>
         <div id="custom-status-container" style="width: 100%;"></div>
+
+        <div id="modificadores">
+
+        </div>
     </div>
 
     <div id="pericias-display"></div>
@@ -921,10 +931,10 @@
         </div>
     </div>
 
-    <div id="dice-div" onclick="hideDiceResult()">
+    <div id="divDeRolagem" onclick="hideDiceResult()">
             <div>
-                <h1 id="rollResult" class="title"></h1>
-                <span id="rollResultType" class="text sm">--</span>
+                <h1 id="resultadoFinalDeRolagem" class="title"></h1>
+                <span id="descriçãoDeRolagem" class="text sm">--</span>
                 <p id="rollResultTypeBackText">Clique em qualquer lugar para voltar.</p>
             </div>
     </div>

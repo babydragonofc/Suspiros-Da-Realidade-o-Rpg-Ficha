@@ -11,17 +11,18 @@ const sexButtons = document.querySelectorAll('.sex-btn');
 let selectedSex = null;
 
 const main = document.querySelector("main");
-const cF = document.getElementById("cF");
-const IB = document.getElementById("IB");
-const Rs = document.getElementById("Rs");
-const Og = document.getElementById("Og");
-const Mg = document.getElementById("Mg");
-const tipo = document.getElementById("tipo");
-const foco = document.getElementById("foco");
+const criaçãoDeFicha = document.getElementById("criaçãoDeFicha");
+const informaçõesBasicas = document.getElementById("informaçõesBasicas");
+const escolhaDeRaças = document.getElementById("escolhaDeRaças");
+const escolhaDeOcupação = document.getElementById("escolhaDeOcupação");
+const escolhaDeOrigem = document.getElementById("escolhaDeOrigem");
+const escolhaDePericia = document.getElementById("escolhaDePericia");
+const escolhasDeMagia = document.getElementById("escolhasDeMagia");
+const escolhaDeTipoMagico = document.getElementById("escolhaDeTipoMagico");
+const escolhaDeFocoMagico = document.getElementById("escolhaDeFocoMagico");
 const elementos = document.getElementById("elementos");
-const Pr = document.getElementById("Pr");
 
-const RsBox = document.getElementById("Rs-box");
+const RsBox = document.getElementById("race-box");
 
 //Documento Ordo
 const docOrdoName = document.querySelector("#ordoDoc .name");
@@ -63,8 +64,8 @@ dateInput.addEventListener("change", async () => {
 // Função para abrir criador
 function abrirCriadorDeFicha() {
     main.style.display = "none";
-    cF.style.display = "flex";
-    IB.style.display = "flex";
+    criaçãoDeFicha.style.display = "flex";
+    informaçõesBasicas.style.display = "flex";
 }
 
 // Inputs
@@ -107,8 +108,8 @@ proximoBtn1.addEventListener("click", () => {
 });
 
 function abrirPagina2() {
-    IB.style.display = "none";
-    Rs.style.display = "flex";
+    informaçõesBasicas.style.display = "none";
+    escolhaDeRaças.style.display = "flex";
     RsBox.style.display = "grid";
 
     ficha.sexo = selectedSex;
@@ -118,26 +119,26 @@ function abrirPagina2() {
 // ====================== RAÇAS ======================
 
 const raças = [
-    {nome: "Humano",pts: 65, per:[{per: "Força", quant: 2}, {per: "Constituição", quant: 1}, {per: "Aparência", quant: 2}]},
-    {nome: "Zumano",pts: 65, per:[{per: "Inteligência", quant: 2}, {per: "Aparência", quant: 1}], hab: {name: "Adaptatividade", desc: "Quando estiver em seu habiat nativo, tem vantagem em ações de ataque, movimentação e percepção, alemde que em momento de paz, recupera 1d3 de medo a cada hora de forma pasiva."}},
-    {nome: "Vampiro",pts: 70, per:[{per: "Constituição", quant: 2}, {per: "Destreza", quant: 1}, {per: "Ocultismo", quant: 1}], hab: {name:"Abrir Voo", desc: "Pode abrir voo em qualquer momento, um voo so dura por 2 minutos e so pode se mover seu movimento em metros, dura 1d3 turnos em combates, ganha uma desvantagem em ataques e reações"}},
-    {nome: "Demonio",pts: 75, per:[{per: "Força", quant: 3}, {per: "Intimidar", quant: 1}, {per: "Aparência", quant: -5}], hab: {name: "Sangue impuro", desc: "Se corta em algum ponto do corpo, levando 10 de dano, seu sangue queima em chamas durante 1d3 turnos, pode ser ussado uma vez a cada 3 horas"}}
+    {nome: "Humano", status: {Pv: 15, Pe: 5, Md: 20 }},
+    {nome: "Zumano", status: {Pv: 20, Pe: 15, Md: 10 }},
+    {nome: "Vampiro", status: {Pv: 10, Pe: 10, Md: 22 }},
+    {nome: "Demonio", status: {Pv: 20, Pe: 15, Md: 20 }}
 ]
 
-const RsContainer = document.getElementById('Rs-box');
+const raceContainer = document.getElementById('race-box');
 const raceCards = document.querySelectorAll('.race-card');
 
 raceCards.forEach(card => {
-    card.querySelector('.rsBtn').addEventListener('click', (event) => {
+    card.querySelector('.raceBtn').addEventListener('click', (event) => {
         event.stopPropagation();
         if (card.classList.contains('active')) {
             card.classList.remove('active');
-            RsContainer.classList.remove('race-selected');
+            raceContainer.classList.remove('race-selected');
             return;
         }
         raceCards.forEach(otherCard => otherCard.classList.remove('active'));
         card.classList.add('active');
-        RsContainer.classList.add('race-selected');
+        raceContainer.classList.add('race-selected');
         
     });
 });
@@ -146,187 +147,202 @@ document.addEventListener('click', (event) => {
     const activeRaceCard = document.querySelector('.race-card.active');
     if (activeRaceCard && !event.target.closest('.race-card.active')) {
         activeRaceCard.classList.remove('active');
-        RsContainer.classList.remove('race-selected');
+        raceContainer.classList.remove('race-selected');
+    }
+
+    const activeOcupationCard = document.querySelector('.ocupation-card.active');
+    if (activeOcupationCard && !event.target.closest('.ocupation-card.active')) {
+        activeOcupationCard.classList.remove('active');
+        ocupaçõesContainer.classList.remove('origin-selected');
     }
 
     const activeOriginCard = document.querySelector('.origin-card.active');
     if (activeOriginCard && !event.target.closest('.origin-card.active')) {
         activeOriginCard.classList.remove('active');
-        OgContainer.classList.remove('origin-selected');
+        ocupaçõesContainer.classList.remove('origin-selected');
     }
 });
 
 function raceChose(rs) {
-    if (RsContainer.classList.contains('race-selected')) {
-        Rs.style.display = "none";
-        Og.style.display = "flex";
+    if (raceContainer.classList.contains('race-selected')) {
+        escolhaDeRaças.style.display = "none";
+        escolhaDeOcupação.style.display = "flex";
     }
 
     ficha.ConhecimentoMagico = 6
+    ficha.raça = raças[rs]
 
-    ficha.pontos = raças[rs].pts
-
-    console.log('Possivel Erro?')
-    //Verificar existencia de rs talvez resolva
-    ficha.raça = rs
-
-    (ficha.pontos)
-    raças[rs].per.forEach(e => {
-        ficha.pericias[e.per].value = e.quant
-        ficha.pericias[e.per].min = e.quant
-        ficha.pericias[e.per].max = 20
-        
-    });
+    console.log("incompleto")
 }
 
-// ====================== ORIGENS ======================
+// ====================== Ocupações ======================
 
-const OgContainer = document.getElementById('origens');
+const ocupaçõesContainer = document.getElementById('ocupaçõesContainer');
 
-const origens = [
+const ocupações = [
+
     {
         id: 1,
         nome: "Médico",
-        descricao: "Você era um profissional da saúde como um enfermeiro, farmacêutico, médico, psicólogo ou socorrista, treinado no atendimento e cuidado de pessoas.",
+        descricao: "Você dedicou sua vida a cuidar de outras pessoas. Seja em hospitais, clínicas ou situações de emergência, aprendeu a compreender o corpo humano, tratar ferimentos e agir quando a vida de alguém está em risco.",
         bonus: "",
-        pericias: ["medicina", "ciencias"],
+        pericias: ["medicina", "ciencia"],
         habilidades: ["ConhecimentoAnatômico", "UsoDeRemédios"]
     },
+
     {
         id: 2,
         nome: "Técnico de Informática",
-        descricao: "Programador, engenheiro de software ou simplesmente 'o cara da T.I.', você tem treinamento e experiência para lidar com sistemas informatizados.",
+        descricao: "Computadores, programas e sistemas são parte da sua rotina. Você possui experiência para lidar com tecnologia, resolver problemas e compreender o funcionamento de equipamentos digitais.",
         bonus: "",
-        pericias: ["tecnologia", "inteligencia"],
+        pericias: ["tecnologia", "atualidades"],
         habilidades: ["ProficiênciaEmHardware", "ProficiênciaEmSoftware"]
     },
+
     {
         id: 3,
         nome: "Mecânico",
-        descricao: "Enquanto os acadêmicos estão preocupados com teorias, você coloca a mão na massa, seja como engenheiro profissional, seja como inventor de garagem.",
+        descricao: "Você entende que quase tudo pode ser consertado com as ferramentas certas — e um pouco de criatividade. Máquinas, mecanismos e equipamentos fazem parte da sua experiência.",
         bonus: "",
-        pericias: ["mecanica", "inteligencia", "atualidades"],
+        pericias: ["mecanica", "atualidades"],
         habilidades: ["Reconstruir"]
     },
+
     {
         id: 4,
         nome: "Negociador",
-        descricao: "Você trabalhou em alguma posição de grande importância, a qual precisava negociar coisas importantes.",
+        descricao: "Você sabe que palavras podem ser tão poderosas quanto ações. Sua experiência em negociações ensinou a persuadir, interpretar pessoas e conseguir aquilo que deseja por meio de uma boa conversa.",
         bonus: "",
-        pericias: ["labia", "psicologia"],
+        pericias: ["conversação", "psicologia"],
         habilidades: ["Enganar", "Blefe"]
     },
+
     {
         id: 5,
         nome: "Combatente",
-        descricao: "Você sempre gostou de estar na frente das brigas e aprendeu a ser mais forte com elas.",
+        descricao: "Você aprendeu a enfrentar conflitos de frente. Seja por treinamento, profissão ou experiência, sabe como lutar e agir sob pressão quando a situação exige força.",
         bonus: "",
-        pericias: ["armas_brancas", "constituição", "força"],
-        habilidades: ["SacrificioProtetor", "TecnicaDeCombate"]
+        pericias: ["armas_brancas", "constituição"],
+        habilidades: ["SacrifícioProtetor", "TécnicaDeCombate"]
     },
+
     {
         id: 6,
         nome: "Atirador",
-        descricao: "Você frequentava clubes de tiro e sabe manusear armas longas como parte do seu corpo.",
+        descricao: "Armas de fogo não são estranhas para você. Treinamento e experiência desenvolveram sua precisão e familiaridade com diferentes tipos de armamento.",
         bonus: "",
-        pericias: ["rifle", "longo_alcance", "pistolas"],
+        pericias: [["rifle", "longo_alcance", "pistolas"]],
+        quantidadePericias: 2,
         habilidades: ["TiroCerto", "AbrirFogo"]
     },
+
     {
         id: 7,
         nome: "Policial",
-        descricao: "Você fez parte de uma força de segurança pública, civil ou militar.",
+        descricao: "Você possui experiência em lidar com situações perigosas e manter o controle sob pressão. Seu treinamento ensinou a proteger pessoas, enfrentar ameaças e agir quando as coisas saem do controle.",
         bonus: "",
-        pericias: ["pistolas", "vontade", "sobrevivencia"],
+        pericias: [["pistolas", "vontade", "sobrevivencia"]],
         habilidades: ["Imobilizar", "Proteger"]
     },
+
     {
         id: 8,
         nome: "Cientista",
-        descricao: "Você estudou por anos sobre a vida e o funcionamento do mundo.",
+        descricao: "Você dedicou sua vida a compreender o mundo. Por meio de observação, pesquisa e experimentação, aprendeu a encontrar respostas para perguntas que ainda não foram respondidas.",
         bonus: "",
-        pericias: ["ciencias", "magia"],
-        habilidades: ["Equipamentos de Laboratório", "Métodos Experimentais"]
+        pericias: ["ciencia", "magia"],
+        habilidades: ["EquipamentosDeLaboratório", "MétodosExperimentais"]
     },
+
     {
         id: 9,
         nome: "Alquimista",
-        descricao: "Você conheceu de perto a verdade sobre a magia e começou a estudar sobre a alquimia.",
+        descricao: "Você descobriu que a magia é mais bela e estranha do que parece. Ao combinar conhecimentos científicos e mágicos, aprendeu a manipular a vontade a fim de controlar completamente a magia.",
         bonus: "",
-        pericias: ["ciencias", "magia"],
-        habilidades: ["Reagentes Místicos", "ControleDeSubstânciasQuímicas"]
+        pericias: ["alquimia", "magia"],
+        habilidades: ["CriaçãoDeSímbolos", "CompreensãoMágica"]
     },
+
     {
         id: 10,
         nome: "Acadêmico",
-        descricao: "Você era um pesquisador ou professor universitário.",
+        descricao: "O conhecimento sempre foi sua principal ferramenta. Como pesquisador, professor ou estudante, você se especializou em estudar, analisar e compreender assuntos complexos.",
         bonus: "",
-        pericias: ["historia", "inteligencia"],
-        habilidades: ["LeituraCrítica", "ConhecimentoEspecializado"]
+        pericias: ["PericiasDeConhecimento"],
+        habilidades: ["LeituraCrítica", "Especialista"]
     },
+
     {
         id: 11,
         nome: "Artista",
-        descricao: "Você era um ator, músico, escritor, dançarino ou influenciador.",
+        descricao: "A arte sempre foi sua forma de expressão. Música, escrita, atuação, dança ou qualquer outra manifestação artística fizeram parte da sua vida e moldaram sua maneira de enxergar o mundo.",
         bonus: "",
-        pericias: ["profissão", "atualidades"],
-        habilidades: ["ArteVisual", "MúsicaOuPerformance"]
+        pericias: ["artes", "atualidades"],
+        habilidades: ["PercepçãoDePadrões", "Performance"]
     },
+
     {
         id: 12,
         nome: "Atleta",
-        descricao: "Você competia em um esporte individual ou por equipe, como natação ou futebol.",
+        descricao: "Treinamento, disciplina e competição fazem parte de quem você é. Sua experiência desenvolveu suas capacidades físicas e ensinou a manter o foco mesmo sob pressão.",
         bonus: "",
         pericias: ["acrobacia", "destreza"],
         habilidades: ["MovimentosLeves", "ReconhecimentoRápidoDeTerreno"]
     },
+
     {
         id: 13,
         nome: "Ocultista",
-        descricao: "Você de algum modo entrou em um grupo ocultista, porém hoje busca entender como pará-los de alguma forma usando suas habilidades ocultas.",
+        descricao: "Você entrou em contato com conhecimentos que deveriam permanecer escondidos. Rituais, símbolos e fenômenos inexplicáveis deixaram de ser apenas histórias e se tornaram parte da sua realidade.",
         bonus: "",
-        pericias: ["ocultismo", "magia"],
+        pericias: ["ocultismo", "vontade"],
         habilidades: ["Ocultismo", "LeituraDeSímbolosAntigos"]
     },
+
     {
         id: 14,
         nome: "Jornalista",
-        descricao: "Você é um jornalista, tendo já escrito e participado de diversas matérias que te levaram a conhecer e vivenciar muitas das situações mais estranhas e inusitadas que alguém jamais imaginaria viver.",
+        descricao: "Você aprendeu que toda história possui algo escondido. Entrevistar pessoas, buscar informações e investigar acontecimentos fazem parte da sua experiência.",
         bonus: "",
-        pericias: ["labia", "psicologia"],
-        habilidades: ["Entrevistas", "RedeDeContatos"]
+        pericias: ["conversação", "psicologia"],
+        habilidades: ["Entrevista", "RedeDeContatos"]
     },
+
     {
         id: 15,
         nome: "Mochileiro",
-        descricao: "Você viajou por todo o mundo, tendo tido inúmeras vivências incríveis.",
+        descricao: "Você aprendeu a se adaptar ao desconhecido. Suas viagens ensinaram a lidar com ambientes diferentes, recursos limitados e situações imprevisíveis.",
         bonus: "",
-        pericias: ["sobrevivencia", "constituição", "inteligencia"],
-        habilidades: ["PreparoDeAbrigo", "Manual"]
+        pericias: ["sobrevivencia",[ "constituição", "ciencia"]],
+        habilidades: ["PreparoDeAbrigo", "ManualDeBolso"]
     },
+
     {
         id: 16,
         nome: "Especialista em Explosivos",
-        descricao: "Você viveu em meio a turbulências e fez do fogo e do caos seu refúgio.",
+        descricao: "Você possui conhecimentos sobre substâncias, mecanismos e materiais capazes de causar grandes destruições. Em sua área, precisão e cuidado são essenciais.",
         bonus: "",
         pericias: ["pontaria", "destreza"],
         habilidades: ["Preparo"]
     },
+
     {
         id: 17,
         nome: "Investigador",
-        descricao: "Você realiza pesquisas e investigações para apurar crimes ou outros fatos.",
+        descricao: "Você é treinado para encontrar respostas. Observar detalhes, reunir informações e conectar pistas são ferramentas tão importantes quanto qualquer arma.",
         bonus: "",
-        pericias: ["percepção", "inteligencia"],
+        pericias: ["percepção", "PericiasDeConhecimento"],
         habilidades: []
     }
+
 ];
 
-function renderOrigens() {
-    OgContainer.innerHTML = "";
-    origens.forEach(o => {
+function renderizarOcupações() {
+
+    ocupaçõesContainer.innerHTML = "";
+    ocupações.forEach(o => {
         const card = document.createElement("div");
-        card.className = "origin-card";
+        card.className = "ocupation-card";
 
         let bonus = ""
         let Habilidades = ""
@@ -335,7 +351,29 @@ function renderOrigens() {
 
             if (bonus != "") bonus += " , "
 
-            const displayName = pericia.replace(/([a-z])([A-Z])/g, '$1 $2');
+            let displayName
+
+            if (pericia == "PericiasDeConhecimento") {
+                const quantidadeDeOpções = o.pericias.findIndex(el => el == pericia)==0? 2: 1;
+                displayName = `${quantidadeDeOpções == 1? "( Uma": "( Duas"} das pericias de Conhecimento )`
+
+            }else if (Array.isArray(pericia)) {
+
+                const quantidadeDeOpções = o.pericias.findIndex(el => el == pericia)==0? 2: 1;
+                displayName = `${quantidadeDeOpções == 1? "( Uma": "( Duas"} das seguintes pericias : ` //inicio do texto
+
+                let text = ""
+
+                pericia.forEach(el => { //geração do texto
+                    if(text != "") text+= " , "
+                    text += el.replace(/^./, letra => letra.toUpperCase())
+                })
+
+                displayName += text + " )" //Fim do texto
+
+            }else {
+                displayName = pericia.replace(/^./, letra => letra.toUpperCase())
+            }
             bonus += `<short class="Pericia" data-key="${pericia}">${displayName}</short>`
 
         });
@@ -357,7 +395,7 @@ function renderOrigens() {
                 <img src="img/corner2.svg" class="corner-image bottom-right" alt="">
             </div>
             <h2 class="title">${o.nome}</h2>
-            <div class="origin-details">
+            <div class="ocupation-details">
                 <p class="text">${o.descricao}</p>
                 <hr>
                 <p class="text sm">Pericias: ${bonus} ; Habilidade: ${Habilidades}</p>
@@ -368,72 +406,461 @@ function renderOrigens() {
         const button = card.querySelector('.btn');
         button.addEventListener('click', (event) => {
             event.stopPropagation();
-            selectOrigin(button, o.id);
+            selectOcupation(o.id);
         });
 
         card.addEventListener('click', () => {
-            const currentlyActive = document.querySelector('.origin-card.originSelected');
+            const currentlyActive = document.querySelector('.ocupation-card.active');
             if (currentlyActive && currentlyActive !== card) {
-                currentlyActive.classList.remove('originSelected');
+                currentlyActive.classList.remove('active');
             }
-            card.classList.toggle('originSelected');
+            card.classList.toggle('active');
         });
 
-        OgContainer.appendChild(card);
+        ocupaçõesContainer.appendChild(card);
     });
-    initTooltips(OgContainer);
+    initTooltips(ocupaçõesContainer);
 }
 
-renderOrigens();
+renderizarOcupações();
 
-function selectOrigin(button, id) {
-    const card = button.closest('.origin-card');
-    const index = ficha.origem.indexOf(id - 1);
+async function selectOcupation(id) {
+    
+    let choicePos = -1;
+    let choices = []
+    for (let i = 0; i < ocupações[id-1].pericias.length; i++) {
+        if (ocupações[id-1].pericias[i] == "PericiasDeConhecimento") {
+            choicePos = i
+            choices = getCategoriasPericiasBase()[5].pericias;
 
-    if (index > -1) {
-        // Deselect origin
-        ficha.origem.splice(index, 1);
-        card.classList.remove('selected');
-        card.classList.remove('originSelected');
-        button.innerHTML = "Escolher";
-    } else if (ficha.origem.length < 2) {
-        // Select origin
-        ficha.origem.push(id - 1);
-        card.classList.add('selected');
-        card.classList.add('originSelected');
-        button.innerHTML = "Desmarcar";
+        } else if (Array.isArray(ocupações[id-1].pericias[i])) {
+            choicePos = i
+            choices = ocupações[id-1].pericias[i]
+
+        }
     }
 
-    // Show/hide next button
-    const nextButton = document.getElementById('origin-next-btn');
-    if (ficha.origem.length === 2) {
-        nextButton.style.display = 'block';
-    } else {
-        nextButton.style.display = 'none';
+    if (choicePos == -1) {
+        ficha.ocupação = ocupações[id-1]
+        finalizarSeleçãoDeOcupação()
+        return;
     }
+
+    try {
+        const pericias = await seleçãoConhecimento(choices, choicePos == 0? 2: 1);
+        console.log(choicePos)
+        ficha.ocupação = ocupações[id-1]
+        ficha.ocupação.pericias.splice(choicePos, 1)
+
+        pericias.forEach(per => {
+            ficha.ocupação.pericias.push(per)
+        })
+        
+        finalizarSeleçãoDeOcupação()
+    } catch (erro) {
+        console.log("Seleção cancelada:", erro.message);
+    }    
 }
 
-function originNext() {
-    if (ficha.origem.length === 2) {
-        Og.style.display = "none";
-        Pr.style.display = "flex";
+function finalizarSeleçãoDeOcupação() {
 
-        ficha.origem.forEach(o => {
-            origens[o].pericias.forEach(pericia => {
-                ficha.bonus.push(pericia)
-                const bonusPerEl = document.querySelector('[aria-value="'+pericia+'"]');
-                bonusPerEl.style.color = "yellow"
-                bonusPerEl.style.boxShadow = '0 0 10px inset #ffff0042;'
-            });
-            origens[o].habilidades.forEach(habilidade => {
-                const habilidadeData = tooltipDictionary.Habilidades[habilidade];
-                const nome = habilidade.replace(/([a-z])([A-Z])/g, '$1 $2');
-                if (habilidadeData) {
-                    createAbility(nome, habilidadeData.descricao, null);
-                }
-            });
+        ficha.ocupação.pericias.forEach(pericia => {
+            const bonusPerEl = document.querySelector('[aria-value="'+pericia+'"]');
+            console.log(pericia, bonusPerEl)
+            bonusPerEl.style.color = "yellow"
+            bonusPerEl.style.boxShadow = '0 0 10px inset #ffff0042;'
         });
+
+        ficha.ocupação.habilidades.forEach(habilidade => {
+            const habilidadeData = tooltipDictionary.Habilidades[habilidade];
+            const nome = habilidade.replace(/([a-z])([A-Z])/g, '$1 $2');
+            if (habilidadeData) {
+                createAbility(nome, habilidadeData.descricao, null);
+            }
+        });   
+
+        escolhaDeOcupação.style.display = "none";
+        escolhaDeOrigem.style.display = "flex";
+        
+}
+
+let cancelarSeleçãoConhecimento = null;
+
+async function seleçãoConhecimento(pericias ,quant) {
+
+    panelOpen('knowledgeSelector');
+
+    return new Promise((resolve, reject) => {
+
+        const periciasSelecionados = [];
+
+        const text = document.querySelector("#knowledgeSelector span");
+        const nextBtn = document.querySelector("#knowledgeSelector .next");
+
+        const seletorDePericias1 = document.querySelector("#knowledgeSelector .i");
+        const seletorDePericias2 = document.querySelector("#knowledgeSelector .ii");
+        const seletorDePericias3 = document.querySelector("#knowledgeSelector .iii");
+        const seletorDePericias4 = document.querySelector("#knowledgeSelector .iiii");
+        const seletorDePericias5 = document.querySelector("#knowledgeSelector .iiiii");
+        const seletorDePericias6 = document.querySelector("#knowledgeSelector .iiiiii");
+
+        const seletoresDePericia = [
+            seletorDePericias1,
+            seletorDePericias2,
+            seletorDePericias3,
+            seletorDePericias4,
+            seletorDePericias5,
+            seletorDePericias6,
+        ]
+
+        seletoresDePericia.forEach(sP => {
+            sP.style.display = "none"
+        })
+
+        console.log(pericias)
+        for (let i = 0; i < pericias.length; i++) {
+            const obj = seletoresDePericia[i]
+
+            obj.style.display = "block"
+            obj.textContent = pericias[i].replace(/^./, letra => letra.toUpperCase())
+        }
+        // Cancela a seleção atual
+        cancelarSeleçãoConhecimento = () => {
+            reject(new Error("Seleção de conhecimento cancelada"));
+            document.querySelectorAll('#knowledgeSelector button:not(.next)').forEach(el => {
+                el.classList.remove('active')
+            })
+        };
+
+        function atualizarTexto() {
+
+            text.textContent =
+                `${periciasSelecionados.length} / ${quant} perícias selecionadas`;
+
+            nextBtn.classList.toggle(
+                "hide",
+                periciasSelecionados.length !== quant
+            );
+        }
+
+        function selecionarPericia(pericia, el) {
+
+            const index = periciasSelecionados.indexOf(pericia);
+
+            if (index !== -1) {
+
+                periciasSelecionados.splice(index, 1);
+                el.classList.remove('active');
+
+            } else if (periciasSelecionados.length < quant) {
+
+                periciasSelecionados.push(pericia);
+                el.classList.add('active');
+            }
+
+            atualizarTexto();
+        }
+
+
+        seletorDePericias1.addEventListener('click', () => {
+            selecionarPericia(pericias[0], seletorDePericias1);
+        });
+
+        seletorDePericias2.addEventListener('click', () => {
+            selecionarPericia(pericias[1], seletorDePericias2);
+        });
+
+        seletorDePericias3.addEventListener('click', () => {
+            selecionarPericia(pericias[2], seletorDePericias3);
+        });
+
+        seletorDePericias4.addEventListener('click', () => {
+            selecionarPericia(pericias[3], seletorDePericias4);
+        });
+
+        seletorDePericias5.addEventListener('click', () => {
+            selecionarPericia(pericias[4], seletorDePericias5);
+        });
+
+        seletorDePericias6.addEventListener('click', () => {
+            selecionarPericia(pericias[5], seletorDePericias6);
+        });
+
+        nextBtn.addEventListener('click', () => {
+
+            if (periciasSelecionados.length === quant) {
+
+                cancelarSeleçãoConhecimento = null;
+
+                resolve(periciasSelecionados);
+                panelClose();
+            }
+
+        }, { once: true });
+
+        atualizarTexto();
+    });
+}
+
+// Função externa para cancelar
+function cancelarSeleçãoConhecimentoAtual() {
+
+    if (cancelarSeleçãoConhecimento) {
+
+        cancelarSeleçãoConhecimento();
+        cancelarSeleçãoConhecimento = null;
+
+        panelClose();
     }
+}
+
+// ====================== ORIGENS ======================
+
+const origensContainer = document.getElementById('origensContainer');
+
+const origens = [
+
+    // Origens ligadas à vida
+
+    {
+        id: 1,
+        nome: "Estudante",
+        descricao: "Passou boa parte da vida em ambiente acadêmico, desenvolvendo conhecimento e relações. Possui facilidade para acessar instituições acadêmicas, bibliotecas e pessoas ligadas ao meio acadêmico.",
+    },
+
+    {
+        id: 2,
+        nome: "Morador de Rua",
+        descricao: "Aprendeu a sobreviver com poucos recursos e a conhecer os perigos das ruas. Possui contatos entre pessoas que vivem nas ruas e conhece lugares onde pode conseguir abrigo, informações ou ajuda.",
+    },
+
+    {
+        id: 3,
+        nome: "Criado no Interior",
+        descricao: "Cresceu em uma comunidade pequena, desenvolvendo familiaridade com ambientes rurais e uma vida mais isolada. Possui facilidade para encontrar ajuda e estabelecer relações em comunidades pequenas e ambientes rurais.",
+    },
+
+    {
+        id: 4,
+        nome: "Criado na Cidade",
+        descricao: "Cresceu em grandes centros urbanos, acostumado ao movimento, à tecnologia e à diversidade. Conhece a dinâmica das cidades e possui familiaridade com estabelecimentos, serviços e diferentes grupos urbanos.",
+    },
+
+    {
+        id: 5,
+        nome: "Nômade",
+        descricao: "Nunca permaneceu muito tempo em um único lugar, aprendendo a se adaptar rapidamente a novos ambientes. Possui contatos e conhecimentos espalhados pelos lugares onde já viveu ou passou.",
+    },
+
+    {
+        id: 6,
+        nome: "Isolado",
+        descricao: "Passou grande parte da vida afastado da sociedade, tendo pouco contato com outras pessoas. Possui dificuldade para lidar com estruturas sociais e costumes comuns, mas seu passado pode ser desconhecido pela maioria das pessoas.",
+    },
+
+    {
+        id: 7,
+        nome: "Privilegiado",
+        descricao: "Cresceu cercado de recursos e oportunidades, tendo acesso a educação, dinheiro ou influência. Possui acesso a ambientes, serviços e pessoas que normalmente seriam inacessíveis para outras pessoas.",
+    },
+
+    {
+        id: 8,
+        nome: "Abandonado",
+        descricao: "Cresceu sem uma estrutura familiar estável e aprendeu desde cedo a depender de si mesmo. Possui contatos entre pessoas que vivem à margem da sociedade e experiência em encontrar recursos sem depender de outras pessoas.",
+    },
+
+    {
+        id: 9,
+        nome: "Órfão",
+        descricao: "Perdeu seus responsáveis cedo, sendo obrigado a amadurecer antes do tempo. Pode possuir contatos ou conhecimentos relacionados às instituições, pessoas e lugares ligados à sua antiga vida.",
+    },
+
+    {
+        id: 10,
+        nome: "Criado em Comunidade",
+        descricao: "Cresceu cercado por uma comunidade muito unida, aprendendo a depender e cuidar dos outros. Pode recorrer à sua comunidade para conseguir abrigo, ajuda, informações ou outros tipos de apoio.",
+    },
+
+
+    // Origens ligadas a acontecimentos
+
+    {
+        id: 11,
+        nome: "Sobrevivente",
+        descricao: "Passou por um acontecimento grave que mudou completamente sua maneira de enxergar o mundo. Possui experiência prática e conhecimentos relacionados ao acontecimento que sobreviveu.",
+    },
+
+    {
+        id: 12,
+        nome: "Exilado",
+        descricao: "Foi obrigado a abandonar seu antigo lar ou grupo. Mantém conhecimentos e contatos de seu antigo lar, embora possa não ser bem-vindo ao retornar.",
+    },
+
+    {
+        id: 13,
+        nome: "Fugitivo",
+        descricao: "Precisou fugir de alguém ou de alguma coisa e aprendeu a viver evitando ser encontrado. Possui conhecimentos sobre como evitar rastreamento e pode conhecer pessoas dispostas a ajudá-lo a desaparecer.",
+    },
+
+    {
+        id: 14,
+        nome: "Amnésico",
+        descricao: "Perdeu parte das próprias memórias, deixando lacunas sobre seu passado. Pode possuir conhecimentos, contatos ou relações que não consegue explicar, mas que podem estar ligados à sua vida antes da perda de memória.",
+    },
+
+
+    // Origens sociais
+
+    {
+        id: 15,
+        nome: "Órfão de Guerra",
+        descricao: "Cresceu em meio a conflitos e aprendeu a lidar com violência e escassez. Possui contatos entre sobreviventes, veteranos e pessoas afetadas por conflitos.",
+    },
+
+    {
+        id: 16,
+        nome: "Alta Sociedade",
+        descricao: "Cresceu entre pessoas influentes e aprendeu a navegar por ambientes sociais privilegiados. Possui acesso a eventos, círculos sociais e pessoas influentes.",
+    },
+
+    {
+        id: 17,
+        nome: "Submundo",
+        descricao: "Cresceu próximo ao crime, contrabando ou outras atividades ilegais. Possui contatos no submundo e conhece pessoas capazes de conseguir informações ou recursos ilegais.",
+    },
+
+    {
+        id: 18,
+        nome: "Comunidade Religiosa",
+        descricao: "Foi criado em um ambiente fortemente ligado a uma comunidade ou instituição religiosa. Possui contatos dentro de sua comunidade religiosa e pode encontrar abrigo, informações ou auxílio através dela.",
+    },
+
+    {
+        id: 19,
+        nome: "Família Militar",
+        descricao: "Cresceu cercado por disciplina, treinamento e pessoas ligadas às forças armadas. Possui contatos entre militares e familiaridade com ambientes e instituições militares.",
+    },
+
+    {
+        id: 20,
+        nome: "Família Rica",
+        descricao: "Teve acesso a recursos que a maioria das pessoas não teria. Pode recorrer aos contatos e propriedades de sua família para conseguir acesso a recursos, locais ou informações.",
+    },
+
+    {
+        id: 21,
+        nome: "Família Criminosa",
+        descricao: "Cresceu cercado por atividades criminosas e aprendeu seus códigos. Possui contatos ligados ao crime e conhece os costumes, códigos e métodos utilizados por organizações criminosas.",
+    },
+
+    {
+        id: 22,
+        nome: "Família de Investigadores",
+        descricao: "Cresceu ouvindo histórias e aprendendo métodos de investigação. Possui acesso a antigos contatos, arquivos ou conhecimentos acumulados por sua família.",
+    },
+
+
+    // Origens ocultas
+
+    {
+        id: 23,
+        nome: "Sobrevivente do Oculto",
+        descricao: "Teve contato direto com o outro lado e seus efeitos, vivendo em busca de esquecer, entender ou destruir aquilo que encontrou. Possui conhecimentos e contatos relacionados ao oculto adquiridos durante sua experiência.",
+    },
+
+    {
+        id: 24,
+        nome: "Experimento",
+        descricao: "Seu corpo ou mente foi alterado por experimentos, deixando fortes sequelas. Pode reconhecer procedimentos, instituições ou pessoas relacionadas aos experimentos que sofreu.",
+    },
+
+    {
+        id: 25,
+        nome: "Misto",
+        descricao: "Possui características provenientes de diferentes origens ou espécies. Possui conhecimentos, costumes ou contatos provenientes das diferentes origens que compõem sua história.",
+    },
+
+    {
+        id: 26,
+        nome: "Ocultista Arrependido",
+        descricao: "Já fez parte de um grupo ocultista ou seita no passado e hoje tenta abandonar ou usar o que sabe contra o outro lado. Possui conhecimento sobre os métodos, símbolos e pessoas relacionados ao grupo do qual fez parte.",
+    },
+
+    {
+        id: 27,
+        nome: "Herdeiro do Oculto",
+        descricao: "Nasceu ou cresceu em uma família que conhecia o sobrenatural e suas implicações, tendo sido criado com um propósito. Possui acesso aos conhecimentos, objetos, contatos ou registros deixados por sua família.",
+    },
+
+    {
+        id: 28,
+        nome: "Reencarnado",
+        descricao: "Possui memórias, características ou conhecimentos que não pertencem à sua vida atual. Pode reconhecer pessoas, lugares ou acontecimentos que não deveria conhecer, mesmo sem saber explicar a origem desse conhecimento.",
+    },
+
+    {
+        id: 29,
+        nome: "Abduzido",
+        descricao: "Desapareceu por um período após ser levado por uma entidade, organização ou fenômeno desconhecido. Possui conhecimentos ou características adquiridos durante seu desaparecimento, mas pode também ser reconhecido por pessoas ou entidades relacionadas ao que aconteceu.",
+    },
+
+    {
+        id: 30,
+        nome: "Monstruoso",
+        descricao: "O limiar entre a humanidade e a loucura, a quebra do templo sagrado. Seu corpo foi completamente modificado pelo outro lado, por vontade própria ou não. Embora tentativas anteriores alertem do perigo, algumas pessoas se submetem a isso para o bem, por ingenuidade, confiança ou loucura. Sempre estão errados. Geralmente são caçados pela Ordo, mas aqueles que os ajudam tornam-se responsáveis por cada ato. Cada elemento tem sua própria vontade.",
+    },
+
+];
+    
+renderizarOrigens()
+
+function renderizarOrigens() {
+
+    origensContainer.innerHTML = "";
+    origens.forEach(origem => {
+        const card = document.createElement("div");
+        card.className = "origin-card";
+
+        card.innerHTML = `
+            <div class="corner-images">
+                <img src="img/corner2.svg" class="corner-image top-left" alt="">
+                <img src="img/corner2.svg" class="corner-image top-right" alt="">
+                <img src="img/corner2.svg" class="corner-image bottom-left" alt="">
+                <img src="img/corner2.svg" class="corner-image bottom-right" alt="">
+            </div>
+            <h2 class="title">${origem.nome}</h2>
+            <div class="origin-details">
+                <p class="text">${origem.descricao}</p>
+                <hr>
+                <button class="btn">Escolher</button>
+            </div>
+        `;
+
+        const button = card.querySelector('.btn');
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            selectOrigin(origem.id);
+        });
+
+        card.addEventListener('click', () => {
+            const currentlyActive = document.querySelector('.origin-card.active');
+            if (currentlyActive && currentlyActive !== card) {
+                currentlyActive.classList.remove('active');
+            }
+            card.classList.toggle('active');
+        });
+
+        origensContainer.appendChild(card);
+    });
+    //initTooltips(origensContainer);
+}
+
+function selectOrigin(id) {
+
+    ficha.original = ocupações[id-1]
+    escolhaDeOrigem.style.display = "none"
+    escolhaDePericia.style.display = "flex";
 }
 
 // ====================== TIPOS ======================
@@ -450,10 +877,10 @@ const types = [
     {nome:"Corpo",descricao:"A matéria física em seu pleno alcance",info:"O controle sob seu corpo e o ambiente a sua volta, o corpo representa a realidade material e fisica, +5 <short class='Status Vida'>Vida</short>, +2 <short class='Pericia Constituição'>Constituição</short>"}
 ];
 
-var TS = null;
+var tipoSelecionado = null;
 
 function typeChose(id) {
-    TS = id
+    tipoSelecionado = id
     const t = types[id];
     typeInfo.style.display = "block";
     typeName.innerHTML = t.nome;
@@ -466,12 +893,12 @@ function typeChose(id) {
 
 function typeConfirmF() {
 
-    if (TS == null) return
-    tipo.style.display = "none";
-    foco.style.display = "flex";
-    ficha.tipo = TS;
+    if (tipoSelecionado == null) return
+    escolhaDeTipoMagico.style.display = "none";
+    escolhaDeFocoMagico.style.display = "flex";
+    ficha.tipo = tipoSelecionado;
 
-    if (ficha.origem.includes(9) || ficha.origem.includes(13)) {
+    if (ficha.ocupação.id == 9) {
         ficha.ConhecimentoMagico += 1
     }
     
@@ -534,6 +961,7 @@ function focoChose(id){
 function putMagicPt(){
     if (ficha.ConhecimentoMagico > 0) {
         focos[focoS].value ++
+        ficha.foco[focoS]++
         ficha.ConhecimentoMagico --
     }
     focosAtu()
@@ -555,6 +983,7 @@ function removeMagicPt(){
 
     if (focos[focoS].value > 0) {
         focos[focoS].value --
+        ficha.foco[focoS]--
         ficha.ConhecimentoMagico ++
     }
     focosAtu()
@@ -582,7 +1011,7 @@ function focosAtu() {
 
 function focoClose(){
 
-    foco.style.display = "none";
+    escolhaDeFocoMagico.style.display = "none";
     if (focos[2].value > 0) {
         elementos.style.display = "flex";
         elementPoints.innerHTML = focos[2].value
@@ -796,8 +1225,8 @@ function FichaEnd() {
     loadScream(3, 3)
 
     setTimeout(() => {
-        prDiv = Pr
-        cF.remove()
+        prDiv = escolhaDePericia
+        criaçãoDeFicha.remove()
         game.style.display = "flex";
     }, 3000);
     
@@ -805,32 +1234,39 @@ function FichaEnd() {
 
 function irParaJogo() {
 
-    const cF = document.getElementById("cF");
+    const criaçãoDeFicha = document.getElementById("criaçãoDeFicha");
     const game = document.getElementById("game");
     const main = document.querySelector("main");
 
     main.style.display = "none";
-    cF.style.display = "flex";
+    criaçãoDeFicha.style.display = "flex";
     game.style.display = "flex";
 
-    
     displayPericias();
+
+    //Atualização autmomatica de ficha 
+    if(configuraçõesDeAtualizações.fichaComEnergia) {
+        statusDef()
+    }
 }
 
 function renderPersonagem() {
     // Basic Info
-    document.getElementById('personagem-nome').textContent = ficha.nome || '';
-    document.getElementById('personagem-idade').textContent = ficha.idade || '';
-    document.getElementById('personagem-raca').textContent = ficha.raça !== undefined ? raças[ficha.raça].nome : '';
-    document.getElementById('personagem-tipo').textContent = ficha.tipo !== undefined ? types[ficha.tipo].nome : '';
+    document.getElementById('personagem-nome').textContent = ficha.nome || 'Err';
+    document.getElementById('personagem-idade').textContent = ficha.idade || 'Err';
+    document.getElementById('personagem-raca').textContent = ficha.raça.nome !== "" ? ficha.raça.nome : 'Err';
     
-    let focosText = [];
-    for (let i = 0; i < focos.length; i++) {
-        if (focos[i].value > 0) {
-            focosText.push(focos[i].name + " (" + focos[i].value + ")");
+    if(ficha.options.haveMagiaPer) {
+        document.getElementById('personagem-tipo').textContent = ficha.tipo !== -1 ? types[ficha.tipo].nome : 'Err';
+        
+        let focosText = [];
+        for (let i = 0; i < focos.length; i++) {
+            if (focos[i].value > 0) {
+                focosText.push(focos[i].name + " (" + focos[i].value + ")");
+            }
         }
+        document.getElementById('personagem-foco').textContent = focosText.join(', ');
     }
-    document.getElementById('personagem-foco').textContent = focosText.join(', ');
 
     // Biography
     const biografiaFields = ['familia', 'gostos', 'desgostos', 'medos', 'contatosProximos', 'historia', 'comportamento', 'dinheiro'];
@@ -1404,8 +1840,6 @@ function writeText(element, text, speed = 40, glitchLength = 6) {
 
 }
 
-
-
 function overshadowText(
     element,
     intensity = 0.3,
@@ -1479,10 +1913,10 @@ function overshadowText(
 
 function startOvershadow(element, amount = 6, speed = 40) {
 
-    stopGlitch(element);
+    stopOvershadow(element);
 
     element._glitchInterval = setInterval(() => {
-        glitchText(element, amount);
+        startOvershadow(element, amount);
     }, speed);
 }
 
@@ -1493,4 +1927,9 @@ function stopOvershadow(element) {
     if (element.dataset.originalText) {
         element.textContent = element.dataset.originalText;
     }
+}
+function test() {
+  document.querySelectorAll('span, p, button, .title').forEach(el => {
+    overshadowText(el, 1, 5000, 2);
+  });
 }

@@ -3,7 +3,7 @@ window.addEventListener("message", (event) => {
         console.log(event.data.value)
     }
     if(event.data.type === "NEW_ITEM") {
-        ficha.origens.push(event.data.value)
+        ficha.ocupação.push(event.data.value)
     }
 });
 
@@ -43,11 +43,19 @@ function panelOpen(id, title, content, sm = false) {
     }else {
         box.style.width = "100%"
     }
+
+    if (id == "knowledgeSelector") {
+        box.classList.add('inv')
+    }else {
+        if(box.classList.contains('inv')) box.classList.remove('inv')
+    }
+
     if (id == "changeLog") {
         box.classList.add('changeLogBox')
     }else {
         if(box.classList.contains('changeLogBox')) box.classList.remove('changeLogBox')
     }
+    
     const targetDiv = box.querySelector("#" + id);
     if (targetDiv) {
         targetDiv.style.display = "flex";
@@ -74,6 +82,7 @@ function panelClose() {
         panelChange();
         return;
     }
+    cancelarSeleçãoConhecimentoAtual()
     mainPanelDissolve.hide(1400)
     const box = document.querySelector("#main-panel .box");
     const divs = box.querySelectorAll("div[id]");
@@ -132,7 +141,7 @@ var statusModifierValue = 1;
 
 var statusList = {
     "vida": {fill: document.getElementById('hpBarFill'), text: document.getElementById('hpValue')},
-    "energia": {fill: document.getElementById('epBarFill'), text: document.getElementById('epValue')},
+    "energia": {fill: document.getElementById('peBarFill'), text: document.getElementById('epValue')},
     "medo": {fill: document.getElementById('spBarFill'), text: document.getElementById('spValue')},
 }
 
@@ -175,26 +184,60 @@ function changeStatusValue(type, status, custom = false) {
 
 }
 
+function calcDefesaAtiva(value) {
+    if (value == 0) return 0;
+    if (value == 1 || value == 2) return 25;
+    if (value == 3) return 50;
+    if (value == 4) return 75;
+    if (value == 5) return 100;
+    else return 0;
+}
+
+function calcDeslocamento(value) {
+    return value + 4;
+}
+
+function calcReflexos(des, con) {
+
+    function calcR(value) {
+        return value==0||value==1? 0: value==2||value==3? 2: value==4||value==5? 4: 0;
+    }
+
+    return calcR(des) + calcR(con) + 6;
+}
+
 function statusDef() {
 
-    ficha.status.vidaMax = 15 + perLvl('constituição')*5
-    ficha.status.energiaMax = 5 + (perLvl('vontade')*2) + (perLvl('constituição')*3)
-    ficha.status.medoMax = 20 + (perLvl('vontade')*10) + (perLvl('psicologia')*3)
+    ficha.status.vidaMax = ficha.raça.status.Pv + perLvl('constituição')*5
+    ficha.status.energiaMax = ficha.raça.status.Pe + (perLvl('vontade')*2) + (perLvl('constituição')*3)
+    ficha.status.medoMax = ficha.raça.status.Md + (perLvl('vontade')*8) + (perLvl('psicologia')*3)
 
     ficha.status.vida = ficha.status.vidaMax
     ficha.status.energia = ficha.status.energiaMax
-    ficha.status.medo = ficha.status.medoMax
+
+    ficha.modificadores.defesaAtiva = calcDefesaAtiva(perLvl('constituição'))
+    ficha.modificadores.deslocamento = calcDeslocamento(perLvl('destreza'))
+    ficha.modificadores.reflexos = calcReflexos(perLvl('destreza'), perLvl('constituição'))
     
+    document.getElementById('modificadores').innerHTML = `
+    <span class="text sm">Defesa Ativa: ${ficha.modificadores.defesaAtiva}%</span>
+    <span class="text sm">Deslocamento: ${ficha.modificadores.deslocamento}</span>
+    <span class="text sm">Reflexos: ${ficha.modificadores.reflexos}</span>
+    `
 }
 
-function statusDefPreview(cons, mag, vont, psc) {
+function statusDefPreview(cons, vont, psc) {
 
     let preview = {}
 
-    preview.vida = 15 + cons*5
-    preview.energia = 5 + mag*10
-    preview.medo = 20 + vont*10 + psc*3
+    preview.vida = ficha.raça.status.Pv + cons*5
+    preview.energia = ficha.raça.status.Pe + vont*2 + cons*3 
+    preview.medo = ficha.raça.status.Md + vont*10 + psc*3
 
+    preview.defesaAtiva = calcDefesaAtiva(perLvl('constituição'))
+    preview.deslocamento = calcDeslocamento(perLvl('destreza'))
+    preview.reflexos = calcReflexos(perLvl('destreza'), perLvl('constituição'))
+    
     return preview;
 
 }
@@ -267,10 +310,8 @@ function ChangeOtherMode(){
 }
 const personagemContatos = document.getElementById('personagem-contatos')
 
-//Diario
-function formatDoc(command, value = null) {
-    document.execCommand(command, false, value);
-}
+//paginas
+
 
 // Edição de pericias
 const periciasEditorDissove = new PerlinDissolve( document.querySelector("#periciasEditorBox"), 1024);
@@ -368,9 +409,8 @@ function salvarPericiasEditadas() {
         }
     });
 
-    ficha.origem.forEach( perN=> {
-        ficha.bonus.push(origens[perN].pericias)
-    });
+    ficha.bonus.push(ficha.ocupação.pericias)
+
     ficha.pericias = periciasEditadas;
     displayPericias();
     if (typeof save === 'function' && ficha.options?.autoSave) save(false);
@@ -705,28 +745,34 @@ function renderPericiasEditorPlaces() {
     // Gera a prévia dos status
     const preview = statusDefPreview(
         periciasNivel["constituição"] || 0,
-        periciasNivel["magia"] || 0,
         periciasNivel["vontade"] || 0,
-        periciasNivel["psicologia"] || 0
+        periciasNivel["psicologia"] || 0,
+        periciasNivel["destreza"] || 0,  
     );
 
     
     const feedback = document.getElementById('periciasEditorFeedback');
     if (!feedback) return;
 
+    const statusText = `
+        Vida: ${preview.vida}<br>
+        Energia: ${preview.energia}<br>
+        Medo: ${preview.medo}<br>
+        <br>
+        Defesa Ativa: ${preview.defesaAtiva}%<br>
+        Deslocamento: ${preview.deslocamento}<br>
+        Reflexos: ${preview.reflexos}
+
+    `
     if (itensCount < min || itensCount > max || !validPyramid) {
         feedback.innerHTML = `Piramide fora da regra do nivel ${editorLevel}: use entre ${min} e ${max} pericias nas casas marcadas.<br>
-        Vida: ${preview.vida}<br>
-        Magia: ${preview.energia}<br>
-        Medo: ${preview.medo}
+        ${statusText}
         `;
         feedback.style.color = '#ff7373';
     } else {
         feedback.innerHTML = feedback.innerHTML = `
         Piramide valida para o nivel ${editorLevel}.<br>
-        Vida: ${preview.vida}<br>
-        Magia: ${preview.magia}<br>
-        Medo: ${preview.medo}
+        ${statusText}
         `;
         feedback.style.color = '#9cff9c';
     }
@@ -779,15 +825,16 @@ function getCategoriasPericias() {
 
 function getCategoriasPericiasBase() {
     return [
-        { name: 'Fisicas', id: 'perListFisicas', pericias: ['destreza', 'força', 'constituição', 'luta', 'pontaria'] },
+        { name: 'Fisicas', id: 'perListFisicas', pericias: ['força', 'constituição', 'luta', 'pontaria'] },
         { name: 'De Armas', id: 'perListArmas', pericias: ['armas_brancas', 'pistolas', 'rifle', 'longo_alcance'] },
-        { name: 'De Mobilidade', id: 'perListFisicas2', pericias: ['atletismo', 'acrobacia', 'furtividade', 'pilotagem'] },
-        { name: 'Sociais', id: 'perListSociais', pericias: ['labia', 'intimidação', 'psicologia'] },
-        { name: 'Investigativas', id: 'perListInvestigacao', pericias: ['percepção', 'crime', 'medicina', 'tecnologia', 'mecanica'] },
-        { name: 'De Conhecimento', id: 'perListConhecimento', pericias: ['inteligencia', 'atualidades', 'ciencias', 'historia', 'profissão'] },
+        { name: 'De Mobilidade', id: 'perListFisicas2', pericias: [ 'acrobacia', 'furtividade', 'pilotagem'] },
+        { name: 'Sociais', id: 'perListSociais', pericias: ['destreza', 'conversasão', 'intimidação', 'psicologia'] },
+        { name: 'Investigativas', id: 'perListInvestigacao', pericias: ['percepção', 'crime', 'tecnologia', 'mecanica', 'pesquisar'] },
+        { name: 'De Conhecimento', id: 'perListConhecimento', pericias: ['artes', 'atualidades', 'ciencia', 'humanas', 'burocracia', 'medicina'] },
         { name: 'Mentais', id: 'perListMentais', pericias: ['vontade', 'ocultismo', 'magia', 'sobrevivencia'] }
     ];
 }
+
 
 function getCategoriaOriginalPericia(pericia) {
     const categoria = getCategoriasPericias().find(categoria => categoria.pericias.includes(pericia));
@@ -844,7 +891,14 @@ function isMobileDevice() {
   return window.matchMedia("(any-hover:none)").matches; 
 }
 
-
 function versionNumber(string) {
     return Number(string.replace(/\./g, ""));
 }
+
+const paginaInput = document.getElementById('pagina-input')
+const paginaBtn = document.getElementById('pagina-btn')
+const paginaIframe = document.getElementById('pagina-iframe')
+
+paginaBtn.addEventListener('click', function() {
+    paginaIframe.src = paginaInput.value
+})

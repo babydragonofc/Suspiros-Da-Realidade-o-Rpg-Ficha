@@ -77,7 +77,7 @@ function renderMagias() {
             rollBtn.textContent = 'Rolar';
             rollBtn.onclick = (e) => {
                 e.stopPropagation();
-                rollDice(false, magic.dice);
+                rollDice(magic.dice, "dice");
             }
             btnsDiv.appendChild(rollBtn);
         }
@@ -172,7 +172,7 @@ function renderHabilidades() {
             rollBtn.textContent = 'Rolar';
             rollBtn.onclick = (e) => {
                 e.stopPropagation();
-                rollDice(false, ability.dice);
+                rollDice(ability.dice, "dice");
             }
             btnsDiv.appendChild(rollBtn);
         }
@@ -294,7 +294,7 @@ function showMagicInfo(magic) {
         rollBtn.textContent = 'Rolar';
         rollBtn.onclick = (e) => {
             e.stopPropagation();
-            rollDice(false, magic.dice);
+            rollDice(magic.dice, "dice");
         }
         magicInfo.appendChild(rollBtn);
     }
@@ -395,7 +395,7 @@ function showAbilityInfo(ability) {
         rollBtn.textContent = 'Rolar';
         rollBtn.onclick = (e) => {
             e.stopPropagation();
-            rollDice(false, ability.dice);
+            rollDice(ability.dice, "dice");
         }
         abilityInfo.appendChild(rollBtn);
     }

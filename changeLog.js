@@ -3,11 +3,42 @@ if (localStorage.getItem('versãoNaUltimaVezQueViuOChangeLog') != siteVersion) {
 }
 
 let fichaComPericiasAntigas = false;
+
+//LEMBRAR DE TROCAR A VERÇÃO EM rules.js! Tapada
 const changeLog = [
     {
         title: "Pequenas correções",
+        version: "1.1.4.0",
+        release: "09/09/2026",
+        content: "Grande atualização do sistema. Raças e muito mais.",
+        changes: {
+            add: [
+                "Raças adicionadas!",
+                "Origens trocadas por Ocupações",
+                "Novo sistema de Origens",
+                "Novo sistema de rolagens",
+                "Adicionados Valores: Defesa ativa, Reflexos e Deslocamento"
+            ],
+            remove: [
+                "Troca de perícias, Profição -> Burocracia, Labia -> Conversação, inteligência -> Pesquisar",
+                "Fim do multi-classe", 
+                "Adicionada escolha de péricia bônus em algumas Ocupações"
+            ],
+            fixes: [
+                "Preview de Energia adicionado na edição de perícias",
+                "Correção na cor do status Energia",
+                "Volta das raças funcionais",
+                "Correção de formatação nos textos de péricias de Ocupações",
+                "Novas descrições às Ocupações",
+                
+            ]
+        },
+        notes: "atualização de descrições e imagens em desenvolvimento"
+    },
+    {
+        title: "Pequenas correções",
         version: "1.1.3.2",
-        release: "22/08/2026",
+        release: "03/09/2026",
         content: "De volta às atualizações, mudanças nos mods e pequenas correções.",
         changes: {
             add: [

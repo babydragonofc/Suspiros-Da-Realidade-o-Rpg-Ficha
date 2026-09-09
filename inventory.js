@@ -702,7 +702,7 @@ function useItem(itemId) {
         renderWeaponArea();
         renderInventory();
     } else if (item.type == "item" && item.data.dice != "") {
-        rollDice(false, item.data.dice);  
+        rollDice(item.data.dice, "damage");  
     }
 
     const existingMenu = document.querySelector('.item-action-menu');
@@ -731,7 +731,7 @@ function attackWeapon() {
         weapon.data.mmo--;
     }
 
-    rollDice(false, false, weapon.data.damage);
+    rollDice(weapon.data.damage, "damage");
 
     console.log
     renderWeaponArea();
@@ -755,7 +755,7 @@ function attackWeaponCritical() {
         weapon.data.mmo--;
     }
 
-    rollDice(false, false, weapon.data.critical);
+    rollDice(weapon.data.critical, "damage");
 
     renderWeaponArea();
     renderInventory();

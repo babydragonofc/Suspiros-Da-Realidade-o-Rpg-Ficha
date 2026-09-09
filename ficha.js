@@ -1,3 +1,4 @@
+let = configuraçõesDeAtualizações = {}
 var ficha = { 
     assinatura: "FichaSuspirosDaRealidade",
     versão: siteVersion,
@@ -8,11 +9,29 @@ var ficha = {
     dataNascimento: "",
 
     ConhecimentoMagico: 0,
-    origem: [],
+    ocupação: {
+        id: 0,
+        nome: "",
+        descricao: "",
+        bonus: "",
+        pericias: [],
+        habilidades: []
+    },
+    origem: {
+        id: 0,
+        nome: "",
+        descricao: ""
+    },
 
-    tipo: 0,
-    raça: 0,
+    tipo: -1,
+    foco: [0,0,0,1],
+    raça: {nome: "", status: {Pv: 0, Pe: 0, Md: 0 }},
     elementos: [],
+    modificadores: {
+        defesaAtiva : 0,
+        deslocamento: 0,
+        reflexos: 0,
+    },
     status: {
         vida: 0,
         energia: 0,
@@ -32,7 +51,6 @@ var ficha = {
     ],
 
     bonus: [],
-
 
     pontos: 0,
     habilidades: [],
@@ -62,7 +80,9 @@ var ficha = {
       translucidPer: false,
       blurPer: false,
       blurPerValue: 5,
-      autoSave: false
+      autoSave: false,
+
+      haveMagiaPer: false
     },
     mods :[],
     customStatus: [],
@@ -166,15 +186,27 @@ if (inputArquivo) {
           return;
         }
 
-        if (dadosCarregados.versão == ficha.versão) saveUpdated = true;
-        console.log('Dados carregados:', dadosCarregados, 'versão:', dadosCarregados.versão);
-        if (!dadosCarregados.versão) {
+        // ATUALIZAÇÃO DE FICHA AUTOMATICA
+
+        const versãoDaFicha = versionNumber(dadosCarregados.versão)
+
+        function verificarVersão(value) {
+            return !versãoDaFicha || versãoDaFicha < versionNumber(value) 
+        }
+
+        if (versãoDaFicha == ficha.versão) saveUpdated = true;
+            console.log('Dados carregados:', dadosCarregados, 'versão:', versãoDaFicha);
+
+        if (!versãoDaFicha) {
             panelOpen(false, 'ATUALIZAÇÃO', 'o sistema de pericias foi atualizados, vá em Personagem > Editar pericias para adicionar suas pericias')
             fichaComPericiasAntigas = true
         }
-        if (dadosCarregados.versão > versionNumber("1.1.3.3") ) {
-            panelOpen(false, 'ATUALIZAÇÃO', 'o status MANA foi trocado para ENERGIA, vá em Personagem > Editar pericias para definir sua energia')
 
+        if (verificarVersão("1.1.3.4")) {
+            configuraçõesDeAtualizações.fichaComEnergia = true
+        }
+        if (verificarVersão("1.1.4.0")) {
+            configuraçõesDeAtualizações.fichaComLabia = true
         }
         ficha = mergeFicha(dadosCarregados);
 
@@ -317,8 +349,8 @@ function CarregarFicha() {
         }
     
     
-        prDiv = Pr
-        cF.remove()
+        prDiv = escolhaDePericia
+        criaçãoDeFicha.remove()
         renderMagias(); // Call renderMagias after all magic items are processed
         statusAtu()
     }, debug? 0:2000)

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap');
 @font-face {
     font-family: 'DDC';
-    src: url('DCC - Manifest.otf') format('opentype');
+    src: url('DCC-Manifest.otf') format('opentype');
     font-weight: normal;
 }
 *{
@@ -149,10 +149,19 @@ main::-webkit-scrollbar {
     transition: 0.2s ease-in; 
 }
 
+.btn.active {
+    box-shadow: 0 0 10px var(--btn-bg);
+}
+
 .btn:hover {
     background-color: var(--btn-hvr);
 }
 
+.hide {
+    opacity: 0;
+    pointer-events: none;
+    transition: 1s ease-in-out;
+}
 .base {
     background-color: rgb(239, 239, 239);
     color: black;
@@ -280,19 +289,27 @@ input:checked + .slider:before {
     max-height: 80px;
 }
 
-#cF {
+#criaçãoDeFicha {
     display: none;
 }
 
-#IB, #Rs {
+#informaçõesBasicas, #escolhaDeRaças {
     display: none;
-    flex-direction: column;
+    flex-direction: column;    
+    padding: 1em;
 }
 
-#IB .text {
+#informaçõesBasicas .text {
     margin: 1.5em 0 0.5em 0;
 }
 
+#informaçõesBasicas #age{
+    width: 50%;
+}
+
+#informaçõesBasicas #lastInfo {
+    justify-content: space-between;
+}
 .pBtn {
     margin: 40px 0;
     background-color: transparent;
@@ -307,12 +324,11 @@ input:checked + .slider:before {
     
 }
 
-#Rs-box {
+#race-box {
     position: relative;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
     height: 40dvw;
-    width: 40dvw;
     gap: 1em;
 }
 
@@ -329,14 +345,25 @@ input:checked + .slider:before {
     cursor: pointer;
 }
 
-#Rs-box.race-selected .race-card:not(.active) {
+#race-box.race-selected .race-card:not(.active) {
     opacity: 0;
     pointer-events: none;
 }
 
 .race-card .race-details {
     display: none;
+    flex-direction: column;
+    align-items: center;
     margin-top: 1em;
+}
+
+.race-card .race-details p {
+    text-align: left;
+    margin-top: 0;
+}
+
+.race-card .race-details .btn {
+    width: 75%;
 }
 
 .race-card.active {
@@ -349,15 +376,15 @@ input:checked + .slider:before {
     transform: scale(1);
 }
 
-.race-card.active .rsBtn {
+.race-card.active .raceBtn {
     display: none;
 }
 
 .race-card.active .race-details {
-    display: block;
+    display: flex;
 }
 
-.rsBtn {
+.raceBtn {
     width: 100%;
     height: 100%;
     background: none;
@@ -368,8 +395,51 @@ input:checked + .slider:before {
     transition: all 0.3s ease-in-out;
 }
 
-.rsBtn:hover {
+.raceBtn:hover {
     background-color: var(--un-tab-clr);
+}
+
+#knowledgeSelector .btn:not(.next) {
+    position: absolute;
+    width: 100px;
+    padding: 0 5px;
+}
+
+#knowledgeSelector{
+    position: relative;
+    align-items: center;
+    justify-content: center;
+
+    span {
+        color: white;
+    }
+
+    .i {
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .ii{
+        top: 25%;
+        transform: translateX(-200px);
+    }
+    .iii {
+        bottom: 25%;
+        transform: translateX(200px)
+    }
+    .iiii {
+        bottom: 25%;
+        transform: translateX(-200px)
+    }
+    .iiiii {
+        top: 25%;
+        transform: translateX(200px);
+    }
+    .iiiiii {
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
 
 .choose-btn {
@@ -417,15 +487,16 @@ input:checked + .slider:before {
     transform: rotate(-90deg);
 }
 
-#Og {
+#escolhaDeOcupação, #escolhaDeOrigem {
     display: none; /* Initially hidden, to be shown by script */
+    flex-direction: column;
+    width: 50dvw;
     height: 84dvh;
     justify-content: center;
     justify-content: center;
-
 }
 
-#origens {
+#ocupaçõesContainer, #origensContainer {
     height: 100%;
     display: flex;
     overflow-x: hidden;
@@ -435,81 +506,161 @@ input:checked + .slider:before {
     align-items: center;
 }
 
-
-#origens {
+#ocupaçõesContainer, #origensContainer{
   --sb-track-color: #99999917;
   --sb-thumb-color: #ffffff;
   --sb-size: 16px;
 }
 
-#origens::-webkit-scrollbar {
+#ocupaçõesContainer::-webkit-scrollbar, #origensContainer::-webkit-scrollbar{
   width: var(--sb-size)
 }
 
-#origens::-webkit-scrollbar-track {
+#ocupaçõesContainer::-webkit-scrollbar-track, #origensContainer::-webkit-scrollbar-track {
   background: var(--sb-track-color);
   backdrop-filter: blur(10px);
   border-radius: 1px;
 }
 
-#origens::-webkit-scrollbar-thumb {
+#ocupaçõesContainer::-webkit-scrollbar-thumb, #origensContainer::-webkit-scrollbar-thumb {
   background: var(--sb-thumb-color);
   border-radius: 1px;
   
 }
 
 @supports not selector(::-webkit-scrollbar) {
-  #origens {
+  #ocupaçõesContainer {
     scrollbar-color: var(--sb-thumb-color)
         var(--sb-track-color);
   }
+    #ocupaçõesContainer {
+        scrollbar-color: var(--sb-thumb-color)
+            var(--sb-track-color);
+  }
 }
 
+.ocupation-card,
 .origin-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+
     position: relative;
-    background-color: rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+
+    width: 100%;
+    min-height: 150px;
     padding: 1em;
+
+    background-color: rgba(0, 0, 0, 0.5);
     color: var(--main-clr);
-    width: 382px;
-    user-select: none;
+
     cursor: pointer;
-    transition: 0.3s ease-in-out;
-    flex-shrink: 0; /* Prevent cards from shrinking */
-    transition: all 0.3s ease-in-out;
+    user-select: none;
+    flex-shrink: 0;
+
+    /* Impede qualquer conteúdo de escapar */
+    overflow: hidden;
+
+    transition:
+        padding 0.5s ease-in-out;
 }
 
-.origin-card:not(.originSelected) {
-    height: 117px;
-    transition: all 0.3s ease-in-out;
+
+/* =========================
+   TÍTULO
+   ========================= */
+
+.ocupation-card .title,
+.origin-card .title {
+    margin: 0;
+
+    text-align: center;
+
+    transition:
+        margin 0.5s ease-in-out,
+        transform 0.5s ease-in-out;
 }
 
+
+/* =========================
+   DETALHES
+   ========================= */
+
+.ocupation-card .ocupation-details,
 .origin-card .origin-details {
-    display: none;
-    transition: all 0.3s ease-in-out;
+    width: calc(100% - 84px);
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-rows: 0fr;
+
+    min-height: 0;
+    height: 0;
+
+    opacity: 0;
+    transform: translateY(-10px);
+
+    margin: 0;
+
+    overflow: hidden;
+
+    transition:
+        grid-template-rows 0.5s ease-in-out,
+        opacity 0.3s ease-in-out,
+        transform 0.5s ease-in-out,
+        margin 0.5s ease-in-out;
 }
 
-.origin-card.originSelected {
-    flex-direction: column;
-    align-items: self-start;
-    transition: all 0.3s ease-in-out;
+/* =========================
+   ATIVO
+   ========================= */
+
+.ocupation-card.active,
+.origin-card.active {
+    align-items: center;
+    justify-content: flex-start;
 }
 
-.origin-card.originSelected .title {
+
+/* Título quando aberto */
+
+.ocupation-card.active .title,
+.origin-card.active .title {
     margin: 42px 42px 0;
 
+    text-align: left;
+    align-self: flex-start;
 }
 
-.origin-card.originSelected .origin-details {
-    display: block;
-    margin: 0px 42px 42px 42px;
+
+/* Detalhes quando aberto */
+
+.ocupation-card.active .ocupation-details,
+.origin-card.active .origin-details {
+    grid-template-rows: 1fr;
+
+    height: auto;
+    opacity: 1;
+    transform: translateY(0);
+
+    margin: 0 42px 42px;
+}
+/* ISSO É PURA FRESCURA DA DEV :P*/
+@media (max-width: 1100px) {
+    #escolhaDeOcupação, #escolhaDeOrigem {
+        width: 70dvw;
+    }
 }
 
-#Mg {
+#escolhasDeMagia {
     display: none;
     color: var(--main-clr);
+}
+
+#escolhaDeFocoMagico {
+    display: none;
 }
 
 .types {
@@ -541,7 +692,8 @@ input:checked + .slider:before {
 }
 
 .type-info {
-    width: 500px;
+    width: 500px;    
+    flex-direction: column;
 }
 
 short {
@@ -1035,7 +1187,7 @@ img.reverse {
     color: #aaa;
 }
 
-#Pr {
+#escolhaDePericia {
     width: 100%;
     display: none;
     flex-direction: column;
@@ -1045,18 +1197,18 @@ img.reverse {
     
 }
 
-#Pr header {
+#escolhaDePericia header {
     display: flex;
     width: -webkit-fill-available;
     box-sizing: border-box;
     justify-content: space-between;
 }
 
-#Pr header .big-title, #lvSelect {
+#escolhaDePericia header .big-title, #lvSelect {
     margin: 0;
 }
 
-#Pr-Content {
+#escolhaDePericia-Content {
     flex-direction: column;
     height: 90dvh;
     overflow: hidden;
@@ -1241,7 +1393,7 @@ img.reverse {
     justify-content: center;
 }
 
-#Pr .pr-block #pericias .pBlock {
+#escolhaDePericia .pr-block #pericias .pBlock {
 
     margin: 10px;
     background-color: #111;
@@ -1611,6 +1763,12 @@ img.reverse {
     overflow-y: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease-in-out;
+}
+
+.panel .box.inv {
+    box-shadow: none;
+    background: transparent;
+    border: none;
 }
 
 .panel .box.changeLogBox {
@@ -2127,7 +2285,7 @@ img.reverse {
 }
 
 
-#dice-div {
+#divDeRolagem {
     width: 100%;
     height: 100%;
     display: flex;
@@ -2143,7 +2301,7 @@ img.reverse {
     background-color: #0000006c;
 }
 
-#dice-div div{
+#divDeRolagem div{
     width: 100%;
     height: 200px;
     display: flex;
@@ -2259,8 +2417,8 @@ img.reverse {
     width: 10%;
 }
 
-#epBarFill {
-    background-color: #1cd842;
+#peBarFill {
+    background-color: #c061cbff;
     width: 20%;
 }
 
@@ -2304,59 +2462,15 @@ img.reverse {
     color: black;
 }
 
-#epBar::after {
+#peBar::after {
     content: '';
     height: 100%;
     width: 100%;
-    background-image: url(https://i.imgur.com/ykWerrn.png&quot;);
+    background-image: url(img/energia.webp);
     position: absolute;
     left: 0;
     top: 0;
     background-size: cover;
-}
-
-
-
-.diario-toolbar {
-  margin-bottom: 10px;
-  background-color: #333;
-  padding: 5px;
-  border-radius: 5px;
-}
-
-.diario-toolbar button, .diario-toolbar select {
-  margin-right: 5px;
-  background-color: #444;
-  color: white;
-  border: 1px solid var(--ter-clr);
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.diario-toolbar button:hover, .diario-toolbar select:hover {
-  background-color: var(--ter-clr);
-}
-
-.diario-toolbar input[type="color"] {
-  border: none;
-  background: none;
-  width: 30px;
-  height: 20px;
-  padding: 0;
-  vertical-align: middle;
-}
-
-.diario-editor {
-  border: 1px solid #ccc;
-  padding: 10px;
-  height: 400px;
-  background-color: #f8f8f8;
-  color: black;
-  border-radius: 5px;
-  font-family: 'Crimson Text', serif;
-  font-size: 16px;
-  line-height: 1.6;
-  overflow-y: auto;
 }
 
 .personagem-content {
@@ -2632,7 +2746,17 @@ img.reverse {
 }
 
 @media (max-width: 500px) {
-    #foco {
+
+    #informaçõesBasicas {
+        width: 100dvw;
+        box-sizing: border-box;
+    }
+
+    #escolhaDeRaças {
+        margin-bottom: 8em;
+    }
+
+    #escolhaDeFocoMagico {
         width: 90dvw;
     }
 
@@ -2706,7 +2830,7 @@ img.reverse {
     .panel .box {
         position: absolute;
         bottom: 0;
-        width: -webkit-fill-available;
+        width: -webkit-fill-available !important;
         height: 70%;
         border-radius: 40px 40px 0 0;
         padding: 0;
@@ -2743,7 +2867,7 @@ img.reverse {
         padding: 10px;
     }
 
-    #Pr header {
+    #escolhaDePericia header {
         display: flex;
         width: 100dvw;
         justify-content: space-between;
@@ -2767,7 +2891,7 @@ img.reverse {
         overflow-x: auto;
     }
 
-    #Pr header .big-title {
+    #escolhaDePericia header .big-title {
         margin-left: 5dvw;
     }
 
@@ -2775,23 +2899,22 @@ img.reverse {
         font-size: 14px;
     }
 
-    .origin-card, .type-card, .element-card {
+    .type-card, .element-card {
         width: 80%;
         max-width: 350px;
     }
 
-    #Rs-div {
+    #race-div {
         justify-content: center;
     }
 
-    .race-card {
-        width: 80%;
-        height: 80%;
-        min-width: 80%;
-        min-height: 80%;
+    #race-box {
+        height: 80dvw;
+        gap: 10px;
     }
+    
 
-    .race-card .rsBtn {
+    .race-card .raceBtn {
         font-size: 3dvw;
         text-align: center;
         display: flex;
@@ -3591,4 +3714,18 @@ fear {
 #spValue {
     mix-blend-mode: exclusion;
     color: white;
+}
+
+#modificadores {
+    display: flex;
+    gap: 10px;
+}
+
+#modificadores span {
+    border: 1px solid #555;
+}
+
+#pagina-iframe {
+    height: 100%;
+    width: 100%;
 }

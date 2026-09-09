@@ -1,143 +1,143 @@
 // ====================== TOOLTIP ======================
 
 const tooltipDictionary = { 
-    Pericia: { 
-        Lábia: { descricao: "Convence pessoas com palavras." },
-        Aparência: { descricao: "Usa charme e beleza." },
-        Intimidar: { descricao: "Assusta para impor respeito." },
-        Poder: { descricao: "Força de influência." },
-        Sorte: { descricao: "Boa fortuna em situações aleatórias." },
-        Força: { descricao: "Capacidade de força física." },
-        Corpo: { descricao: "Controle corporal geral." },
-        Constituição: { descricao: "Resistência física e vitalidade." },
-        Destreza: { descricao: "Agilidade e precisão motora." },
-        Inteligência: { descricao: "Capacidade analítica e lógica." },
-        Percepção: { descricao: "Atenção aos detalhes e sentidos." },
-        Estabilidade: { descricao: "Controle emocional e mental." },
-        ArmasBrancas: { descricao: "Uso de facas e espadas." },
-        Pistolas: { descricao: "Armas de fogo de curto alcance." },
-        Rifles: { descricao: "Armas de fogo de médio alcance." },
-        LongoAlcance: { descricao: "Arcos, bestas e similares." },
-        Arremeçar: { descricao: "Lançar objetos com precisão." },
-        Movimento: { descricao: "Sua mobilidade em combate"},
-        Furtividade: { descricao: "Sua habilidade de pasar despercebido"},
-        Esquiva: { descricao: "Capacidade de se desviar de ataques"},
-        Acrobacia: { descricao: "Capacidade de executar e performar manobras"},
-        ContraAtaque:{ descricao: "Habilidade de revidar ataques"},
-        Magia: { descricao: "Manipulação de energias mágicas." },
-        Alquimia: { descricao: "Preparação de poções e elixires." },
-        Ocultismo: { descricao: "Conhecimento do sobrenatural." },
-        História: { descricao: "Conhecimento histórico." },
-        Mecanica: { descricao: "Reparo e engenharia prática." },
-        UsarComputadores: { descricao: "Uso de computadores." },
-        Sobrevivência: { descricao: "Habilidades de campo e mato." },
-        Música: { descricao: "Uso artístico de instrumentos e voz." },
-        ConhecimentosGerais: { descricao: "Cultura ampla e variada." },
-        Linguas: { descricao: "Comunicação em outros idiomas." },
-        Medicina: { descricao: "Cuidado com ferimentos e doenças." },
-        Ciência: { descricao: "Conhecimento científico." },
-        Aprendizado: { descricao: "Facilidade em aprender"} 
-    },
+    Pericia: {
+        // Físicas
+        Força: { descricao: "Sua capacidade de utilizar força física, carregar peso, quebrar algo." },
+        Constituição: { descricao: "Sua capacidade de resistir a golpes, ferimentos, no geral." },
+        Luta: { descricao: "Sua capacidade/conhecimento sobre luta, seja artes marciais ou técnicas de luta corpo a corpo." },
+        Pontaria: { descricao: "Sua capacidade de jogar/disparar projéteis precisamente sem armas de fogo. (Pode ser usada para percepção DT sobre em 5)" },
+
+        // De Armas
+        ArmasBrancas: { descricao: "Sua capacidade de utilizar armas brancas em combate, como facas, espadas, machados, etc." },
+        Pistolas: { descricao: "Sua capacidade de utilizar armas de fogo curtas, como pistolas e revólveres." },
+        Rifles: { descricao: "Sua capacidade de utilizar armas de fogo grandes, como rifles, fuzis, escopetas, etc." },
+        LongoAlcance: { descricao: "Sua capacidade de utilizar snipers, e armas longas no geral." },
+
+        // De Mobilidade
+        Destreza: { descricao: "Refere-se às suas habilidades de mobilidade, agilidade." },
+        Acrobacia: { descricao: "Sua capacidade de fazer manobras difíceis e performar movimentos precisos." },
+        Furtividade: { descricao: "Sua capacidade de passar despercebido e se espreitar em ambientes." },
+        Pilotagem: { descricao: "Sua capacidade de pilotar veículos." },
+
+        // Sociais
+        Conversação: { descricao: "Sua capacidade de comunicação, debate, mentir, convencer, etc." },
+        Intimidação: { descricao: "Sua capacidade de impor ordens pelo medo." },
+        Psicologia: { descricao: "Sua capacidade de interpretar sinais da mente humana, mentiras." },
+
+        // Investigativas
+        Percepção: { descricao: "Sua habilidade em notar pequenos detalhes, ouvir, escutar, e perceber o ambiente." },
+        Crime: { descricao: "Sua capacidade de identificar/cometer delitos e fraudes." },
+        Tecnologia: { descricao: "Sua capacidade de utilizar, entender e burlar sistemas eletrônicos e digitais." },
+        Mecânica: { descricao: "Sua capacidade de utilizar, criar, entender e modificar mecanismos complexos." },
+        Pesquisa: { descricao: "Sua capacidade de pesquisar informações em bibliotecas e arquivos." },
+
+        // De Conhecimento
+        Atualidades: { descricao: "Seu conhecimento geral sobre nichos culturais, como filmes, jogos etc." },
+        Ciências: { descricao: "Seu conhecimento/habilidade sobre ciências como física, química, biologia etc." },
+        Humanas: { descricao: "Seu conhecimento/habilidade sobre ciências humanas, como história, geografia, etc." },
+        Burocracia: { descricao: "Seu conhecimento sobre documentos, leis, etc." },
+        Artes: { descricao: "Seu conhecimento sobre produção artística, como música, pinturas, arquitetura, etc." },
+        Medicina: { descricao: "Seu conhecimento/habilidade sobre o corpo humano." },
+
+        // Mentais
+        Vontade: { descricao: "Sua resistência/resiliência mental, sua capacidade de se manter consciente das suas vontades e objetivos." },
+        Ocultismo: { descricao: "Seu conhecimento, habilidade ou conexão com o outro lado e seus efeitos." },
+        Magia: { descricao: "Seu conhecimento e domínio sobre a magia e seus usos." },
+        Sobrevivência: { descricao: "Seu conhecimento sobre a natureza e formas de sobreviver/improvisar nela." }
+},
     Raça: {},
-    Atributo: {
-        Social: { descricao: "Relacionamento interpessoal.", pericias: ["Lábia", "Aparência", "Intimidar", "Poder", "Sorte"] },
-        Fisico: { descricao: "Força, agilidade e vitalidade.", pericias: ["Força", "Corpo", "Constituição", "Destreza"] },
-        Intelecto: { descricao: "Pensamento e raciocínio lógico.", pericias: ["Inteligência", "Percepção", "Estabilidade"] },
-        Combate: { descricao: "Habilidades marciais.", pericias: ["ArmasBrancas", "Pistolas", "Rifles", "LongoAlcance", "Arremeçar"] },
-        Habilidades: { descricao: "Capacidades físicas e de movimento.", pericias: ["Movimento", "Furtividade", "Esquiva", "Acrobacia", "ContraAtaque"] },
-        Magia: { descricao: "Energia arcana e estudos ocultos.", pericias: ["Magia", "Alquimia", "Ocultismo"] },
-        Conhecimento: { descricao: "Estudos e erudição.", pericias: ["História", "Mecanica", "Sobrevivência", "Música", "ConhecimentosGerais", "Linguas", "Medicina", "Ciência", "Aprendizado", "UsarComputadores"] } },
     Habilidades: {
-        ConhecimentoAnatômico: {
-            descricao: 'Gastando 5 de Medo e um turno, você é capaz de identificar o ponto fraco de um alvo. Todos que souberem dessa fraqueza causarão +50% de dano contra ele durante 1D3 turnos.'
-        },
-        UsoDeRemédios: {
-            descricao: 'Você pode gastar um kit médico completo para curar um Ferimento Grave em meia hora.'
-        },
-        ProficiênciaEmHardware: {
-            descricao: 'Você identifica falhas, vulnerabilidades e brechas em aparelhos eletrônicos com facilidade.'
-        },
-        ProficiênciaEmSoftware: {
-            descricao: 'Com uma rodada de Usar Computadores, você pode invadir sistemas avançados e obter acesso privilegiado.'
-        },
-        Reconstruir: {
-            descricao: 'Com uma rodada de Mecânica, você pode desmontar um objeto e criar outro semelhante a partir de suas peças.'
-        },
-        Enganar: {
-            descricao: 'Gastando 5 de Medo, você pode substituir qualquer teste de Perícia por uma rolagem de Lábia ou Aparência.'
-        },
-        Blefe: {
-            descricao: 'Gastando 10 de Medo, você passa automaticamente em um teste de Lábia, sem necessidade de rolagem.'
-        },
-        SacrifícioProtetor: {
-            descricao: 'Ao realizar um teste de Destreza antes que um aliado receba dano, você pode intervir e receber o dano em seu lugar.'
-        },
-        TécnicaDeCombate: {
-            descricao: 'Com uma rolagem de Força e gastando 10 de Medo, você causa o dobro de dano em um ataque físico.'
-        },
-        TiroCerto: {
-            descricao: 'Ao atacar de forma furtiva, você pode causar o dobro de dano com um tiro preciso.'
-        },
-        AbrirFogo: {
-            descricao: 'Você pode efetuar três disparos em um mesmo turno, sofrendo apenas duas desvantagens.'
-        },
-        Imobilizar: {
-            descricao: 'Gastando 5 de Medo (uma vez a cada meia hora), você pode imobilizar um alvo por 1D4 turnos.'
-        },
-        Proteger: {
-            descricao: 'Você concede +3 de armadura a um aliado atrás de você, além de deixá-lo em estado furtivo.'
-        },
-        EquipamentosDeLaboratório: {
-            descricao: 'Você recebe vantagem ao analisar pequenos objetos utilizando ferramentas e equipamentos de laboratório.'
-        },
-        MétodosExperimentais: {
-            descricao: 'Você domina procedimentos experimentais, podendo realizar testes e análises detalhadas, como remoção de tinta e rastreamento de resíduos.'
-        },
-        ReagentesMísticos: {
-            descricao: 'Você é capaz de criar reações químicas ou místicas únicas utilizando reagentes especiais.'
-        },
-        ControleDeSubstânciasQuímicas: {
-            descricao: 'Sua habilidade em misturar e manipular substâncias químicas previne acidentes e aumenta a eficácia dos resultados.'
-        },
-        LeituraCrítica: {
-            descricao: 'Gastando 5 de Medo, você obtém vantagem em testes de Inteligência e Percepção ao analisar textos, documentos ou situações complexas.'
-        },
-        ConhecimentoEspecializado: {
-            descricao: 'Você possui domínio teórico aprofundado, recebendo vantagem em testes de História e Aprendizado.'
-        },
-        ArteVisual: {
-            descricao: 'Sua arte pode influenciar emoções, transmitir mensagens complexas ou criar disfarces convincentes.'
-        },
-        MúsicaOuPerformance: {
-            descricao: 'Você é capaz de cativar, inspirar ou manipular o público através da música, atuação ou outras formas de performance.'
-        },
-        MovimentosLeves: {
-            descricao: 'Você se move com leveza e precisão, recebendo vantagem em testes de Furtividade e Esquiva.'
-        },
-        ReconhecimentoRápidoDeTerreno: {
-            descricao: 'Gastando 10 de Medo, você identifica brechas, caminhos ocultos e pontos estratégicos no ambiente ao seu redor.'
-        },
-        Ocultismo: {
-            descricao: 'Seu conhecimento sobre o oculto permite reconhecer criaturas, rituais e artefatos sobrenaturais. Gastando 20 de Medo, você recebe duas vantagens em qualquer teste de Ocultismo.'
-        },
-        LeituraDeSímbolosAntigos: {
-            descricao: 'Você é capaz de decifrar símbolos e rituais antigos que seriam incompreensíveis para a maioria das pessoas.'
-        },
-        Entrevistas: {
-            descricao: 'Gastando 5 de Medo e realizando um teste de Lábia, você pode fazer uma pergunta certeira que revela uma informação valiosa ou secreta.'
-        },
-        RedeDeContatos: {
-            descricao: 'Você conhece pessoas influentes e bem posicionadas, podendo recorrer a elas para obter informações, favores ou recursos.'
-        },
-        PreparoDeAbrigo: {
-            descricao: 'Você domina técnicas de sobrevivência, sendo capaz de encontrar ou construir abrigos seguros em ambientes hostis ou urbanos.'
-        },
-        Manual: {
-            descricao: 'Você executa tarefas práticas e manuais com precisão, sendo capaz de improvisar soluções com poucos recursos.'
-        },
-        Preparo: {
-            descricao: 'Gastando 15 de Medo, você prepara um explosivo com perfeição, garantindo o dano máximo possível.'
-        }
+    ConhecimentoAnatômico: {
+        descricao: 'Gastando 5 de Medo e um turno, você é capaz de identificar o ponto fraco de um alvo. Todos que souberem dessa fraqueza causarão +50% de dano contra ele durante 1D3 turnos.'
+    },
+    UsoDeRemédios: {
+        descricao: 'Você pode gastar um kit médico completo para curar um Ferimento Grave em meia hora.'
+    },
+    ProficiênciaEmHardware: {
+        descricao: 'Você identifica falhas, vulnerabilidades e brechas em aparelhos eletrônicos com facilidade.'
+    },
+    ProficiênciaEmSoftware: {
+        descricao: 'Com uma rodada de Usar Computadores, você pode invadir sistemas avançados e obter acesso privilegiado.'
+    },
+    Reconstruir: {
+        descricao: 'Com uma rodada de Mecânica, você pode desmontar um objeto e criar outro semelhante a partir de suas peças.'
+    },
+    Enganar: {
+        descricao: 'Gastando 5 de Medo, você pode substituir qualquer teste de Perícia por uma rolagem de Lábia ou Aparência.'
+    },
+    Blefe: {
+        descricao: 'Gastando 10 de Medo, você passa automaticamente em um teste de Lábia, sem necessidade de rolagem.'
+    },
+    SacrifícioProtetor: {
+        descricao: 'Ao realizar um teste de Destreza antes que um aliado receba dano, você pode intervir e receber o dano em seu lugar.'
+    },
+    TécnicaDeCombate: {
+        descricao: 'Com uma rolagem de Força e gastando 10 de Medo, você causa o dobro de dano em um ataque físico.'
+    },
+    TiroCerto: {
+        descricao: 'Ao atacar de forma furtiva, você pode causar o dobro de dano com um tiro preciso.'
+    },
+    AbrirFogo: {
+        descricao: 'Você pode efetuar três disparos em um mesmo turno, sofrendo apenas duas desvantagens.'
+    },
+    Imobilizar: {
+        descricao: 'Gastando 5 de Medo (uma vez a cada meia hora), você pode imobilizar um alvo por 1D4 turnos.'
+    },
+    Proteger: {
+        descricao: 'Você concede +3 de armadura a um aliado atrás de você, além de deixá-lo em estado furtivo.'
+    },
+    EquipamentosDeLaboratório: {
+        descricao: 'Você recebe vantagem ao analisar pequenos objetos utilizando ferramentas e equipamentos de laboratório.'
+    },
+    MétodosExperimentais: {
+        descricao: 'Você domina procedimentos experimentais, podendo realizar testes e análises detalhadas, como remoção de tinta e rastreamento de resíduos.'
+    },
+    ReagentesMísticos: {
+        descricao: 'Você é capaz de criar reações químicas ou místicas únicas utilizando reagentes especiais.'
+    },
+    ControleDeSubstânciasQuímicas: {
+        descricao: 'Sua habilidade em misturar e manipular substâncias químicas previne acidentes e aumenta a eficácia dos resultados.'
+    },
+    LeituraCrítica: {
+        descricao: 'Gastando 5 de Medo, você obtém vantagem em testes de Inteligência e Percepção ao analisar textos, documentos ou situações complexas.'
+    },
+    ConhecimentoEspecializado: {
+        descricao: 'Você possui domínio teórico aprofundado, recebendo vantagem em testes de História e Aprendizado.'
+    },
+    ArteVisual: {
+        descricao: 'Sua arte pode influenciar emoções, transmitir mensagens complexas ou criar disfarces convincentes.'
+    },
+    MúsicaOuPerformance: {
+        descricao: 'Você é capaz de cativar, inspirar ou manipular o público através da música, atuação ou outras formas de performance.'
+    },
+    MovimentosLeves: {
+        descricao: 'Você se move com leveza e precisão, recebendo vantagem em testes de Furtividade e Esquiva.'
+    },
+    ReconhecimentoRápidoDeTerreno: {
+        descricao: 'Gastando 10 de Medo, você identifica brechas, caminhos ocultos e pontos estratégicos no ambiente ao seu redor.'
+    },
+    Ocultismo: {
+        descricao: 'Seu conhecimento sobre o oculto permite reconhecer criaturas, rituais e artefatos sobrenaturais. Gastando 20 de Medo, você recebe duas vantagens em qualquer teste de Ocultismo.'
+    },
+    LeituraDeSímbolosAntigos: {
+        descricao: 'Você é capaz de decifrar símbolos e rituais antigos que seriam incompreensíveis para a maioria das pessoas.'
+    },
+    Entrevistas: {
+        descricao: 'Gastando 5 de Medo e realizando um teste de Lábia, você pode fazer uma pergunta certeira que revela uma informação valiosa ou secreta.'
+    },
+    RedeDeContatos: {
+        descricao: 'Você conhece pessoas influentes e bem posicionadas, podendo recorrer a elas para obter informações, favores ou recursos.'
+    },
+    PreparoDeAbrigo: {
+        descricao: 'Você domina técnicas de sobrevivência, sendo capaz de encontrar ou construir abrigos seguros em ambientes hostis ou urbanos.'
+    },
+    Manual: {
+        descricao: 'Você executa tarefas práticas e manuais com precisão, sendo capaz de improvisar soluções com poucos recursos.'
+    },
+    Preparo: {
+        descricao: 'Gastando 15 de Medo, você prepara um explosivo com perfeição, garantindo o dano máximo possível.'
+    }
     },
     Origem: {
         Medico: { descricao: "Você era um profissional da saúde como um enfermeiro, farmacêutico, médico, psicólogo ou socorrista, treinado no atendimento e cuidado de pessoas. " },
@@ -155,15 +155,16 @@ const tooltipDictionary = {
         Ocultista: { descricao: "Você de algum modo entrou em um grupo ocultista, porém hoje busca entender como pará-los de alguma forma usando suas habilidades ocultas."},
         Jornalista: { descricao: "Você é um jornalista, tendo já escrito e participado de diversas matérias que te levaram a conhecer e vivenciar muitas das situações mais estranhas e inusitadas que alguém jamais imaginaria viver. Porém, nada disso te impediu se sempre ir atrás de mais uma aventura para consegui um furo de noticias."},
         Mochileiro: { descricao: "Você viajou por todo o mundo, tendo tido inúmeras vivências incríveis, conhecendo povos por todo o globo e participando das mais imagináveis celebrações. Graças a isso, está pronto para participar de qualquer aventura ou loucura que te chamarem, afinal um dia ruim acaba sempre virando uma boa história."},
-        ExpecialistaEmExplosivos: { descricao: "Você viveu em meio a turbulencias e fez do fogo e do caus seu refugio."} },
-        MagiaFicha: {
-            ConhecimentoMagico: { descricao: "Seu conhecimento sobre a performace de magias", descricaoExtra: "Serve para"},
-            Elementos : {descricao: "Os elementos são as forças matrizes do mundo, divididos em simples e avançados.", descricaoExtra: "Simples: Fogo, Água, Gelo, Terra, Eletricidade, Planta e Vento; Avançados: Escuridão, Luz e Hipnose,"}
-        },
+        ExpecialistaEmExplosivos: { descricao: "Você viveu em meio a turbulencias e fez do fogo e do caus seu refugio."} 
+    },
+    MagiaFicha: {
+        ConhecimentoMagico: { descricao: "Seu conhecimento sobre a performace de magias", descricaoExtra: "Serve para"},
+        Elementos : {descricao: "Os elementos são as forças matrizes do mundo, divididos em simples e avançados.", descricaoExtra: "Simples: Fogo, Água, Gelo, Terra, Eletricidade, Planta e Vento; Avançados: Escuridão, Luz e Hipnose,"}
+    },
         Status: {
-            Vida: { descricao: "Sua força de vigor e vitalidade"},
-            PontosDeMagia: {descricao: "A energia vital usada para conjurar magias de todos os tipos"},
-            Medo: { descricao: "Sua resistencia a pressão e medo"}
+        Vida: { descricao: "Sua força de vigor e vitalidade"},
+        PontosDeMagia: {descricao: "A energia vital usada para conjurar magias de todos os tipos"},
+        Medo: { descricao: "Sua resistencia a pressão e medo"}
     }
 };
 

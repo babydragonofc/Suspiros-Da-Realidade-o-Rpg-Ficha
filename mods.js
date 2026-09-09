@@ -624,15 +624,6 @@ function downloadExampleMod() {
                 background:"https://i.imgur.com/KjoMoq3.png",
                 fillColor: "#57e389ff"
             },
-            {
-                id: "en",
-                name: "Energia",
-                max: 15,
-                value: 15,
-                background:"https://i.imgur.com/ykWerrn.png",
-                fillColor: "#c061cbff"
-            }
-
         ],
 
         backgrounds: [{

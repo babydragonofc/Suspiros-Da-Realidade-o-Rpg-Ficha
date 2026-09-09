@@ -1,10 +1,10 @@
 
-const rollResult = document.getElementById("rollResult");
-const rollResultTypeBackText = document.getElementById('rollResultTypeBackText');
-const rollResultType = document.getElementById("rollResultType")
 const diceInput = document.getElementById("diceInput");
-const diceDiv = document.getElementById("dice-div")
-const diceDivShow =document.querySelector("#dice-div div")
+const resultadoFinalDeRolagem = document.getElementById("resultadoFinalDeRolagem");
+const rollResultTypeBackText = document.getElementById('rollResultTypeBackText');
+const descriçãoDeRolagem = document.getElementById("descriçãoDeRolagem")
+const divDeRolagem = document.getElementById("divDeRolagem")
+const fundoDeDivDeRolagem = document.querySelector("#divDeRolagem div")
 
 const DICE_MULTIPLIER_REGEX = /^(\d+)\*d(\d+)$/i;
 const DICE_EXPRESSION_REGEX = /^[+-]?((\d+d\d+)|(\d+))(\s*[+-]\s*((\d+d\d+)|(\d+)))*$/i;
@@ -21,29 +21,51 @@ function isValidDiceExpression(diceString) {
 }
 
 function rollDiceExpression(diceString) {
+
     const normalizedDiceString = diceString.replace(/\s+/g, "");
     const parts = normalizedDiceString.match(/[+-]?[^+-]+/g) || [];
+
     let total = 0;
+    const rolls = [];
 
     for (const part of parts) {
+
         const sign = part.startsWith("-") ? -1 : 1;
         const value = part.replace(/^[+-]/, "");
+
         const diceMatch = value.match(/^(\d+)d(\d+)$/i);
 
         if (diceMatch) {
+
             const quantity = parseInt(diceMatch[1]);
             const sides = parseInt(diceMatch[2]);
+
             for (let i = 0; i < quantity; i++) {
-                total += sign * getRandomNumber(1, sides);
+
+                const roll = getRandomNumber(1, sides);
+
+                total += sign * roll;
+
+                rolls.push({
+                    dice: `d${sides}`,
+                    value: roll,
+                    sign: sign
+                });
             }
+
         } else {
-            total += sign * parseInt(value);
+
+            const number = parseInt(value);
+
+            total += sign * number;
         }
     }
 
-    return total;
+    return {
+        total: total,
+        rolls: rolls
+    };
 }
-
 
 function openDiceMultiplierPanel(maxDice, sides) {
     const panel = document.getElementById('dice-multiplier-panel');
@@ -69,7 +91,7 @@ function rollMultiplierDice(quantity, sides) {
     for (let i = 0; i < quantity; i++) {
         total += getRandomNumber(1, sides);
     }
-    rollResult.textContent = total;
+    resultadoFinalDeRolagem.textContent = total;
 }
 
 function closeDiceMultiplierPanel() {
@@ -77,78 +99,36 @@ function closeDiceMultiplierPanel() {
     panel.style.display = 'none';
 }
 
-/*
-function rollDice(per, damage = false) {
+var vantagens = 0;
 
-    const diceString = diceInput.value;
-    const multiplierMatch = diceString.match(DICE_MULTIPLIER_REGEX);
-
-    if (multiplierMatch) {
-        const maxDice = parseInt(multiplierMatch[1]);
-        const sides = parseInt(multiplierMatch[2]);
-        openDiceMultiplierPanel(maxDice, sides);
-        return;
-    }
+/**
+ * 
+ * @param {string} value dados a serem jogados | em "per", será o nome da pericia
+ * @param {string} type tipo de rolagem : "per", "damage", "dice"
+ * @returns 
+ */
+function rollDice(value, type = "dice") {
     
-    if (!isValidDiceExpression(diceString)) {
-        rollResult.textContent = "Formato de dado inválido. Use [quantidade]d[dado], números, +, -, ou [numero]*d[dado]. Ex: 1d6, 1d20+5, 1d12-2, 4*d20";
-        return;
+    if (type == "dice"){
+        diceInput.value = value;
     }
-
-    
-    const total = rollDiceExpression(diceString);
-    let type;
-
-    if (per) {
-        type = verificarResultado(total, per).type
-        rollResultType.textContent = total != 1? type : "Dessastre";
-        rollResultType.style.color = type == "Extremo" ? "purple" : type == "Bom" ? "green" : type == "Normal" ? "white" : total == 1 ? "red" : "gray";
-    } else {
-        rollResultType.style.color = "white"
-        rollResultType.textContent = "--";
-        if (damage) { 
-            rollResultType.textContent = "de Dano"; 
-            diceDivShow.style.background = "linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgb(128, 16, 16) 50%, rgba(0, 0, 0, 0) 100%)";
-        }
+    if (type == "damage") {
+        diceInput.value = value;
     }
+    if (type == "per") {
+        const lvl = perLvl(value)
 
-    rollResult.textContent = total;
-    diceDiv.style.opacity = "1"
-    diceDiv.style.pointerEvents = "all"
-    setTimeout(()=> {
-        rollResultTypeBackText.style.opacity = "1"
-    }, 3000)
+        if (lvl == 0) MAIN_DICE = "1d8";
+        if (lvl == 1) MAIN_DICE = "1d12";
+        if (lvl == 2) MAIN_DICE = "1d12+1d6";
+        if (lvl == 3) MAIN_DICE = "1d12+1d8";
+        if (lvl == 4) MAIN_DICE = "1d12+1d12";
+        if (lvl == 5) MAIN_DICE = "1d20+1d6";
 
-    return {value: total, type: type};
-}*/
+        const periciaTreinada = ficha.ocupação.pericias.includes(value)? 1: null;
+        const vantagemFinal = periciaTreinada||vantagens>0? "+ "+ PASSOS_DE_DADOS[vantagens + periciaTreinada]: ""; 
 
-
-function rollDice(per, dice = false, damage = false) {
-
-    
-    if (dice != false){
-        diceInput.value = dice;
-    }
-    if (damage != false) {
-        diceInput.value = damage;
-    }
-    if (per) {
-        const lvl = perLvl(per)
-
-        let DICE_QUANT = 1
-        let DICE_SOM = 0
-        if (lvl >= 3) DICE_QUANT = 2
-        if (lvl == 2|| lvl == 4) DICE_SOM = 2
-        if (lvl == 5) DICE_SOM = 7
-        
-        if (ficha.bonus.includes(per)) DICE_SOM += 3
-        if (DICE_SOM != 0) DICE_SOM = "+" + DICE_SOM
-        else DICE_SOM = ""
-        if (lvl == 0) DICE_SOM = "-6"
-        if (lvl == 0 && ficha.bonus.includes(per)) DICE_SOM = "+2"
-
-        diceInput.value = DICE_QUANT + "d20" + DICE_SOM
-        console.log(DICE_QUANT + "d20" + DICE_SOM)
+        diceInput.value = `${MAIN_DICE + vantagemFinal}`;
     }
 
     const diceString = diceInput.value;
@@ -162,37 +142,43 @@ function rollDice(per, dice = false, damage = false) {
     }
     
     if (!isValidDiceExpression(diceString)) {
-        rollResult.textContent = "Formato de dado inválido. Use [quantidade]d[dado], números, +, -, ou [numero]*d[dado]. Ex: 1d6, 1d20+5, 1d12-2, 4*d20";
+        resultadoFinalDeRolagem.textContent = "Formato de dado inválido. Use [quantidade]d[dado], números, +, -, ou [numero]*d[dado]. Ex: 1d6, 1d20+5, 1d12-2, 4*d20";
         return;
     }
     
-    const total = rollDiceExpression(diceString);
+    const rolagem = rollDiceExpression(diceString);
 
-    if (per) {
-        rollResultType.textContent = diceString
+    let descriçãoDeDados = ""
+    rolagem.rolls.forEach((roll)=>{
+        descriçãoDeDados += roll.dice
+        descriçãoDeDados += ` (${roll.value}) `
+    })
+
+    if (type != "damage") {
+        descriçãoDeRolagem.textContent = descriçãoDeDados;
     }
-    if (damage) { 
-        rollResultType.textContent = "de Dano"; 
-        diceDivShow.style.background = "linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgb(128, 16, 16) 50%, rgba(0, 0, 0, 0) 100%)";
+    else { 
+        descriçãoDeRolagem.textContent = `de Dano \n ${descriçãoDeDados}`; 
+        fundoDeDivDeRolagem.style.background = "linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgb(128, 16, 16) 50%, rgba(0, 0, 0, 0) 100%)";
     }
 
-    rollResult.textContent = total;
-    diceDiv.style.opacity = "1"
-    diceDiv.style.pointerEvents = "all"
+    resultadoFinalDeRolagem.textContent = rolagem.total;
+    divDeRolagem.style.opacity = "1"
+    divDeRolagem.style.pointerEvents = "all"
     setTimeout(()=> {
         rollResultTypeBackText.style.opacity = "1"
     }, 3000)
 
-    return total;
+    return rolagem.total;
 }
 
 function hideDiceResult(priority = false) {
     if (hideDiceResultBlocked && !priority) return;
     rollResultTypeBackText.style.opacity = "0"
-    diceDiv.style.opacity = "0"
-    diceDiv.style.pointerEvents = "none"
+    divDeRolagem.style.opacity = "0"
+    divDeRolagem.style.pointerEvents = "none"
     setTimeout(() => {
-        diceDivShow.style.background = "linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%)";
+        fundoDeDivDeRolagem.style.background = "linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgb(0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%)";
     }, 500);
 
 }
