@@ -505,7 +505,6 @@ function finishPer() {
     if (ficha.ocupação.id == 9){
         ficha.ConhecimentoMagico += 1
     }
-   console.log(ficha.options.HaveMagicPer)
     if (ficha.options.HaveMagicPer) {
         escolhaDePericia.style.display = "none"
         escolhasDeMagia.style.display = "flex";

@@ -124,11 +124,11 @@ const tooltipDictionary = {
     LeituraDeSímbolosAntigos: {
         descricao: 'Você é capaz de decifrar símbolos e rituais antigos que seriam incompreensíveis para a maioria das pessoas.'
     },
-    Entrevistas: {
-        descricao: 'Gastando 5 de Medo e realizando um teste de Lábia, você pode fazer uma pergunta certeira que revela uma informação valiosa ou secreta.'
+    Inspiração: {
+        descricao: 'Você pode gastar 1 PE para propor uma estratégia criativa para a cena. Se o Mestre considerar a ideia interessante e viável para a situação, você recebe vantagem no próximo teste realizado para executar esse plano.'
     },
     RedeDeContatos: {
-        descricao: 'Você conhece pessoas influentes e bem posicionadas, podendo recorrer a elas para obter informações, favores ou recursos.'
+        descricao: 'Uma vez por Aventura, pode entrar em contato com alguém para obter uma informação, acesso ou ajuda.'
     },
     PreparoDeAbrigo: {
         descricao: 'Você domina técnicas de sobrevivência, sendo capaz de encontrar ou construir abrigos seguros em ambientes hostis ou urbanos.'

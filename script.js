@@ -1,5 +1,5 @@
 function pS() {
-    console.log("opening prefabSave");
+    ("opening prefabSave");
     document.getElementById('arquivoJSON').value = 'ficha_save (1).json';}
 
 // ====================== FICHA ======================
@@ -172,7 +172,7 @@ function raceChose(rs) {
     ficha.ConhecimentoMagico = 6
     ficha.raça = raças[rs]
 
-    console.log("incompleto")
+    ("incompleto")
 }
 
 // ====================== Ocupações ======================
@@ -305,7 +305,7 @@ const ocupações = [
         descricao: "Você aprendeu que toda história possui algo escondido. Entrevistar pessoas, buscar informações e investigar acontecimentos fazem parte da sua experiência.",
         bonus: "",
         pericias: ["conversação", "psicologia"],
-        habilidades: ["Entrevista", "RedeDeContatos"]
+        habilidades: ["Entrevista", "Inspiração"]
     },
 
     {
@@ -448,7 +448,6 @@ async function selectOcupation(id) {
 
     try {
         const pericias = await seleçãoConhecimento(choices, choicePos == 0? 2: 1);
-        console.log(choicePos)
         ficha.ocupação = ocupações[id-1]
         ficha.ocupação.pericias.splice(choicePos, 1)
 
@@ -458,7 +457,7 @@ async function selectOcupation(id) {
         
         finalizarSeleçãoDeOcupação()
     } catch (erro) {
-        console.log("Seleção cancelada:", erro.message);
+        ("Seleção cancelada:", erro.message);
     }    
 }
 
@@ -466,7 +465,6 @@ function finalizarSeleçãoDeOcupação() {
 
         ficha.ocupação.pericias.forEach(pericia => {
             const bonusPerEl = document.querySelector('[aria-value="'+pericia+'"]');
-            console.log(pericia, bonusPerEl)
             bonusPerEl.style.color = "yellow"
             bonusPerEl.style.boxShadow = '0 0 10px inset #ffff0042;'
         });
@@ -517,7 +515,6 @@ async function seleçãoConhecimento(pericias ,quant) {
             sP.style.display = "none"
         })
 
-        console.log(pericias)
         for (let i = 0; i < pericias.length; i++) {
             const obj = seletoresDePericia[i]
 

@@ -733,7 +733,7 @@ function attackWeapon() {
 
     rollDice(weapon.data.damage, "damage");
 
-    console.log
+    
     renderWeaponArea();
     renderInventory();
 }

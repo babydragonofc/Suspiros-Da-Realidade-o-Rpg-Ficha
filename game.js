@@ -1,6 +1,6 @@
 window.addEventListener("message", (event) => {
     if (event.data.type === "LOG_DATA") {
-        console.log(event.data.value)
+        (event.data.value)
     }
     if(event.data.type === "NEW_ITEM") {
         ficha.ocupação.push(event.data.value)
