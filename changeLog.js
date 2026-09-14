@@ -6,6 +6,24 @@ let fichaComPericiasAntigas = false;
 
 //LEMBRAR DE TROCAR A VERÇÃO EM rules.js! Tapada
 const changeLog = [
+        {
+        title: "Pequenas correções",
+        version: "1.1.4.1",
+        release: "14/09/2026",
+        content: "Grande atualização do sistema. Raças e muito mais.",
+        changes: {
+            add: [
+                "Adição da perícia Sorte"
+            ],
+            remove: [
+
+            ],
+            fixes: [
+                "Correção da troca de Labia para Conversação",                
+            ]
+        },
+        notes: "atualização de descrições e imagens em desenvolvimento"
+    },
     {
         title: "Pequenas correções",
         version: "1.1.4.0",

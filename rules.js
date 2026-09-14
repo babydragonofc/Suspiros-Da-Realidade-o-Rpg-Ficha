@@ -1,7 +1,7 @@
 const debug = false;
 // :D
 
-const siteVersion = "1.1.4.0"
+const siteVersion = "1.1.4.1"
 
 const PASSOS_DE_DADOS = [
     '',

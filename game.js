@@ -829,9 +829,9 @@ function getCategoriasPericiasBase() {
         { name: 'De Armas', id: 'perListArmas', pericias: ['armas_brancas', 'pistolas', 'rifle', 'longo_alcance'] },
         { name: 'De Mobilidade', id: 'perListFisicas2', pericias: [ 'acrobacia', 'furtividade', 'pilotagem'] },
         { name: 'Sociais', id: 'perListSociais', pericias: ['destreza', 'conversasão', 'intimidação', 'psicologia'] },
-        { name: 'Investigativas', id: 'perListInvestigacao', pericias: ['percepção', 'crime', 'tecnologia', 'mecanica', 'pesquisar'] },
+        { name: 'Investigativas', id: 'perListInvestigacao', pericias: ['percepção', 'crime', 'tecnologia', 'mecanica', 'pesquisar', 'sobrevivencia'] },
         { name: 'De Conhecimento', id: 'perListConhecimento', pericias: ['artes', 'atualidades', 'ciencia', 'humanas', 'burocracia', 'medicina'] },
-        { name: 'Mentais', id: 'perListMentais', pericias: ['vontade', 'ocultismo', 'magia', 'sobrevivencia'] }
+        { name: 'Mentais', id: 'perListMentais', pericias: ['vontade', 'ocultismo', 'magia', 'sorte'] }
     ];
 }
 
