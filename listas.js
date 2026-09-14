@@ -148,9 +148,9 @@ function renderHabilidades() {
 
         const abilityDescriptionEl = document.createElement('p');
         abilityDescriptionEl.className = "abilityDesc scroll-container";
-        console.log(ability)
-        console.log(ability.description)
-        abilityDescription.innerHTML = ability.description.replace(/\n/g, "<br>");
+
+        abilityDescriptionEl.textContent = ability.description;
+        abilityDescriptionEl.style.whiteSpace = "pre-line";
         backSide.appendChild(abilityDescriptionEl);
 
         // Add favorite star icon

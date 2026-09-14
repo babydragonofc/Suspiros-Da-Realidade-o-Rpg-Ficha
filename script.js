@@ -303,7 +303,7 @@ const ocupações = [
         descricao: "Você aprendeu que toda história possui algo escondido. Entrevistar pessoas, buscar informações e investigar acontecimentos fazem parte da sua experiência.",
         bonus: "",
         pericias: ["conversação", "psicologia"],
-        habilidades: ["Entrevista", "Inspiração"]
+        habilidades: ["RedeDeContatos", "Inspiração"]
     },
 
     {
