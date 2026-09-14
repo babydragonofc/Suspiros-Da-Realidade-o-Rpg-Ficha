@@ -171,8 +171,6 @@ function raceChose(rs) {
 
     ficha.ConhecimentoMagico = 6
     ficha.raça = raças[rs]
-
-    ("incompleto")
 }
 
 // ====================== Ocupações ======================
