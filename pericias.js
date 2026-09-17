@@ -520,8 +520,21 @@ function displayPericias() {
             el.id = "perListLvl" + i
             el.classList = "pBlock"
     
+            let secondDice
             const header = document.createElement('header')
-            header.textContent = "Nível " + i
+                if (i == 0) PERLVL_DICE = ["1d8"];
+                if (i == 1) PERLVL_DICE = ["1d12"];
+                if (i == 2) PERLVL_DICE = ["1d12","1d6"];
+                if (i == 3) PERLVL_DICE = ["1d12","1d8"];
+                if (i == 4) PERLVL_DICE = ["1d12","1d12"];
+                if (i == 5) PERLVL_DICE = ["1d20","1d6"];
+
+            if(i>1) {
+                secondDice = `<dice class='white' data-set="${PERLVL_DICE[1]}">`
+            }
+
+            const dados = `<div><dice class='white' data-set="${PERLVL_DICE[0]}"></dice> ${i>1? secondDice:''}</div>`
+            header.innerHTML = `Nível ${i} + ${dados}`
             el.appendChild(header)
             const perElBoxInt = document.createElement('div')
             perElBoxInt.classList = "perDisplayBlockInt"
@@ -551,6 +564,20 @@ function displayPericias() {
                 }
             }
 
+            const hr = document.createElement('hr')
+            perElBoxInt.appendChild(hr)
+
+            console.log(ficha.pericias[i])
+            if (ficha.pericias[i][0] == '' ) {
+                const msg = document.createElement('span')
+                msg.textContent = "Sem Pericias"
+                msg.classList = "text sm" 
+                msg.style.textAlign = 'center'
+
+                perElBoxInt.style.marginTop = "0 !important"
+                perElBoxInt.appendChild(msg)
+            }
+
             ficha.pericias[i].forEach(per => {
                 const perElBox = document.createElement('div')
                 perElBox.classList = "perDisplayBlock"
@@ -558,12 +585,13 @@ function displayPericias() {
 
 
                 const perElName = document.createElement('span')
-                perElName.textContent = per
-                if(ficha.bonus.includes(per)) {
+                perElName.textContent = per.replace(/_/g, ' ').replace(/\b\w/g, letra => letra.toUpperCase());
+                if(ficha.ocupação.bonus.includes(per)) {
                     perElName.style.color = "yellow"
-                    perElName.textContent += " (+3)"
                 } 
                 const perElBtn = document.createElement('button')
+                perElBtn.classList = "btn"
+                
                 perElBtn.addEventListener('click', () => {
                     rollDice(per, "per")
                 })
@@ -579,6 +607,5 @@ function displayPericias() {
 function perLvl(per, withBonus = false) {
     for (let i = 0; i < 6; i++) {
         if (ficha.pericias[i].includes(per)) return i;
-        console.log(i)
     }
 }

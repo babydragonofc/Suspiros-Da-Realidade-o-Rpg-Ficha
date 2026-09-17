@@ -337,7 +337,6 @@ function CarregarFicha() {
                 createAbility(h.name, h.description, h.dice, true)
             });
         }
-        console.log('1')
 renderHabilidades(); // Call renderHabilidades after all ability items are processed
     
         if (ficha.magias && Array.isArray(ficha.magias)) {

@@ -101,6 +101,33 @@ function closeDiceMultiplierPanel() {
 
 var vantagens = 0;
 
+function atualizarVantagem() {
+    const dado = document.getElementById('dadoVantagem');
+
+    const indice = Math.abs(vantagens);
+
+    if (indice === 0) {
+        dado.removeAttribute('data-dice');
+    } else {
+        const valor = PASSOS_DE_DADOS[indice];
+        dado.dataset.dice = vantagens < 0 ? `-${valor}` : valor;
+    }
+}
+
+function diminuirVantagem() {
+    if (vantagens <= -(PASSOS_DE_DADOS.length - 1)) return;
+
+    vantagens--;
+    atualizarVantagem();
+}
+
+function aumentarVantagem() {
+    if (vantagens >= PASSOS_DE_DADOS.length - 1) return;
+
+    vantagens++;
+    atualizarVantagem();
+}
+
 /**
  * 
  * @param {string} value dados a serem jogados | em "per", será o nome da pericia

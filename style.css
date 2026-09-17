@@ -700,6 +700,19 @@ short {
   cursor: pointer;
 }
 
+dice {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+}
+
+dice img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 .tooltip {
   position: absolute;
   background: #111;
@@ -1573,7 +1586,12 @@ img.reverse {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 5px;
+}
+
+#pericias-display .pBlock .perDisplayBlockInt hr{
+    margin-bottom: 15px;
+
 }
 
 #pericias-display .pBlock .perDisplayBlockInt .perDisplayBlock {
@@ -3725,7 +3743,23 @@ fear {
     border: 1px solid #555;
 }
 
-#pagina-iframe {
+#vantagens {
+    display: flex;
+    height: 30px;
+    font-size: 30px;
+    gap: 8px;
+}
+
+#vantagens button {
+    margin: 0;
     height: 100%;
-    width: 100%;
+}
+
+.desvantagem {
+    filter: brightness(0) saturate(100%) invert(15%) sepia(100%) saturate(5000%) hue-rotate(350deg);
+}
+
+.perDisplayBlockInt .btn {
+    padding: 0;
+    width: 50px;
 }

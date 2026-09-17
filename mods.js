@@ -122,7 +122,6 @@ function applyMod(mod) {
 
     });
 
-    console.log('6')
 renderHabilidades();
     renderCustomStatuses();
 
@@ -394,7 +393,6 @@ function removeMod(modId) {
 
     renderMods();
 
-    console.log('7')
 renderHabilidades();
 
     renderCustomStatuses();
@@ -426,7 +424,6 @@ function renderCustomStatuses() {
             const name = status.name;
 
             // Garante valores salvos
-            console.log(ficha.status[id])
             if (ficha.status[id] === undefined) {
                 ficha.status[id] = status.value;
             }

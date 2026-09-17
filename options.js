@@ -158,7 +158,6 @@ function turnPerBlur() {
 }
 
 document.getElementById('perBlurInput').addEventListener('change', function() {
-    console.log(this.value)
     ficha.options.blurPerValue = this.value
     const root = document.documentElement;
     root.style.setProperty ('--blur-per', ficha.options.blurPerValue + "px");

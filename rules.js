@@ -1,7 +1,7 @@
 const debug = false;
 // :D
 
-const siteVersion = "1.1.4.1"
+const siteVersion = "1.1.4.2"
 
 const PASSOS_DE_DADOS = [
     '',
@@ -11,7 +11,7 @@ const PASSOS_DE_DADOS = [
     '1d10',
     '1d12',
     '1d20'
-]
+];
 
 const F = false;
 const T = true;

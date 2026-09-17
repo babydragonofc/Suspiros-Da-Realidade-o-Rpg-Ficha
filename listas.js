@@ -386,7 +386,6 @@ function showAbilityInfo(ability) {
     saveBtn.onclick = () => {
         ability.name = editAbilityNameInput.value;
         ability.description = editAbilityDescriptionInput.value;
-        console.log('2')
 renderHabilidades();
         panelClose();
     };
@@ -409,7 +408,6 @@ renderHabilidades();
     favoriteBtn.textContent = ability.isFavorite ? 'Desfavoritar' : 'Favoritar';
     favoriteBtn.onclick = () => {
         ability.isFavorite = !ability.isFavorite;
-        console.log('3')
 renderHabilidades(); // Re-render to update sorting and star
         panelClose(); // Close info panel after action
     };
@@ -422,7 +420,6 @@ renderHabilidades(); // Re-render to update sorting and star
     duplicateBtn.onclick = () => {
         const duplicatedAbility = { ...ability, name: ability.name + " (Cópia)", isFavorite: false }; // Create a copy, change name, not favorited by default
         ficha.habilidades.push(duplicatedAbility);
-        console.log('4')
 renderHabilidades(); // Re-render to show the new item
         panelClose(); // Close info panel after action
     };
@@ -436,7 +433,6 @@ renderHabilidades(); // Re-render to show the new item
         if (abilityIndex > -1) {
             ficha.habilidades.splice(abilityIndex, 1);
         }
-        console.log('5')
 renderHabilidades(); // Re-render after deletion
         panelClose();
     };
