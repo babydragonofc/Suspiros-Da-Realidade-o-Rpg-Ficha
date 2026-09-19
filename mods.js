@@ -503,7 +503,7 @@ function reloadMods() {
 }
 
 function downloadExampleMod() {
-
+/*
     const exampleMod = {
 
         id: "midnight_trip",
@@ -638,7 +638,44 @@ function downloadExampleMod() {
         options: {}
 
     };
+*/
 
+    const exampleMod = {
+
+        id: "midnight_trip",
+
+        name: "Wallpaper²",
+
+        author: 'Emilly Martins',
+
+        version: "1.0",
+
+        itens: [],
+
+        description:
+            "Novos Wallpapers.",
+
+        skills: [],
+
+        statuses: [
+        ],
+
+        backgrounds: [{
+            "name": "Teste",
+            "bg": "img/backgrounds/wallpaperSangue.png",
+            "main":"white",
+            "sec": "black",
+            "btnBg": "rgb(239, 239, 239)",
+            "btnHvr": "rgb(205, 205, 205)",
+            "btnTx": "black",
+            "ter": "#c1c1c1",
+            "uTb": "",
+            "sc": "#CB0E09"
+        }],
+
+        options: {}
+
+    };
     const blob = new Blob(
         [
             JSON.stringify(

@@ -91,7 +91,7 @@ var ficha = {
 
 // PUTA QUE PARIU QUE NOTIFICAÇÃO ARROMBADA
 
-const notionText = "Seu save foi atualizado para a versão mais recente " + ficha.versão + "!Verifique a lista de updates";
+const notionText = "Seu save foi atualizado para a versão mais recente " + ficha.versão + "! Verifique a lista de updates";
 
 const defaultFicha = JSON.parse(JSON.stringify(ficha));
 let saveUpdated = false;

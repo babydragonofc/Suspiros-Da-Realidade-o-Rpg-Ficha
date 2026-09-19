@@ -192,6 +192,8 @@ function addItemCategory(itemCategory) {
 let openedInventoryItem = null;
 
 function renderInventory() {
+    document.getElementById('useInput').value = ficha.inventario.usando
+
     inventoryContainer.innerHTML = '';
     // Sort inventory: favorites first
     const sortedInventory = [...ficha.inventario.content].sort((a, b) => {
@@ -423,7 +425,40 @@ function renderWeaponArea() {
 
     // Dados seguros
     const damage = weapon.data.damage || "-";
+
+    function separarDados(expressao) {
+        const dados = [];
+
+        // Encontra dados no formato NdM
+        const regex = /(\d+)d(\d+)/gi;
+        let match;
+
+        while ((match = regex.exec(expressao)) !== null) {
+            const quantidade = parseInt(match[1]);
+            const lados = match[2];
+
+            for (let i = 0; i < quantidade; i++) {
+                dados.push(`1d${lados}`);
+            }
+        }
+
+        return dados;
+    }
+
+    var damageDices = ""
+
+    separarDados(damage).forEach(dice => {
+        damageDices += (`<dice class='white' data-dice='${dice}'></dice>`)
+    })
+
     const critical = weapon.data.critical || "-";
+
+    var damageCritical = ""
+
+    separarDados(critical).forEach(dice => {
+        damageCritical += (`<dice class='white' data-dice='${dice}'></dice>`)
+    })
+
     const ammo = weapon.data.mmo ?? 0;
     const maxAmmo = weapon.data.maxMmo ?? 0;
 
@@ -431,9 +466,9 @@ function renderWeaponArea() {
         <p class="text">${weapon.name}</p>
 
         <p class="text">
-            Dano: ${damage}
+            Dano: ${damageDices}
             |
-            Crítico: ${critical}
+            Crítico: ${damageCritical}
         </p>
 
         ${
@@ -825,3 +860,7 @@ function unequipWeapon() {
     renderWeaponArea();
     renderInventory();
 }
+
+document.getElementById('useInput').addEventListener('input', (e) => {
+    ficha.inventario.usando = e.target.value;
+});

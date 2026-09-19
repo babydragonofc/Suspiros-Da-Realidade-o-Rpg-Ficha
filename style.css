@@ -1765,7 +1765,6 @@ img.reverse {
 }
 
 .panel .box {
-    
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1781,6 +1780,12 @@ img.reverse {
     overflow-y: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     transition: all 0.3s ease-in-out;
+}
+
+.panel .box div textarea {
+    resize: none;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .panel .box.inv {
@@ -2438,6 +2443,7 @@ img.reverse {
 #peBarFill {
     background-color: #c061cbff;
     width: 20%;
+
 }
 
 #spBarFill {
@@ -2768,6 +2774,10 @@ img.reverse {
     #informaçõesBasicas {
         width: 100dvw;
         box-sizing: border-box;
+    }
+
+    #guardados {
+        margin: 0;
     }
 
     #escolhaDeRaças {

@@ -894,11 +894,3 @@ function isMobileDevice() {
 function versionNumber(string) {
     return Number(string.replace(/\./g, ""));
 }
-
-const paginaInput = document.getElementById('pagina-input')
-const paginaBtn = document.getElementById('pagina-btn')
-const paginaIframe = document.getElementById('pagina-iframe')
-
-paginaBtn.addEventListener('click', function() {
-    paginaIframe.src = paginaInput.value
-})

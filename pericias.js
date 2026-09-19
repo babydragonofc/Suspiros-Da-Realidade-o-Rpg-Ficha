@@ -534,7 +534,7 @@ function displayPericias() {
             }
 
             const dados = `<div><dice class='white' data-set="${PERLVL_DICE[0]}"></dice> ${i>1? secondDice:''}</div>`
-            header.innerHTML = `Nível ${i} + ${dados}`
+            header.innerHTML = `Nível ${i} ${dados}`
             el.appendChild(header)
             const perElBoxInt = document.createElement('div')
             perElBoxInt.classList = "perDisplayBlockInt"
@@ -585,7 +585,7 @@ function displayPericias() {
 
 
                 const perElName = document.createElement('span')
-                perElName.textContent = per.replace(/_/g, ' ').replace(/\b\w/g, letra => letra.toUpperCase());
+                perElName.textContent = per.replace(/_/g, ' ').replace(/(^|\s)\p{L}/gu, letra => letra.toUpperCase());
                 if(ficha.ocupação.bonus.includes(per)) {
                     perElName.style.color = "yellow"
                 } 

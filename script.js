@@ -1262,7 +1262,7 @@ function renderPersonagem() {
     }
 
     // Biography
-    const biografiaFields = ['familia', 'gostos', 'desgostos', 'medos', 'contatosProximos', 'historia', 'comportamento', 'dinheiro'];
+    const biografiaFields = ['familia', 'gostos', 'desgostos', 'medos', 'contatos', 'historia', 'comportamento', 'dinheiro'];
     biografiaFields.forEach(field => {
         const element = document.getElementById(`personagem-${field.toLowerCase()}`);
         if (element) {
@@ -1928,6 +1928,8 @@ function test() {
 }
 
 function atualizarDado(el) {
+
+    if(el.nodeName != "DICE") return;
     // Obtém o valor do dado
     const value = el.hasAttribute('data-dice')
         ? el.dataset.dice

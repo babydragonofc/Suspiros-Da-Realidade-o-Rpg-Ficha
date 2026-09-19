@@ -125,14 +125,13 @@ setWallpaper(ficha.options.wallpaper) //init
 
 const statusModifierEdit = document.getElementById('statusModifierEdit')
 
-function changestatusModifier(value) {
-
-function turnStatusModifier() {
+function turnStatusMod() {
     ficha.options.statusModifier = !ficha.options.statusModifier 
-    statusModifier.style.display = ficha.options.statusModifier? "flex": "none"
+    statusModifierEdit.style.display = ficha.options.statusModifier? "flex": "none"
     verifyAutoSave()
 }
 
+function changestatusModifier(value) {
     statusModifierValue = value
 
     if(document.getElementsByClassName('on').length == 1) document.getElementsByClassName('on')[0].classList.remove('on');
