@@ -126,25 +126,47 @@ function mergeFicha(loadedFicha) {
  * @param {object} data O objeto JavaScript a ser baixado.
  * @param {string} filename O nome do arquivo JSON a ser criado.
  */
-function baixarObjetoComoJSON(data, filename) {
-  // Converte o objeto para uma string JSON
-  const jsonString = JSON.stringify(data, null, 2); // O "null" e o "2" são para formatação (indentação)
+async function baixarObjetoComoJSON(data, filename) {
+  // Converte o objeto para uma string JSON formatada
+  const jsonString = JSON.stringify(data, null, 2);
 
-  // Cria um Blob (objeto binário grande) contendo a string JSON
-  const blob = new Blob([jsonString], { type: 'application/json' });
+  try {
+    // 1. Abre a janela nativa para o usuário escolher a pasta e o nome do arquivo
+    const handle = await window.showSaveFilePicker({
+      suggestedName: filename + '.json',
+      types: [{
+        description: 'Arquivo JSON',
+        accept: { 'application/json': ['.json'] },
+      }],
+    });
 
-  // Cria um link temporário para download
-  const url = URL.createObjectURL(blob);
+    // 2. Cria o fluxo de escrita e grava o conteúdo no local escolhido
+    const writable = await handle.createWritable();
+    await writable.write(jsonString);
+    await writable.close();
 
-  // Cria um elemento <a> (link)
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename + '.json'; // Define o nome do arquivo
-  document.body.appendChild(a); // Adiciona o link ao DOM (necessário para funcionar)
-  a.click(); // Simula um clique no link para iniciar o download
-  document.body.removeChild(a); // Remove o link do DOM
-  URL.revokeObjectURL(url); // Libera a URL do objeto para liberar memória
+    console.log('Arquivo salvo com sucesso!');
+  } catch (err) {
+    // Trata o caso de navegadores antigos ou se o usuário clicar em "Cancelar"
+    if (err.name === 'AbortError') {
+      console.log('O usuário cancelou o salvamento.');
+    } else {
+      console.error('Navegador não suporta showSaveFilePicker, usando método padrão...', err);
+      
+      // FALLBACK: Se der erro ou o navegador não suportar, roda o seu código antigo
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  }
 }
+
 
 /**
  * Função para carregar um arquivo JSON e retornar o objeto JavaScript.

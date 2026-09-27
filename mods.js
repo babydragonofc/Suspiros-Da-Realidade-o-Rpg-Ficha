@@ -122,7 +122,7 @@ function applyMod(mod) {
 
     });
 
-renderHabilidades();
+    renderHabilidades();
     renderCustomStatuses();
 
 }

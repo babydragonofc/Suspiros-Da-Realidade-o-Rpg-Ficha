@@ -244,8 +244,17 @@
         <section class="file-upload-wrapper">
             <input type="file" id="arquivoJSON" class="btn" style="display: none;" accept=".json">
             <label for="arquivoJSON" class="btn btn-personalizado">Importar Ficha</label>
-        </section>
+        </section> 
 
+        <div style="display: flex; flex-direction: column;">
+            <a href="https://drive.google.com/drive/u/1/folders/1jY7Vs_7j6pttqA5OT_jOhUIss8aIVD82">
+                <img style="width: 250px;" src="https://i.imgur.com/8gbht3t_d.webp?maxwidth=760&fidelity=grand" alt="" referrerpolicy="no-referrer">
+            </a>
+    
+            <a href="https://online.fliphtml5.com/nqinh/organized_compressed/#p=1">
+                <img style="width: 250px;" src="https://i.imgur.com/YMTn2QO.png" alt=""  referrerpolicy="no-referrer">
+            </a>
+        </div>
         <!--<button class="btn" onclick="irParaJogo()">Ir para o Jogo (Debug)</button>-->
         
         <footer>
@@ -734,14 +743,21 @@
       <div class="mt-content" id="personagem-content" style="display: none;">
           <div class="personagem-content">
               <div class="personagem-info-basica">
-                <h3 class="title">Personagem</h3>
-                <hr style="margin-bottom: 50px;">
-                <p><strong>Nome:</strong> <span id="personagem-nome"></span></p>
-                <p><strong>Idade:</strong> <span id="personagem-idade"></span></p>
-                <p><strong>Raça:</strong> <span id="personagem-raca"></span></p>
-                <p><strong>Tipo:</strong> <span id="personagem-tipo"></span></p>
-                <p><strong>Foco:</strong> <span id="personagem-foco"></span></p>
-                
+                <div>
+                    <h3 class="title">Personagem</h3>
+                    <hr style="margin-bottom: 50px;">
+                    <p><strong>Nome:</strong> <span id="personagem-nome"></span></p>
+                    <p><strong>Idade:</strong> <span id="personagem-idade"></span></p>
+                    <p><strong>Data de Nascimento:</strong></p> <span id="personagem-nascimento"></span>
+                    <p><strong>Raça:</strong> <span id="personagem-raça"></span></p>
+                    <p><strong>Ocupação:</strong></p> <span id="personagem-ocupação"></span>
+                    <p><strong>Origem:</strong></p> <span id="personagem-origem"></span>
+                    <div id="informações-magicas" style="display: none;">
+                        <p><strong>Tipo:</strong> <span id="personagem-tipo"></span></p>
+                        <p><strong>Foco:</strong> <span id="personagem-foco"></span></p>
+                    </div>
+                    
+                </div>
                 <button class="btn" id="editarPericiasBtn">Editar pericias</button>
                 
 

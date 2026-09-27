@@ -2520,19 +2520,14 @@ img.reverse {
 }
 
 .personagem-info-basica {
-    position: relative;
     max-height: 84dvh;
-
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .personagem-info-basica p {
     margin: 5px 0;
-}
-
-.personagem-info-basica .btn {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
 }
 
 .personagem-biografia {

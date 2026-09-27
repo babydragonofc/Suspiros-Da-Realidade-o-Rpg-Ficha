@@ -7,6 +7,26 @@ let fichaComPericiasAntigas = false;
 //LEMBRAR DE TROCAR A VERÇÃO EM rules.js! Tapada
 const changeLog = [
     {
+        title: "PLAY TEST",
+        version: "1.1.4.3",
+        release: "27/09/2026",
+        content: "Correções para o play test.",
+        changes: {
+            add: [
+                "Regras do Play test já disponiveis!",
+            ],
+            remove: [
+                ""
+            ],
+            fixes: [
+                "Correção na descrição da Origem Abandonado",
+                "Correção na escolha de Origem.",
+                "Correção na haba Personagens"
+            ]
+        },
+        notes: ""
+    },
+    {
         title: "Pequenas correções",
         version: "1.1.4.2",
         release: "16/09/2026",

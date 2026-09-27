@@ -662,7 +662,7 @@ const origens = [
     {
         id: 8,
         nome: "Abandonado",
-        descricao: "Cresceu sem uma estrutura familiar estável e aprendeu desde cedo a depender de si mesmo. Possui contatos entre pessoas que vivem à margem da sociedade e experiência em encontrar recursos sem depender de outras pessoas.",
+        descricao: "Cresceu sem uma estrutura familiar instável e aprendeu desde cedo a depender de si mesmo. Possui contatos entre pessoas que vivem à margem da sociedade e experiência em encontrar recursos sem depender de outras pessoas.",
     },
 
     {
@@ -835,7 +835,7 @@ function renderizarOrigens() {
         const button = card.querySelector('.btn');
         button.addEventListener('click', (event) => {
             event.stopPropagation();
-            selectOrigin(origem.id);
+            selecionarOrigem(origem.id);
         });
 
         card.addEventListener('click', () => {
@@ -851,9 +851,9 @@ function renderizarOrigens() {
     //initTooltips(origensContainer);
 }
 
-function selectOrigin(id) {
+function selecionarOrigem(id) {
 
-    ficha.original = ocupações[id-1]
+    ficha.origem = origens[id-1]
     escolhaDeOrigem.style.display = "none"
     escolhaDePericia.style.display = "flex";
 }
@@ -1247,9 +1247,12 @@ function renderPersonagem() {
     // Basic Info
     document.getElementById('personagem-nome').textContent = ficha.nome || 'Err';
     document.getElementById('personagem-idade').textContent = ficha.idade || 'Err';
-    document.getElementById('personagem-raca').textContent = ficha.raça.nome !== "" ? ficha.raça.nome : 'Err';
-    
+    document.getElementById('personagem-nascimento').textContent = ficha.dataNascimento || 'Err'
+    document.getElementById('personagem-raça').textContent = ficha.raça.nome !== "" ? ficha.raça.nome : 'Err';
+    document.getElementById('personagem-ocupação').textContent = ficha.ocupação.nome || 'Err'
+    document.getElementById('personagem-origem').textContent = ficha.origem.nome || 'Err'
     if(ficha.options.haveMagiaPer) {
+        document.getElementById('informações-magicas').style.display = "block"
         document.getElementById('personagem-tipo').textContent = ficha.tipo !== -1 ? types[ficha.tipo].nome : 'Err';
         
         let focosText = [];
