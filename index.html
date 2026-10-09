@@ -10,6 +10,7 @@
 </head>
 <body>
 
+
 <div class="panel" id="main-panel">
     <div class="box">
         <p class="exit-box" onclick="panelClose()">x</p>
@@ -27,7 +28,11 @@
 
                 <h2 style="margin: 0; margin-top: 0.5em;">Programação</h2><br>
                 Arthur "BabyDragon" Farias<br>
-                Emilly Martins
+                Emilly Martins<br>
+
+                <h2 style="margin:0; margin-top: 0.5em;">Artes</h2><br>
+                Emilly Martins<br>
+                <a href="https://www.instagram.com/nycrow_day/">NYCROW</a>
 
             </span>
         </div>
@@ -102,7 +107,7 @@
             <p class="text white">Dado</p>
             <input type="text" id="abilityDice" class="input dice">
                 <br>
-            <button class="btn" onclick="createAbility()">Criar</button>
+            <button class="btn" id="abilityCreateBtn">Criar</button>
             </section>
         </div>
         <!-- ================= ITEM ================= -->
@@ -649,7 +654,7 @@
     </div>
     
 <div id="game">
-    <button id="enterPer" onclick="enterPer">Abrir Pericias e Status</button>
+    <button id="enterPer" onclick="enterPer()">Abrir Pericias e Status</button>
 
   <!-- ================= MULTI TASK ================= -->
   <div id="multiTask">
@@ -765,6 +770,7 @@
             <div class="personagem-biografia">
                 <div class="divMark" >
                     <h2 class="text">Biografia</h2>
+
                     <button class="btn" onclick="ChangeBiogrMode()" id="bioStateBtn">Fechar</button>
                 </div>
                 <div id="bio-content">
@@ -805,9 +811,8 @@
       
       <div class="mt-content" id="diario-content" style="display: none;align-items: center;">
         <h3 class="title">Diario</h3>
-        <p>*Removido por tempo indeterminado</p>
+        <p class="text">*Removido por tempo indeterminado</p>
       </div>
-
 
       <!-- ============ OPÇÕES ============ -->
        <div class="mt-content" id="options-content" style="display: none;">
@@ -851,6 +856,7 @@
                 <button class="btn" onclick="openModsMenu()">Gerenciar Mods</button>
             </div>
        </div>
+      
     </main>
   </div>
 

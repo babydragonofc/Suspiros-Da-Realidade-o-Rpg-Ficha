@@ -350,7 +350,13 @@ function startAbilityCreation() {
     abilityDice.value = "";
 }
 
+document.getElementById('abilityCreateBtn').addEventListener('click', function() {
+    createAbility(abilityName.value, abilityDescription.value, abilityDice.value, load = false)
+    console.log("a")
+})
+
 function createAbility(nome, descricao, dado, load = false) {
+    if(!nome&&!descricao) return;
     const abilityVar = {
         name: nome,
         description: descricao,
@@ -361,6 +367,9 @@ function createAbility(nome, descricao, dado, load = false) {
     if (!ficha.habilidades.some(h => h.name === nome) && !load) {
         ficha.habilidades.push(abilityVar);
     }
+
+    panelClose()
+    renderHabilidades()
 }
 
 function showAbilityInfo(ability) {

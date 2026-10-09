@@ -61,6 +61,11 @@ main::-webkit-scrollbar {
     display: none;
 }
 
+a {
+    color: white;
+    text-decoration: none;
+}
+
 .logo {
     filter: brightness(0) invert(1);
     width: 90%;
@@ -2138,7 +2143,7 @@ img.reverse {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     width: 281.587px;
     height: 150px;
@@ -2533,7 +2538,6 @@ img.reverse {
 .personagem-biografia {
     display: flex;
     flex-direction: column;
-    overflow: auto;
 }
 
 .personagem-biografia label {
@@ -2550,6 +2554,7 @@ img.reverse {
     color: var(--main-clr);
     border-radius: 3px;
     resize: vertical;
+    height: 200px;
 }
 
 #diario-content {
@@ -3070,7 +3075,15 @@ img.reverse {
     }
 
     #inventario-content .inv-side {
+        width: 100%;
+    }
+
+    .arma-area {
         width: auto;
+    }
+
+    #guardados {
+        width: 100%;
     }
 
     #inventory {
@@ -3136,15 +3149,13 @@ img.reverse {
         color: #9f9f9f;
     }
 
-
     .place, .item {
         width: 16dvw;
         height: 7dvh;
         font-size: 2dvw;
     }
 
-
-    .personagem-biografia, #bio-content, #other-content {
+    #bio-content, #other-content {
         overflow: hidden;
     }
 
@@ -3349,7 +3360,7 @@ img.reverse {
     align-items: center;
     background: var(--ter-clr);
     padding: 0 10px;
-    margin-bottom: 10px;
+    margin: 10px 0;
 }
 
 .mod-card {

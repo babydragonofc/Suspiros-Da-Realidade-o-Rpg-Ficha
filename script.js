@@ -1233,6 +1233,7 @@ function irParaJogo() {
     const game = document.getElementById("game");
     const main = document.querySelector("main");
 
+
     main.style.display = "none";
     criaçãoDeFicha.style.display = "flex";
     game.style.display = "flex";
