@@ -1791,6 +1791,7 @@ img.reverse {
     resize: none;
     width: 100%;
     box-sizing: border-box;
+    height: 150px;
 }
 
 .panel .box.inv {

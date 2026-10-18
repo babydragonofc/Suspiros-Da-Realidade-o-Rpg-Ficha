@@ -1241,6 +1241,11 @@ function irParaJogo() {
     displayPericias();
 
     statusDef()
+
+    if (ficha.nome.toLowerCase().includes("roy")) {
+        happi()
+    }
+
     
 }
 
