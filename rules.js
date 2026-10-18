@@ -144,6 +144,16 @@ function happi() {
         }
     }, 'content')
     createItem({
+        name: "Carta Nathy",
+        description: "Oiii, Feliz aniversário Heitoor, desejo mtos anos de vidaa. Por mais que eu não te conheça mto bem, eu desejo tudo de bom ❤️❤️",
+        weight: 0,
+        type: "item",
+        data: {
+          dice: "",
+          type: "documento"
+        }
+    }, 'content')
+    createItem({
         name: "Leia por ultimo",
         description: "clique na imagem de player",
         weight: 0,
