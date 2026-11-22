@@ -8,7 +8,7 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gsta
 import {
   getDatabase, ref, set, get, update, remove, push,
   onValue, onChildAdded, onChildChanged, onChildRemoved, onDisconnect,
-  query, limitToLast, serverTimestamp
+  query, limitToLast, serverTimestamp, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { firebaseConfig } from "./firebase-config.js";
 
@@ -65,6 +65,11 @@ const state = {
   unsub: [],
   containers: [],        // listas de cards a manter atualizadas
   rollBoxes: [],
+  mesa: {},              // itens que estão na mesa
+  ini: {},               // iniciativa
+  presets: {},           // (mestre) itens salvos
+  views: [],             // blocos de interface (mesa / iniciativa / presets)
+  iniSeen: false, mesaSeen: false,
   presence: null,
   lastApplied: null,
   ui: { step: 1, tab: {} }
@@ -187,7 +192,8 @@ function disconnectRoom() {
   state.unsub.forEach(u => { try { u(); } catch { /* ignore */ } });
   Object.assign(state, {
     unsub: [], role: null, code: null, meta: null, players: {}, fichas: {}, rolls: [],
-    containers: [], rollBoxes: [], presence: null, lastApplied: null
+    containers: [], rollBoxes: [], presence: null, lastApplied: null,
+    mesa: {}, ini: {}, presets: {}, views: [], iniSeen: false, mesaSeen: false
   });
 }
 
@@ -207,6 +213,33 @@ function attachCommon(code) {
     if (r.uid !== uid && Date.now() - num(r.ts) < 8000) toast(`${r.who} rolou ${r.label}: ${r.total}`);
   }, err));
   state.unsub.push(onChildRemoved(q, s => { state.rolls = state.rolls.filter(r => r.id !== s.key); renderRolls(); }, err));
+
+  // mesa de itens
+  state.unsub.push(onValue(ref(db, `${base}/mesa`), s => {
+    const prev = state.mesa;
+    state.mesa = s.val() || {};
+    renderKind('mesa');
+    if (state.mesaSeen) {
+      for (const [id, m] of Object.entries(state.mesa)) {
+        if (!prev[id] && m.uid !== uid) toast(`${m.by || 'Alguém'} colocou "${m.nome}" na mesa`);
+      }
+    }
+    state.mesaSeen = true;
+  }, err));
+
+  // iniciativa
+  state.unsub.push(onValue(ref(db, `${base}/iniciativa`), s => {
+    const prev = state.ini || {};
+    const v = s.val() || {};
+    state.ini = v;
+    renderKind('ini');
+    if (state.iniSeen && v.ativa && v.atual && v.atual !== prev.atual) {
+      const e = v.entries && v.entries[v.atual];
+      if (v.atual === 'p_' + uid) toast('É a sua vez!');
+      else if (e) toast('Turno de ' + e.nome);
+    }
+    state.iniSeen = true;
+  }, err));
 }
 
 function forceLeave() {
@@ -319,6 +352,7 @@ async function openMasterRoom(code) {
   state.unsub.push(onChildAdded(fr, upsert, err));
   state.unsub.push(onChildChanged(fr, upsert, err));
   state.unsub.push(onChildRemoved(fr, s => { delete state.fichas[s.key]; renderAll(); }, err));
+  state.unsub.push(onValue(ref(db, `rooms/${code}/presets`), s => { state.presets = s.val() || {}; renderKind('presets'); }, err));
 }
 
 async function masterCommit(puid, f) {
@@ -613,20 +647,16 @@ function newItem(type) {
   return { id: rid(), name: 'Novo item', description: '', weight: 0, isFavorite: false, type, data };
 }
 
-function itemEditor(ctx, list, it, place) {
-  const f = ctx.f, inv = f.inventario;
+// Campos editáveis de um item (usado no editor do mestre, no formulário da mesa e nos presets)
+function itemFieldList(it, ctx, S = fn => fn, onTitle = () => {}, withFav = false) {
   it.data = it.data || {};
   const d = it.data;
-  const title = () => (it.isFavorite ? '★ ' : '') + (it.name || '(sem nome)');
-  const sum = h('summary', {}, title(), h('span', { class: 'sl-muted' }, ` · ${it.type || '?'} · peso ${num(it.weight)}`));
-  const syncWeapon = () => { if (inv.weapon && inv.weapon.id === it.id) inv.weapon = JSON.parse(JSON.stringify(it)); };
-  const S = fn => v => { fn(v); syncWeapon(); };
   const fields = [
-    fld('Nome', inp('text', it.name, S(v => { it.name = v; sum.firstChild.textContent = title(); }), ctx)),
+    fld('Nome', inp('text', it.name, S(v => { it.name = v; onTitle(); }), ctx)),
     fld('Peso', inp('number', it.weight, S(v => { it.weight = v; }), ctx)),
-    fld('Descrição', inp('area', it.description, S(v => { it.description = v; }), ctx), 'wide'),
-    chk('Favorito', it.isFavorite, S(v => { it.isFavorite = v; sum.firstChild.textContent = title(); }), ctx)
+    fld('Descrição', inp('area', it.description, S(v => { it.description = v; }), ctx), 'wide')
   ];
+  if (withFav) fields.push(chk('Favorito', it.isFavorite, S(v => { it.isFavorite = v; onTitle(); }), ctx));
   if (it.type === 'arma') {
     fields.push(
       fld('Tipo', sel(['branca', 'pistola', 'rifle', 'longo_alcance'], d.type, S(v => { d.type = v; }), ctx)),
@@ -643,6 +673,18 @@ function itemEditor(ctx, list, it, place) {
       fld('Dado', diceInp(d.dice, S(v => { d.dice = v; }), ctx)),
       fld('Categoria', sel(['objeto', 'documento', 'vestimenta', 'artefato'], d.type, S(v => { d.type = v; }), ctx)));
   }
+  return fields;
+}
+
+function itemEditor(ctx, list, it, place) {
+  const f = ctx.f, inv = f.inventario;
+  it.data = it.data || {};
+  const d = it.data;
+  const title = () => (it.isFavorite ? '★ ' : '') + (it.name || '(sem nome)');
+  const sum = h('summary', {}, title(), h('span', { class: 'sl-muted' }, ` · ${it.type || '?'} · peso ${num(it.weight)}`));
+  const syncWeapon = () => { if (inv.weapon && inv.weapon.id === it.id) inv.weapon = JSON.parse(JSON.stringify(it)); };
+  const S = fn => v => { fn(v); syncWeapon(); };
+  const fields = itemFieldList(it, ctx, S, () => { sum.firstChild.textContent = title(); }, true);
   const other = place === 'inv' ? inv.guardados : inv.content;
   return h('details', { class: 'sl-item', open: ctx.justAdded === it },
     sum,
@@ -757,6 +799,348 @@ const TAB_FN = {
   magias: c => listTab(c, 'magias'), hab: c => listTab(c, 'habilidades'), traumas: c => listTab(c, 'traumas')
 };
 
+// ---------------------------------------------------------------- blocos de interface compartilhados
+function addView(kind, render) { state.views.push({ kind, render }); }
+function renderKind(kind) { state.views.forEach(v => { if (v.kind === kind) v.render(); }); }
+const section = (title, node) => h('details', { class: 'sl-sec', open: true }, h('summary', {}, title), node);
+
+// Redesenha uma lista, mas espera o usuário sair do campo em que está digitando
+function safeRender(box, fn) {
+  const a = document.activeElement;
+  if (a && box.contains(a) && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) {
+    box._pending = fn;
+    if (!box._fo) {
+      box._fo = true;
+      box.addEventListener('focusout', () => setTimeout(() => {
+        const b = document.activeElement;
+        if (box._pending && !(b && box.contains(b))) { const f = box._pending; box._pending = null; f(); }
+      }, 80));
+    }
+    return;
+  }
+  box._pending = null;
+  fn();
+}
+
+const stripItem = it => { const c = JSON.parse(JSON.stringify(it)); delete c.id; c.isFavorite = false; return c; };
+function parseItem(json, nome) {
+  try { return JSON.parse(json); } catch { return { name: nome || 'Item', description: '', weight: 0, type: 'item', data: { dice: '', type: 'objeto' } }; }
+}
+function itemInfo(it) {
+  const d = it.data || {};
+  const parts = [];
+  if (it.type === 'arma') { parts.push('Arma ' + (d.type || '')); if (d.damage) parts.push('dano ' + d.damage); if (d.critical) parts.push('crítico ' + d.critical); if (d.maxMmo) parts.push('munição ' + d.maxMmo); }
+  else if (it.type === 'municao') { parts.push('Munição ' + (d.type || '') + (d.weapon ? ' de ' + d.weapon : '')); }
+  else { if (d.type) parts.push(d.type); if (d.dice) parts.push('dado ' + d.dice); }
+  if (num(it.weight)) parts.push('peso ' + num(it.weight));
+  return parts.join(' · ');
+}
+
+// ---------------------------------------------------------------- mesa de itens
+async function putOnTable(it, qty = 1, by = 'Mestre') {
+  if (!state.code) return;
+  const copy = stripItem(it);
+  if (!copy.name) copy.name = 'Novo item';
+  const payload = { json: JSON.stringify(copy), nome: copy.name, by, uid, ts: serverTimestamp() };
+  const n = Math.max(1, Math.min(20, Math.floor(num(qty)) || 1));
+  try {
+    for (let i = 0; i < n; i++) await push(ref(db, `rooms/${state.code}/mesa`), payload);
+    return true;
+  } catch (e) { toast(friendly(e)); return false; }
+}
+
+async function removeFromTable(id) {
+  try { await remove(ref(db, `rooms/${state.code}/mesa/${id}`)); } catch (e) { toast(friendly(e)); }
+}
+
+function addToInventory(it) {
+  const item = { name: it.name || 'Item', description: it.description || '', weight: it.weight, type: it.type, data: it.data || {} };
+  if (typeof createItem === 'function') createItem(item, 'inventario');
+  else {
+    ficha.inventario.content.push({ ...item, id: rid(), weight: num(item.weight), isFavorite: false });
+    for (const fn of ['renderInventory', 'renderTotalWeight']) { try { if (typeof window[fn] === 'function') window[fn](); } catch { /* ignore */ } }
+  }
+  scheduleSync();
+}
+
+// Pegar da mesa: a transação garante que só um jogador leva o item
+async function grabItem(id) {
+  const m = state.mesa[id];
+  if (!m) return;
+  let found = false;
+  try {
+    await runTransaction(ref(db, `rooms/${state.code}/mesa/${id}`), cur => { found = cur !== null; return null; });
+  } catch (e) { toast(friendly(e)); return; }
+  if (!found) { toast('Alguém já pegou este item.'); return; }
+  const it = parseItem(m.json, m.nome);
+  addToInventory(it);
+  toast(`Você pegou "${it.name}"`);
+}
+
+// Colocar na mesa um item do inventário/guardados do jogador
+async function placeItem(entry) {
+  if (!entry || !entry.it) return;
+  const { it, list } = entry;
+  const ok = await putOnTable(it, 1, ficha.nome || 'Jogador');
+  if (!ok) return;
+  const inv = ficha.inventario;
+  if (inv.weapon && inv.weapon.id === it.id) inv.weapon = {};
+  const i = list.indexOf(it);
+  if (i !== -1) list.splice(i, 1);
+  for (const fn of ['renderInventory', 'renderGuardados', 'renderWeaponArea', 'renderTotalWeight']) {
+    try { if (typeof window[fn] === 'function') window[fn](); } catch { /* ignore */ }
+  }
+  scheduleSync();
+  toast(`Você colocou "${it.name}" na mesa`);
+}
+
+function mesaRow(id, m, master) {
+  const it = parseItem(m.json, m.nome);
+  return h('div', { class: 'sl-mrow' },
+    h('div', { style: 'flex:1;min-width:0' },
+      h('div', {}, h('b', {}, it.name || m.nome), h('span', { class: 'sl-muted' }, ' · por ' + (m.by || '?'))),
+      h('div', { class: 'sl-muted' }, itemInfo(it)),
+      it.description ? h('div', { class: 'sl-desc' }, it.description) : null),
+    h('div', { class: 'sl-row', style: 'flex:none' },
+      master ? [h('button', { class: 'sl-btn', title: 'Salvar este item como preset', onclick: () => savePreset(it) }, '→ Preset'),
+        h('button', { class: 'sl-btn sl-danger', onclick: () => removeFromTable(id) }, 'Remover')]
+        : h('button', { class: 'sl-btn', onclick: () => grabItem(id) }, 'Pegar')));
+}
+
+function mesaForm() {
+  let draft = newItem('item');
+  const nctx = { commit() {} };
+  const box = h('div', { class: 'sl-fs' });
+  const fill = () => box.replaceChildren(...itemFieldList(draft, nctx));
+  const cat = sel([['item', 'Item'], ['arma', 'Arma'], ['municao', 'Munição']], 'item', v => {
+    draft = Object.assign(newItem(v), { name: draft.name, description: draft.description, weight: draft.weight });
+    fill();
+  }, nctx);
+  const qty = h('input', { class: 'sl-in', type: 'number', value: 1, min: 1, max: 20, style: 'width:70px' });
+  fill();
+  return h('details', { class: 'sl-item' },
+    h('summary', {}, '+ Novo item'),
+    h('div', { class: 'sl-fs' }, fld('Categoria', cat)),
+    box,
+    h('div', { class: 'sl-row' }, fld('Quantidade', qty),
+      h('button', { class: 'sl-btn', onclick: () => putOnTable(draft, qty.value, 'Mestre') }, 'Colocar na mesa'),
+      h('button', { class: 'sl-btn', onclick: () => savePreset(draft) }, 'Salvar como preset')));
+}
+
+function placeForm() {
+  const s = h('select', { class: 'sl-in', style: 'flex:1;min-width:150px' });
+  let map = [], chosen = null;
+  const fill = () => {
+    map = [];
+    const inv = ficha.inventario || {};
+    (inv.content || []).forEach(it => map.push({ it, list: inv.content, where: 'inventário' }));
+    (inv.guardados || []).forEach(it => map.push({ it, list: inv.guardados, where: 'guardados' }));
+    s.replaceChildren(...(map.length ? map.map((m, i) => h('option', { value: i }, `${m.it.name} (${m.where})`)) : [h('option', { value: '' }, 'Nada para colocar')]));
+    const idx = map.findIndex(m => m.it === chosen);
+    s.value = idx >= 0 ? String(idx) : (map.length ? '0' : '');
+  };
+  s.addEventListener('focus', fill);
+  s.addEventListener('change', () => { const m = map[Number(s.value)]; chosen = m ? m.it : null; });
+  fill();
+  return h('div', { class: 'sl-row', style: 'margin-top:8px' }, s,
+    h('button', { class: 'sl-btn', onclick: async () => {
+      const m = map[Number(s.value)];
+      if (!m) return toast('Escolha um item do seu inventário.');
+      await placeItem(m); chosen = null; fill();
+    } }, 'Colocar na mesa'));
+}
+
+function mesaView(master) {
+  const list = h('div', {});
+  const render = () => {
+    const ids = Object.keys(state.mesa).sort((a, b) => num(state.mesa[a].ts) - num(state.mesa[b].ts));
+    list.replaceChildren(...(ids.length ? ids.map(id => mesaRow(id, state.mesa[id], master)) : [h('p', { class: 'sl-muted' }, 'A mesa está vazia.')]));
+  };
+  addView('mesa', render);
+  render();
+  return h('div', {}, list, master ? mesaForm() : placeForm());
+}
+
+// ---------------------------------------------------------------- presets (mestre)
+async function savePreset(it) {
+  if (!state.code) return;
+  const copy = stripItem(it);
+  if (!copy.name) copy.name = 'Novo item';
+  try {
+    await push(ref(db, `rooms/${state.code}/presets`), { json: JSON.stringify(copy), nome: copy.name });
+    toast(`Preset "${copy.name}" salvo`);
+  } catch (e) { toast(friendly(e)); }
+}
+
+function presetRow(id) {
+  const p = state.presets[id];
+  const it = parseItem(p.json, p.nome);
+  const name = h('span', {}, it.name || p.nome);
+  const sum = h('summary', {}, name, h('span', { class: 'sl-muted' }, ' ' + itemInfo(it)),
+    h('button', { class: 'sl-btn', style: 'margin-left:8px', onclick: e => { if (e.preventDefault) e.preventDefault(); putOnTable(it, 1, 'Mestre'); } }, '+ Mesa'));
+  const qty = h('input', { class: 'sl-in', type: 'number', value: 1, min: 1, max: 20, style: 'width:70px' });
+  const ctx = {
+    commit() {
+      const c = stripItem(it);
+      update(ref(db), { [`rooms/${state.code}/presets/${id}`]: { json: JSON.stringify(c), nome: c.name || 'Item' } })
+        .catch(e => toast(friendly(e)));
+    }
+  };
+  return h('details', { class: 'sl-item' }, sum,
+    h('div', { class: 'sl-fs' }, itemFieldList(it, ctx, undefined, () => { name.textContent = it.name || '(sem nome)'; })),
+    h('div', { class: 'sl-row' }, fld('Quantidade', qty),
+      h('button', { class: 'sl-btn', onclick: () => putOnTable(it, qty.value, 'Mestre') }, 'Colocar na mesa'),
+      h('button', { class: 'sl-btn sl-danger', onclick: () => {
+        if (confirm(`Excluir o preset "${it.name}"?`)) remove(ref(db, `rooms/${state.code}/presets/${id}`)).catch(e => toast(friendly(e)));
+      } }, 'Excluir preset')));
+}
+
+function presetsView() {
+  const list = h('div', {});
+  const render = () => safeRender(list, () => {
+    const ids = Object.keys(state.presets).sort((a, b) => String(state.presets[a].nome).localeCompare(String(state.presets[b].nome), 'pt'));
+    list.replaceChildren(...(ids.length ? ids.map(presetRow)
+      : [h('p', { class: 'sl-muted' }, 'Nenhum preset ainda. Crie um item em "+ Novo item" (na Mesa) e use "Salvar como preset", ou use "→ Preset" num item da mesa.')]));
+  });
+  addView('presets', render);
+  render();
+  return list;
+}
+
+// ---------------------------------------------------------------- iniciativa
+const iniSorted = () => Object.entries((state.ini && state.ini.entries) || {})
+  .map(([id, e]) => ({ id, ...e }))
+  .sort((a, b) => num(b.valor) - num(a.valor) || String(a.nome).localeCompare(String(b.nome), 'pt'));
+
+async function iniUpdate(map) {
+  const base = `rooms/${state.code}/iniciativa`;
+  const u = {};
+  for (const [k, v] of Object.entries(map)) u[`${base}/${k}`] = v;
+  try { await update(ref(db), u); } catch (e) { toast(friendly(e)); }
+}
+function iniToggle() {
+  const ini = state.ini || {};
+  const on = !ini.ativa;
+  const patch = { ativa: on };
+  if (on) {
+    if (!ini.rodada) patch.rodada = 1;
+    if (!ini.atual || !(ini.entries && ini.entries[ini.atual])) { const first = iniSorted()[0]; if (first) patch.atual = first.id; }
+  }
+  return iniUpdate(patch);
+}
+function iniNext() {
+  const list = iniSorted();
+  if (!list.length) return toast('Adicione alguém à ordem de iniciativa.');
+  const ini = state.ini || {};
+  const idx = list.findIndex(e => e.id === ini.atual);
+  let next = idx + 1, rodada = num(ini.rodada) || 1;
+  if (idx < 0) next = 0;
+  else if (next >= list.length) { next = 0; rodada++; }
+  return iniUpdate({ atual: list[next].id, rodada, ativa: true });
+}
+function iniReset() {
+  const first = iniSorted()[0];
+  return iniUpdate({ rodada: 1, atual: first ? first.id : null });
+}
+function iniAdd(nome, valor) {
+  if (!nome) return toast('Digite um nome.');
+  const id = 'n_' + rid().replace(/-/g, '').slice(0, 8);
+  return iniUpdate({ [`entries/${id}`]: { nome, valor: num(valor), tipo: 'npc' } });
+}
+function iniAddPlayers() {
+  const entries = (state.ini && state.ini.entries) || {};
+  const map = {};
+  for (const [puid, p] of Object.entries(state.players)) {
+    if (!entries['p_' + puid]) map[`entries/p_${puid}`] = { nome: p.nome || 'Jogador', valor: 0, uid: puid, tipo: 'jogador' };
+  }
+  if (!Object.keys(map).length) return toast('Todos os jogadores já estão na lista.');
+  return iniUpdate(map);
+}
+function iniClear() {
+  if (!confirm('Limpar toda a lista de iniciativa?')) return;
+  return iniUpdate({ entries: null, atual: null, rodada: 1 });
+}
+function iniDel(id) {
+  const patch = { [`entries/${id}`]: null };
+  const ini = state.ini || {};
+  if (ini.atual === id) {
+    const rest = iniSorted().filter(e => e.id !== id);
+    const i = iniSorted().findIndex(e => e.id === id);
+    patch.atual = rest.length ? rest[Math.min(i, rest.length - 1)].id : null;
+  }
+  return iniUpdate(patch);
+}
+function setMyIni(valor) {
+  const v = Number(valor);
+  if (!Number.isFinite(v)) return toast('Digite um número.');
+  return update(ref(db), { [`rooms/${state.code}/iniciativa/entries/p_${uid}`]: { nome: ficha.nome || 'Jogador', valor: v, uid, tipo: 'jogador' } })
+    .catch(e => toast(friendly(e)));
+}
+
+function iniRow(e, master, ini) {
+  const cur = !!(ini.ativa && ini.atual === e.id);
+  if (!master) {
+    return h('div', { class: 'sl-irow' + (cur ? ' cur' : '') },
+      h('span', { class: 'sl-ival' }, String(num(e.valor))),
+      h('span', { class: 'sl-iname' }, (cur ? '▶ ' : '') + (e.nome || '?') + (e.uid === uid ? ' (você)' : '')));
+  }
+  const val = h('input', { class: 'sl-in', type: 'number' });
+  val.value = num(e.valor);
+  val.addEventListener('change', () => iniUpdate({ [`entries/${e.id}/valor`]: num(val.value) }));
+  const nm = h('input', { class: 'sl-in sl-iname' });
+  nm.value = e.nome || '';
+  nm.addEventListener('change', () => { if (nm.value.trim()) iniUpdate({ [`entries/${e.id}/nome`]: nm.value.trim() }); });
+  return h('div', { class: 'sl-irow' + (cur ? ' cur' : '') },
+    h('span', { class: 'sl-ival' }, val), nm,
+    h('button', { class: 'sl-btn', title: 'Dar o turno a este', onclick: () => iniUpdate({ atual: e.id, ativa: true }) }, '▶'),
+    h('button', { class: 'sl-btn', title: 'Rolar d20', onclick: () => iniUpdate({ [`entries/${e.id}/valor`]: 1 + Math.floor(Math.random() * 20) }) }, 'd20'),
+    h('button', { class: 'sl-btn sl-danger', onclick: () => iniDel(e.id) }, '✕'));
+}
+
+function iniView(master) {
+  const refs = {};
+  const list = h('div', {});
+  let top;
+  if (master) {
+    const nm = h('input', { class: 'sl-in', placeholder: 'Nome (inimigo/NPC)', style: 'flex:1;min-width:120px' });
+    const vl = h('input', { class: 'sl-in', type: 'number', placeholder: 'Valor', style: 'width:80px' });
+    top = h('div', {},
+      h('div', { class: 'sl-row' },
+        (refs.toggle = h('button', { class: 'sl-btn', onclick: iniToggle }, 'Ativar iniciativa')),
+        h('button', { class: 'sl-btn', onclick: iniNext }, 'Próximo turno ▶'),
+        h('button', { class: 'sl-btn', onclick: iniReset }, 'Reiniciar rodada'),
+        (refs.round = h('span', { class: 'sl-muted' }))),
+      h('div', { class: 'sl-row', style: 'margin:6px 0' }, nm, vl,
+        h('button', { class: 'sl-btn', onclick: () => { iniAdd(nm.value.trim(), vl.value); nm.value = ''; vl.value = ''; } }, '+ Adicionar'),
+        h('button', { class: 'sl-btn', onclick: iniAddPlayers }, '+ Jogadores'),
+        h('button', { class: 'sl-btn sl-danger', onclick: iniClear }, 'Limpar lista')));
+  } else {
+    const v = h('input', { class: 'sl-in', type: 'number', placeholder: 'Sua iniciativa', style: 'width:130px' });
+    refs.self = h('div', { class: 'sl-row', style: 'margin-top:6px;display:none' }, v,
+      h('button', { class: 'sl-btn', onclick: () => setMyIni(v.value) }, 'Definir'),
+      h('button', { class: 'sl-btn', onclick: () => {
+        const r = 1 + Math.floor(Math.random() * 20);
+        v.value = r; setMyIni(r);
+        logRoll({ label: 'Iniciativa', expr: '1d20', total: r, detail: `d20 (${r})` });
+      } }, 'Rolar d20'));
+    refs.round = h('div', { class: 'sl-muted' });
+    top = h('div', {}, refs.round);
+  }
+  const render = () => {
+    const ini = state.ini || {};
+    if (refs.toggle) refs.toggle.textContent = ini.ativa ? 'Desativar iniciativa' : 'Ativar iniciativa';
+    if (refs.round) refs.round.textContent = ini.ativa ? `Rodada ${num(ini.rodada) || 1}` : (master ? 'Desativada' : 'A iniciativa não está ativa.');
+    if (refs.self) refs.self.style.display = ini.ativa ? '' : 'none';
+    safeRender(list, () => {
+      const rows = (master || ini.ativa) ? iniSorted().map(e => iniRow(e, master, ini)) : [];
+      list.replaceChildren(...(rows.length ? rows : (master || ini.ativa ? [h('p', { class: 'sl-muted' }, 'Ninguém na ordem ainda.')] : [])));
+    });
+  };
+  addView('ini', render);
+  render();
+  return h('div', {}, top, list, refs.self || null);
+}
+
 // ---------------------------------------------------------------- tela do jogador (aba "Sala")
 let salaContent;
 
@@ -765,6 +1149,7 @@ function renderPlayerSala() {
   salaContent.replaceChildren();
   state.containers = state.containers.filter(c => c.master);
   state.rollBoxes = [];
+  state.views = [];
 
   if (!CFG_OK) {
     salaContent.append(h('div', { class: 'sl-wrap' }, h('div', { class: 'sl-box' },
@@ -787,6 +1172,8 @@ function renderPlayerSala() {
         h('button', { class: 'sl-btn', onclick: () => navigator.clipboard && navigator.clipboard.writeText(state.code).then(() => toast('Código copiado')) }, 'Copiar código'),
         h('button', { class: 'sl-btn sl-danger', onclick: () => { if (confirm('Sair da sala?')) leaveAsPlayer(); } }, 'Sair da sala')),
       h('div', { class: 'sl-box' }, h('h3', { class: 'sl-h' }, 'Jogadores'), players, players._empty),
+      h('div', { class: 'sl-box' }, section('Iniciativa', iniView(false))),
+      h('div', { class: 'sl-box' }, section('Mesa de itens', mesaView(false))),
       h('div', { class: 'sl-box' }, h('h3', { class: 'sl-h' }, 'Histórico de rolagens'), rolls)));
     renderAll(); fillRolls(rolls);
     return;
@@ -858,7 +1245,7 @@ function masterHome() {
 }
 
 function masterRoomView() {
-  state.containers = []; state.rollBoxes = [];
+  state.containers = []; state.rollBoxes = []; state.views = [];
   const players = h('div', { class: 'sl-grid' });
   players._empty = h('p', { class: 'sl-muted' }, 'Nenhum jogador entrou ainda. Passe o código da sala.');
   state.containers.push({ el: players, master: true });
@@ -882,6 +1269,9 @@ function masterRoomView() {
     h('div', { class: 'sl-main' },
       h('div', {}, h('h3', { class: 'sl-h' }, 'Jogadores'), players, players._empty),
       h('div', {},
+        section('Iniciativa', iniView(true)),
+        section('Mesa de itens', mesaView(true)),
+        section('Presets de itens', presetsView()),
         h('h3', { class: 'sl-h' }, 'Rolagens'),
         h('div', { class: 'sl-row', style: 'margin-bottom:6px' }, dice, h('button', { class: 'sl-btn', onclick: roll }, 'Rolar'),
           ['d4', 'd6', 'd8', 'd10', 'd12', 'd20'].map(d => h('button', { class: 'sl-btn', onclick: () => masterRoll('1' + d) }, d))),
@@ -900,6 +1290,15 @@ const CSS = `
 .sl-h{margin:0 0 8px;font-size:16px;font-weight:700}
 .sl-code{font-size:26px;letter-spacing:4px;font-weight:700;line-height:1.1}
 .sl-muted{opacity:.7;font-size:12px;margin:2px 0}
+details.sl-sec{border:1px solid rgba(255,255,255,.18);border-radius:8px;background:rgba(0,0,0,.45);padding:6px 10px;margin-bottom:10px}
+details.sl-sec>summary{cursor:pointer;font-weight:700;font-size:16px;padding:2px 0}
+.sl-irow{display:flex;gap:6px;align-items:center;padding:4px 6px;border-radius:6px;margin:3px 0;border:1px solid transparent}
+.sl-irow.cur{background:rgba(255,200,0,.18);border-color:rgba(255,200,0,.7)}
+.sl-ival{min-width:44px;font-weight:700;font-size:16px;text-align:center}
+.sl-ival input{width:60px}
+.sl-iname{flex:1;min-width:80px}
+.sl-mrow{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.sl-desc{font-size:12px;opacity:.85;white-space:pre-wrap}
 .sl-err{color:#ff7373;font-size:13px}
 .sl-grid{display:flex;flex-direction:column;gap:8px}
 .sl-btn{background:#2a2a35;color:#fff;border:1px solid #555;border-radius:4px;padding:5px 10px;cursor:pointer;font:inherit;font-size:13px}
