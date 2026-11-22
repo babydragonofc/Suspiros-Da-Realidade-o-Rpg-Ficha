@@ -23,6 +23,11 @@ const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } ca
 const num = v => (Number.isFinite(Number(v)) ? Number(v) : 0);
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const newCode = () => Array.from({ length: 5 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
+const newSecret = () => {
+  const a = new Uint32Array(12); crypto.getRandomValues(a);
+  return Array.from(a, n => CODE_CHARS[n % CODE_CHARS.length]).join('');
+};
+const cleanSecret = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 16);
 const cleanCode = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
 const rid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()));
 const fmtName = n => String(n).replace(/_/g, ' ').replace(/(^|\s)\p{L}/gu, l => l.toUpperCase());
@@ -67,12 +72,15 @@ const state = {
   rollBoxes: [],
   mesa: {},              // itens que estão na mesa
   ini: {},               // iniciativa
-  presets: {},           // (mestre) itens salvos
+  presets: {},           // (mestre) itens, rituais, habilidades e NPCs salvos
+  condicoes: {},         // condições por alvo (jogador ou NPC)
+  npcs: {},              // (mestre) NPCs em cena
+  segredo: null,         // (mestre) código para entrar como mestre em outro aparelho
   views: [],             // blocos de interface (mesa / iniciativa / presets)
   iniSeen: false, mesaSeen: false,
   presence: null,
   lastApplied: null,
-  ui: { step: 1, tab: {}, sub: {} }
+  ui: { step: 1, tab: {}, sub: {}, secreta: false, npcAberto: {} }
 };
 let app, auth, db, uid = null, ready = null;
 let lastPushed = null, applying = false, syncTimer = null;
@@ -194,7 +202,7 @@ function disconnectRoom() {
   Object.assign(state, {
     unsub: [], role: null, code: null, meta: null, players: {}, fichas: {}, rolls: [],
     containers: [], rollBoxes: [], presence: null, lastApplied: null,
-    mesa: {}, ini: {}, presets: {}, views: [], iniSeen: false, mesaSeen: false
+    mesa: {}, ini: {}, presets: {}, condicoes: {}, npcs: {}, segredo: null, views: [], iniSeen: false, mesaSeen: false
   });
 }
 
@@ -214,6 +222,9 @@ function attachCommon(code) {
     if (r.uid !== uid && Date.now() - num(r.ts) < 8000) toast(`${r.who} rolou ${r.label}: ${r.total}`);
   }, err));
   state.unsub.push(onChildRemoved(q, s => { state.rolls = state.rolls.filter(r => r.id !== s.key); renderRolls(); }, err));
+
+  // condições (envenenado, caído…)
+  state.unsub.push(onValue(ref(db, `${base}/condicoes`), s => { state.condicoes = s.val() || {}; renderAll(); renderKind('condicoes'); }, err));
 
   // mesa de itens
   state.unsub.push(onValue(ref(db, `${base}/mesa`), s => {
@@ -257,7 +268,7 @@ async function joinAsPlayer(codeRaw) {
   if (!ficha || !ficha.nome) throw new Error('Carregue ou crie uma ficha antes de entrar numa sala.');
   const meta = (await get(ref(db, `rooms/${code}/meta`))).val();
   if (!meta) throw new Error('Sala não encontrada. Confira o código.');
-  if (meta.masterUid === uid) throw new Error('Você é o mestre desta sala. Abra-a por "Sala do Mestre" no menu inicial.');
+  if (await souMestreDa(code, meta)) throw new Error('Você é o mestre desta sala. Abra-a por "Sala do Mestre" no menu inicial.');
 
   // Se o mestre editou a ficha enquanto o jogador estava fora, a versão da sala vence
   const remote = (await get(ref(db, `rooms/${code}/fichas/${uid}`))).val();
@@ -285,6 +296,8 @@ async function joinAsPlayer(codeRaw) {
       set(pr, true).catch(() => {});
     }
   }));
+  // itens que outros jogadores (ou o mestre) entregaram a mim
+  state.unsub.push(onChildAdded(ref(db, `rooms/${code}/entregas/${uid}`), s => receberEntrega(s.key, s.val()), e => toast(friendly(e))));
   state.unsub.push(onValue(ref(db, `rooms/${code}/fichas/${uid}`), s => {
     const v = s.val();
     if (!v) { if (state.role === 'player') { toast('Você foi removido da sala.'); forceLeave(); } return; }
@@ -320,11 +333,34 @@ async function createRoom(name) {
   }
   if (!code) throw new Error('Não foi possível gerar um código. Tente de novo.');
   await set(ref(db, `rooms/${code}/meta`), { masterUid: uid, name: name || 'Mesa', createdAt: serverTimestamp() });
+  try { await set(ref(db, `rooms/${code}/segredo`), newSecret()); } catch (e) { console.warn('[sala] código de mestre não criado', e); }
   const list = lsGet(LS_MASTER, []);
   list.push({ code, name: name || 'Mesa' });
   lsSet(LS_MASTER, list);
   return code;
 }
+
+// Outro aparelho vira mestre informando o código de mestre da sala
+async function claimMaster(codeRaw, secretRaw) {
+  const code = cleanCode(codeRaw), secret = cleanSecret(secretRaw);
+  if (code.length < 4) throw new Error('Digite o código da sala.');
+  if (secret.length < 8) throw new Error('Digite o código de mestre (12 letras e números).');
+  await init();
+  const meta = (await get(ref(db, `rooms/${code}/meta`))).val();
+  if (!meta) throw new Error('Sala não encontrada. Confira o código.');
+  if (meta.masterUid !== uid) {
+    try { await set(ref(db, `rooms/${code}/claim/${uid}`), secret); }
+    catch (e) {
+      if (/permission[_ ]denied/i.test(String((e && (e.code || e.message)) || e))) throw new Error('Código de mestre incorreto.');
+      throw e;
+    }
+  }
+  const list = lsGet(LS_MASTER, []);
+  if (!list.some(r => r.code === code)) { list.push({ code, name: meta.name || 'Mesa' }); lsSet(LS_MASTER, list); }
+  return code;
+}
+const souMestreDa = async (code, meta) =>
+  meta.masterUid === uid || (await get(ref(db, `rooms/${code}/claim/${uid}`))).exists();
 
 async function openMasterRoom(code) {
   await init();
@@ -333,7 +369,7 @@ async function openMasterRoom(code) {
     lsSet(LS_MASTER, lsGet(LS_MASTER, []).filter(r => r.code !== code));
     throw new Error('Essa sala não existe mais.');
   }
-  if (meta.masterUid !== uid) throw new Error('Você não é o mestre desta sala neste navegador.');
+  if (!(await souMestreDa(code, meta))) throw new Error('Você não é o mestre desta sala neste aparelho. Use "Entrar com código de mestre".');
   disconnectRoom();
   Object.assign(state, { role: 'master', code, meta });
   attachCommon(code);
@@ -354,6 +390,8 @@ async function openMasterRoom(code) {
   state.unsub.push(onChildChanged(fr, upsert, err));
   state.unsub.push(onChildRemoved(fr, s => { delete state.fichas[s.key]; renderAll(); }, err));
   state.unsub.push(onValue(ref(db, `rooms/${code}/presets`), s => { state.presets = s.val() || {}; renderKind('presets'); }, err));
+  state.unsub.push(onValue(ref(db, `rooms/${code}/npcs`), s => { state.npcs = s.val() || {}; renderKind('npcs'); }, err));
+  state.unsub.push(onValue(ref(db, `rooms/${code}/segredo`), s => { state.segredo = s.val() || null; renderKind('segredo'); }, err));
 }
 
 async function masterCommit(puid, f) {
@@ -435,21 +473,26 @@ function wrapRolls() {
   }
 }
 
-function masterRoll(exprRaw) {
+function masterRoll(exprRaw, secreta = !!state.ui.secreta) {
   const expr = String(exprRaw || '').trim();
   if (!expr) return;
   if (/\*/.test(expr) || !isValidDiceExpression(expr)) return toast('Formato inválido. Exemplos: 1d20, 2d6+3, 1d12-2');
   const r = rollDiceExpression(expr);
   const detail = r.rolls.map(x => `${x.sign < 0 ? '-' : ''}${x.dice} (${x.value})`).join(' ');
+  if (secreta) {   // rolagem secreta: só aparece para o mestre e não é enviada à sala
+    state.rolls.push({ id: 's_' + rid(), uid, who: 'Mestre', label: 'Dado', expr, total: r.total, detail, kind: 'dice', ts: Date.now(), secreta: true });
+    renderRolls();
+    return;
+  }
   logRoll({ label: 'Dado', expr, total: r.total, detail });
 }
 
 function fillRolls(box) {
   const rows = [...state.rolls].reverse().map(r => {
     const t = num(r.ts) ? new Date(num(r.ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-    return h('div', { class: 'sala-rolagem' + (r.kind === 'damage' ? ' dmg' : '') },
+    return h('div', { class: 'sala-rolagem' + (r.kind === 'damage' ? ' dmg' : '') + (r.secreta ? ' secreta' : '') },
       h('div', {},
-        h('div', {}, h('b', {}, r.who || '?'), ' · ', r.label || 'Dado'),
+        h('div', {}, r.secreta ? '🔒 ' : null, h('b', {}, r.who || '?'), ' · ', r.label || 'Dado'),
         h('div', { class: 'sala-discreto' }, [r.expr, r.detail].filter(Boolean).join(' — ')),
         h('div', { class: 'sala-discreto' }, t)),
       h('b', { class: 'total' }, String(r.total)));
@@ -457,6 +500,34 @@ function fillRolls(box) {
   box.replaceChildren(...(rows.length ? rows : [h('p', { class: 'sala-discreto' }, 'Nenhuma rolagem ainda.')]));
 }
 function renderRolls() { state.rollBoxes.forEach(fillRolls); }
+
+// ---------------------------------------------------------------- condições (envenenado, caído…)
+const CONDICOES = ['Envenenado', 'Caído', 'Amedrontado', 'Sangrando', 'Atordoado', 'Cego', 'Lento', 'Inspirado'];
+const condicoesDe = alvo => Object.entries((state.condicoes && state.condicoes[alvo]) || {}).map(([cid, c]) => ({ cid, ...c }));
+async function addCondicao(alvo, nome, turnos) {
+  nome = String(nome || '').trim().slice(0, 30);
+  if (!nome) return toast('Digite o nome da condição.');
+  const t = Math.max(0, Math.min(99, Math.floor(num(turnos))));
+  try { await push(ref(db, `rooms/${state.code}/condicoes/${alvo}`), { nome, turnos: t }); } catch (e) { toast(friendly(e)); }
+}
+function delCondicao(alvo, cid) {
+  remove(ref(db, `rooms/${state.code}/condicoes/${alvo}/${cid}`)).catch(e => toast(friendly(e)));
+}
+function emblemas(alvo, master) {
+  return condicoesDe(alvo).map(c => h('span', { class: 'sala-condicao', title: c.turnos ? `${c.turnos} turno(s) restante(s)` : 'Sem limite de turnos' },
+    c.nome + (c.turnos ? ` (${c.turnos})` : ''),
+    master ? h('button', { class: 'sala-condicao-x', title: 'Remover condição', onclick: () => delCondicao(alvo, c.cid) }, '✕') : null));
+}
+function condicaoForm(alvo) {
+  const id = 'cond-' + rid().replace(/-/g, '').slice(0, 6);
+  const nome = h('input', { class: 'sala-campo sala-expandir', placeholder: 'Condição', list: id });
+  const turnos = h('input', { class: 'sala-campo sala-largura-numero', type: 'number', min: 0, max: 99, placeholder: 'Turnos' });
+  return h('div', { class: 'sala-linha sala-condicao-form' }, nome,
+    h('datalist', { id }, CONDICOES.map(c => h('option', { value: c }))), turnos,
+    h('button', { class: 'sala-botao', onclick: () => { addCondicao(alvo, nome.value, turnos.value); nome.value = ''; turnos.value = ''; } }, '+ Condição'));
+}
+// a quem pertencem as condições de uma linha da iniciativa
+const alvoIni = e => e.uid || e.npc || e.id;
 
 // ---------------------------------------------------------------- cards (vista rápida)
 function buildCard(puid, master) {
@@ -477,6 +548,9 @@ function buildCard(puid, master) {
           h('button', { class: 'sala-botao', onclick: () => adjust(puid, k, -1) }, '−'),
           h('button', { class: 'sala-botao', onclick: () => adjust(puid, k, +1) }, '+')) : null);
     })),
+    master ? (r.info = h('div', { class: 'sala-info sala-discreto' })) : null,
+    (r.cond = h('div', { class: 'sala-condicoes' })),
+    master ? condicaoForm(puid) : null,
     master ? (r.body = Object.assign(h('div', { class: 'sala-corpo' }), { hidden: true })) : null);
   if (master) {
     r.body.addEventListener('focusout', () => {
@@ -500,6 +574,23 @@ function updateCard(card, puid, master) {
     r[k].txt.textContent = `${r[k].label} ${cur}/${max}`;
     r[k].fill.style.width = (max > 0 ? Math.max(0, Math.min(100, (cur / max) * 100)) : 0) + '%';
   }
+  // destaques: vida baixa e medo alto
+  card.classList.toggle('critico', num(d.vidaMax) > 0 && num(d.vida) / num(d.vidaMax) <= 0.25);
+  card.classList.toggle('assustado', num(d.medoMax) > 0 && num(d.medo) / num(d.medoMax) >= 0.75);
+  r.cond.replaceChildren(...emblemas(puid, master));
+  if (r.info) r.info.textContent = e && e.ficha ? infoRapida(e.ficha) : '';
+}
+// arma equipada e perícias mais altas (linha extra no card do mestre)
+function infoRapida(f) {
+  const partes = [];
+  const arma = f.inventario && f.inventario.weapon;
+  if (arma && arma.name) partes.push('Arma: ' + arma.name);
+  if (Array.isArray(f.pericias)) {
+    const top = f.pericias.flatMap((arr, lvl) => (Array.isArray(arr) ? arr : []).map(n => [n, lvl])).filter(x => x[1] > 0)
+      .sort((a, b) => b[1] - a[1]).slice(0, 3).map(([n, lvl]) => `${fmtName(n)} ${lvl}`);
+    if (top.length) partes.push('Perícias: ' + top.join(', '));
+  }
+  return partes.join(' · ');
 }
 
 function syncCards(container, master) {
@@ -738,6 +829,7 @@ function listTab(ctx, key) {
   const arr = f[key];
   const isT = key === 'traumas';
   const dk = isT ? 'dado' : 'dice';
+  const tipo = key === 'magias' ? 'ritual' : 'habilidade';
   const items = arr.map(it => {
     const title = () => (it.isFavorite ? '★ ' : '') + (it.name || '(sem nome)');
     const sum = h('summary', {}, title());
@@ -764,13 +856,32 @@ function listTab(ctx, key) {
     return h('details', { class: 'sala-item', open: ctx.justAdded === it },
       sum,
       h('div', { class: 'sala-grupo-campos' }, fields),
-      h('div', { class: 'sala-linha' }, h('button', { class: 'sala-botao sala-perigo', onclick: () => {
+      h('div', { class: 'sala-linha' },
+        isT ? null : h('button', { class: 'sala-botao', title: 'Salvar como preset para dar a outros jogadores', onclick: () => savePreset(it, tipo) }, '→ Preset'),
+        h('button', { class: 'sala-botao sala-perigo', onclick: () => {
         if (!confirm(`Excluir "${it.name}"?`)) return;
         arr.splice(arr.indexOf(it), 1); ctx.commit(); ctx.rerender();
       } }, 'Excluir')));
   });
+  // adicionar a partir de um preset
+  const pSel = h('select', { class: 'sala-campo sala-expandir' });
+  const fillP = () => {
+    const ids = presetsDoTipo(tipo);
+    pSel.replaceChildren(...(ids.length ? ids.map(id => h('option', { value: id }, state.presets[id].nome)) : [h('option', { value: '' }, 'Nenhum preset salvo')]));
+  };
+  pSel.addEventListener('focus', fillP);
+  fillP();
+  const dePreset = isT ? null : h('div', { class: 'sala-linha sala-margem-topo' }, pSel,
+    h('button', { class: 'sala-botao', onclick: () => {
+      const p = state.presets[pSel.value];
+      if (!p) return toast('Nenhum preset salvo ainda (aba Presets).');
+      const c = textoPreset(parseItem(p.json, p.nome));
+      if (arr.some(x => String(x.name || '').toLowerCase() === c.name.toLowerCase())) return toast('Este jogador já tem isso.');
+      arr.push(c); ctx.justAdded = c; ctx.commit(); ctx.rerender();
+    } }, '+ De preset'));
   return h('div', {},
     items.length ? items : h('p', { class: 'sala-discreto' }, 'Nada por aqui.'),
+    dePreset,
     h('button', { class: 'sala-botao sala-margem-topo', onclick: () => {
       const it = isT ? { name: 'Novo trauma', description: '', dado: '', time: { numero: 'PER', tipoT: 'PER' }, isFavorite: false }
         : { name: 'Novo', description: '', dice: '', isFavorite: false };
@@ -974,12 +1085,8 @@ async function grabItem(id) {
   toast(`Você pegou "${it.name}"`);
 }
 
-// Colocar na mesa um item do inventário/guardados do jogador
-async function placeItem(entry) {
-  if (!entry || !entry.it) return;
-  const { it, list } = entry;
-  const ok = await putOnTable(it, 1, ficha.nome || 'Jogador');
-  if (!ok) return;
+// Tira um item do inventário/guardados do jogador (depois de colocar na mesa ou entregar)
+function tirarDoInventario({ it, list }) {
   const inv = ficha.inventario;
   if (inv.weapon && inv.weapon.id === it.id) inv.weapon = {};
   const i = list.indexOf(it);
@@ -988,7 +1095,63 @@ async function placeItem(entry) {
     try { if (typeof window[fn] === 'function') window[fn](); } catch { /* ignore */ }
   }
   scheduleSync();
-  toast(`Você colocou "${it.name}" na mesa`);
+}
+
+// Colocar na mesa um item do inventário/guardados do jogador
+async function placeItem(entry) {
+  if (!entry || !entry.it) return;
+  const ok = await putOnTable(entry.it, 1, ficha.nome || 'Jogador');
+  if (!ok) return;
+  tirarDoInventario(entry);
+  toast(`Você colocou "${entry.it.name}" na mesa`);
+}
+
+// Entregar um item direto a outro jogador (vale também para o mestre, via preset)
+async function darItem(it, destUid, deNome = 'Mestre') {
+  if (!state.code || !destUid) return false;
+  const copy = stripItem(it);
+  try {
+    await push(ref(db, `rooms/${state.code}/entregas/${destUid}`), { json: JSON.stringify(copy), nome: copy.name || 'Item', de: uid, deNome, ts: serverTimestamp() });
+    return true;
+  } catch (e) { toast(friendly(e)); return false; }
+}
+async function entregarItem(entry, destUid) {
+  if (!entry || !entry.it) return toast('Escolha um item do seu inventário.');
+  if (!destUid) return toast('Escolha para quem entregar.');
+  const ok = await darItem(entry.it, destUid, ficha.nome || 'Jogador');
+  if (!ok) return;
+  tirarDoInventario(entry);
+  const p = state.players[destUid];
+  toast(`Você entregou "${entry.it.name}" a ${(p && p.nome) || 'outro jogador'}`);
+}
+// Chegou um item entregue a mim: a transação garante que ele só entra uma vez no inventário
+async function receberEntrega(key, v) {
+  if (!v || state.role !== 'player' || !state.code) return;
+  let achou = false;
+  try {
+    await runTransaction(ref(db, `rooms/${state.code}/entregas/${uid}/${key}`), cur => { achou = cur !== null; return null; });
+  } catch (e) { console.warn('[sala] entrega', e); return; }
+  if (!achou) return;
+  const it = parseItem(v.json, v.nome);
+  addToInventory(it);
+  toast(`${v.deNome || 'Alguém'} entregou "${it.name}" a você`);
+}
+
+// Lista de jogadores para escolher (um jogador ou "todos")
+function jogadorSel(comTodos, semEu) {
+  const s = h('select', { class: 'sala-campo' });
+  const fill = () => {
+    const atual = s.value;
+    const ids = Object.keys(state.players).filter(id => !(semEu && id === uid))
+      .sort((a, b) => String(state.players[a].nome || '').localeCompare(String(state.players[b].nome || ''), 'pt'));
+    s.replaceChildren(...[comTodos && ids.length ? h('option', { value: '*' }, 'Todos os jogadores') : null,
+      ...ids.map(id => h('option', { value: id }, state.players[id].nome || '(sem nome)'))].filter(Boolean));
+    if ([...s.children].some(o => o.value === atual)) s.value = atual;
+  };
+  s.addEventListener('focus', fill);
+  fill();
+  s.alvos = () => (s.value === '*' ? Object.keys(state.players) : (s.value ? [s.value] : []));
+  return s;
 }
 
 function mesaRow(id, m, master) {
@@ -1023,7 +1186,8 @@ function mesaForm() {
       h('button', { class: 'sala-botao', onclick: () => savePreset(draft) }, 'Salvar como preset')));
 }
 
-function placeForm() {
+// Lista com os itens do inventário e dos guardados do jogador
+function escolherItem() {
   const s = h('select', { class: 'sala-campo sala-expandir sala-largo' });
   let map = [], chosen = null;
   const fill = () => {
@@ -1031,19 +1195,36 @@ function placeForm() {
     const inv = ficha.inventario || {};
     (inv.content || []).forEach(it => map.push({ it, list: inv.content, where: 'inventário' }));
     (inv.guardados || []).forEach(it => map.push({ it, list: inv.guardados, where: 'guardados' }));
-    s.replaceChildren(...(map.length ? map.map((m, i) => h('option', { value: i }, `${m.it.name} (${m.where})`)) : [h('option', { value: '' }, 'Nada para colocar')]));
+    s.replaceChildren(...(map.length ? map.map((m, i) => h('option', { value: i }, `${m.it.name} (${m.where})`)) : [h('option', { value: '' }, 'Nada para escolher')]));
     const idx = map.findIndex(m => m.it === chosen);
     s.value = idx >= 0 ? String(idx) : (map.length ? '0' : '');
   };
   s.addEventListener('focus', fill);
   s.addEventListener('change', () => { const m = map[Number(s.value)]; chosen = m ? m.it : null; });
   fill();
-  return h('div', { class: 'sala-linha sala-margem-topo' }, s,
+  return { el: s, pick: () => map[Number(s.value)] || null, refresh() { chosen = null; fill(); } };
+}
+
+function placeForm() {
+  const e = escolherItem();
+  return h('div', { class: 'sala-linha sala-margem-topo' }, e.el,
     h('button', { class: 'sala-botao', onclick: async () => {
-      const m = map[Number(s.value)];
+      const m = e.pick();
       if (!m) return toast('Escolha um item do seu inventário.');
-      await placeItem(m); chosen = null; fill();
+      await placeItem(m); e.refresh();
     } }, 'Colocar na mesa'));
+}
+
+function entregarForm() {
+  const e = escolherItem();
+  const dest = jogadorSel(false, true);
+  return h('div', { class: 'sala-margem-topo' },
+    h('p', { class: 'sala-discreto' }, 'O item sai do seu inventário e vai direto para o inventário do jogador escolhido.'),
+    h('div', { class: 'sala-linha' }, e.el, dest,
+      h('button', { class: 'sala-botao', onclick: async () => {
+        await entregarItem(e.pick(), dest.value);
+        e.refresh();
+      } }, 'Entregar')));
 }
 
 function mesaView(master) {
@@ -1056,19 +1237,35 @@ function mesaView(master) {
   render();
   return master
     ? submenu('mesa-mestre', [['mesa', 'Na mesa', list], ['novo', 'Criar item', mesaForm()]])
-    : submenu('mesa-jogador', [['mesa', 'Na mesa', list], ['colocar', 'Colocar item meu', placeForm()]]);
+    : submenu('mesa-jogador', [['mesa', 'Na mesa', list], ['colocar', 'Colocar item meu', placeForm()], ['entregar', 'Entregar a alguém', entregarForm()]]);
 }
 
 // ---------------------------------------------------------------- presets (mestre)
-async function savePreset(it) {
+// Cada preset tem um tipo: item, ritual, habilidade ou npc
+const TIPOS_PRESET = [['item', 'Itens'], ['ritual', 'Rituais'], ['habilidade', 'Habilidades'], ['npc', 'NPCs']];
+const presetsDoTipo = tipo => Object.keys(state.presets)
+  .filter(id => (state.presets[id].tipo || 'item') === tipo)
+  .sort((a, b) => String(state.presets[a].nome).localeCompare(String(state.presets[b].nome), 'pt'));
+const textoPreset = it => ({ name: it.name || 'Novo', description: it.description || '', dice: it.dice || '', isFavorite: false });
+
+async function savePreset(it, tipo = 'item') {
   if (!state.code) return;
-  const copy = stripItem(it);
-  if (!copy.name) copy.name = 'Novo item';
+  const copy = tipo === 'item' ? stripItem(it)
+    : tipo === 'npc' ? { ...NPC_VAZIO(), ...it, pv: num(it.pvMax), pe: num(it.peMax), md: 0 }
+    : textoPreset(it);
+  const nome = copy.name || copy.nome || (tipo === 'item' ? 'Novo item' : tipo === 'npc' ? 'NPC' : 'Novo');
+  if (tipo === 'item' && !copy.name) copy.name = nome;
   try {
-    await push(ref(db, `rooms/${state.code}/presets`), { json: JSON.stringify(copy), nome: copy.name });
-    toast(`Preset "${copy.name}" salvo`);
+    await push(ref(db, `rooms/${state.code}/presets`), { json: JSON.stringify(copy), nome, tipo });
+    toast(`Preset "${nome}" salvo`);
   } catch (e) { toast(friendly(e)); }
 }
+function excluirPreset(id, nome) {
+  if (confirm(`Excluir o preset "${nome}"?`)) remove(ref(db, `rooms/${state.code}/presets/${id}`)).catch(e => toast(friendly(e)));
+}
+const salvarPresetEditado = (id, tipo, c) =>
+  update(ref(db), { [`rooms/${state.code}/presets/${id}`]: { json: JSON.stringify(c), nome: c.name || c.nome || 'Preset', tipo } })
+    .catch(e => toast(friendly(e)));
 
 function presetRow(id) {
   const p = state.presets[id];
@@ -1077,32 +1274,215 @@ function presetRow(id) {
   const sum = h('summary', {}, name, h('span', { class: 'sala-discreto' }, ' ' + itemInfo(it)),
     h('button', { class: 'sala-botao sala-margem-esquerda', onclick: e => { if (e.preventDefault) e.preventDefault(); putOnTable(it, 1, 'Mestre'); } }, '+ Mesa'));
   const qty = h('input', { class: 'sala-campo sala-largura-quantidade', type: 'number', value: 1, min: 1, max: 20 });
-  const ctx = {
-    commit() {
-      const c = stripItem(it);
-      update(ref(db), { [`rooms/${state.code}/presets/${id}`]: { json: JSON.stringify(c), nome: c.name || 'Item' } })
-        .catch(e => toast(friendly(e)));
-    }
-  };
+  const dest = jogadorSel(true);
+  const ctx = { commit() { salvarPresetEditado(id, 'item', stripItem(it)); } };
   return h('details', { class: 'sala-item' }, sum,
     h('div', { class: 'sala-grupo-campos' }, itemFieldList(it, ctx, undefined, () => { name.textContent = it.name || '(sem nome)'; })),
     h('div', { class: 'sala-linha' }, fld('Quantidade', qty),
-      h('button', { class: 'sala-botao', onclick: () => putOnTable(it, qty.value, 'Mestre') }, 'Colocar na mesa'),
-      h('button', { class: 'sala-botao sala-perigo', onclick: () => {
-        if (confirm(`Excluir o preset "${it.name}"?`)) remove(ref(db, `rooms/${state.code}/presets/${id}`)).catch(e => toast(friendly(e)));
-      } }, 'Excluir preset')));
+      h('button', { class: 'sala-botao', onclick: () => putOnTable(it, qty.value, 'Mestre') }, 'Colocar na mesa')),
+    h('div', { class: 'sala-linha sala-margem-topo' }, dest,
+      h('button', { class: 'sala-botao', onclick: async () => {
+        const alvos = dest.alvos();
+        if (!alvos.length) return toast('Não há jogadores na sala.');
+        for (const a of alvos) await darItem(it, a, 'Mestre');
+        toast(`"${it.name}" entregue a ${alvos.length} jogador(es)`);
+      } }, 'Dar ao jogador'),
+      h('button', { class: 'sala-botao sala-perigo', onclick: () => excluirPreset(id, it.name) }, 'Excluir preset')));
+}
+
+// Dá um ritual ou habilidade a um ou mais jogadores (grava direto na ficha deles)
+async function darPreset(it, tipo, puids) {
+  const key = tipo === 'ritual' ? 'magias' : 'habilidades';
+  if (!puids.length) return toast('Não há jogadores na sala.');
+  let ok = 0, ja = 0;
+  for (const puid of puids) {
+    const e = state.fichas[puid];
+    if (!e || !e.ficha) continue;
+    const f = JSON.parse(JSON.stringify(e.ficha));
+    if (!Array.isArray(f[key])) f[key] = [];
+    if (f[key].some(x => String(x.name || '').toLowerCase() === String(it.name || '').toLowerCase())) { ja++; continue; }
+    f[key].push(textoPreset(it));
+    await masterCommit(puid, f);
+    rebuildEditorIfOpen(puid);
+    ok++;
+  }
+  const rotulo = tipo === 'ritual' ? 'Ritual' : 'Habilidade';
+  toast(ok ? `${rotulo} "${it.name}" dado a ${ok} jogador(es)` + (ja ? ` (${ja} já tinha)` : '') : (ja ? 'Esse jogador já tem isso.' : 'Nenhuma ficha carregada.'));
+}
+
+function presetTextoRow(id, tipo) {
+  const p = state.presets[id];
+  const it = { ...textoPreset({}), ...parseItem(p.json, p.nome) };
+  const sum = h('summary', {}, it.name || p.nome, it.dice ? h('span', { class: 'sala-discreto' }, ' · ' + it.dice) : null);
+  const ctx = { commit() { salvarPresetEditado(id, tipo, textoPreset(it)); } };
+  const dest = jogadorSel(true);
+  return h('details', { class: 'sala-item' }, sum,
+    h('div', { class: 'sala-grupo-campos' },
+      fld('Nome', inp('text', it.name, v => { it.name = v; sum.firstChild.textContent = v || '(sem nome)'; }, ctx)),
+      fld('Dado', diceInp(it.dice, v => { it.dice = v; }, ctx)),
+      fld('Descrição', inp('area', it.description, v => { it.description = v; }, ctx), 'wide')),
+    h('div', { class: 'sala-linha' }, dest,
+      h('button', { class: 'sala-botao', onclick: () => darPreset(it, tipo, dest.alvos()) }, 'Dar ao jogador'),
+      h('button', { class: 'sala-botao sala-perigo', onclick: () => excluirPreset(id, it.name) }, 'Excluir preset')));
+}
+
+function presetNpcRow(id) {
+  const p = state.presets[id];
+  const d = { ...NPC_VAZIO(), ...parseItem(p.json, p.nome) };
+  const ctx = { commit() { salvarPresetEditado(id, 'npc', { ...d, nome: d.nome || 'NPC' }); } };
+  const sum = h('summary', {}, d.nome || p.nome, h('span', { class: 'sala-discreto' }, ` · PV ${num(d.pvMax)} · PE ${num(d.peMax)} · MD ${num(d.mdMax)}`));
+  return h('details', { class: 'sala-item' }, sum,
+    h('div', { class: 'sala-grupo-campos' },
+      fld('Nome', inp('text', d.nome, v => { d.nome = v; }, ctx)),
+      fld('PV máx.', inp('number', d.pvMax, v => { d.pvMax = v; d.pv = v; }, ctx)),
+      fld('PE máx.', inp('number', d.peMax, v => { d.peMax = v; d.pe = v; }, ctx)),
+      fld('MD máx.', inp('number', d.mdMax, v => { d.mdMax = v; }, ctx)),
+      fld('Notas', inp('area', d.notas, v => { d.notas = v; }, ctx), 'wide')),
+    h('div', { class: 'sala-linha' },
+      h('button', { class: 'sala-botao', onclick: () => npcNovo(npcDePreset(d)).then(k => k && toast(`"${d.nome}" entrou em cena`)) }, 'Colocar em cena'),
+      h('button', { class: 'sala-botao sala-perigo', onclick: () => excluirPreset(id, d.nome) }, 'Excluir preset')));
+}
+const npcDePreset = d => ({ ...d, pv: num(d.pvMax), pe: num(d.peMax), md: 0 });
+
+// Formulário para criar um ritual ou habilidade novo já como preset
+function presetNovoForm(tipo) {
+  const vazio = () => ({ name: '', description: '', dice: '', isFavorite: false });
+  let draft = vazio();
+  const box = h('div', { class: 'sala-grupo-campos' });
+  const nctx = { commit() {} };
+  const fill = () => box.replaceChildren(
+    fld('Nome', inp('text', draft.name, v => { draft.name = v; }, nctx)),
+    fld('Dado', diceInp(draft.dice, v => { draft.dice = v; }, nctx)),
+    fld('Descrição', inp('area', draft.description, v => { draft.description = v; }, nctx), 'wide'));
+  fill();
+  return h('div', { class: 'sala-caixa' },
+    h('h4', { class: 'sala-subtitulo' }, tipo === 'ritual' ? 'Novo ritual' : 'Nova habilidade'), box,
+    h('button', { class: 'sala-botao sala-margem-topo', onclick: async () => {
+      if (!String(draft.name).trim()) return toast('Digite o nome.');
+      await savePreset(draft, tipo); draft = vazio(); fill();
+    } }, 'Salvar preset'));
 }
 
 function presetsView() {
-  const list = h('div', {});
-  const render = () => safeRender(list, () => {
-    const ids = Object.keys(state.presets).sort((a, b) => String(state.presets[a].nome).localeCompare(String(state.presets[b].nome), 'pt'));
-    list.replaceChildren(...(ids.length ? ids.map(presetRow)
-      : [h('p', { class: 'sala-discreto' }, 'Nenhum preset ainda. Crie um item em "+ Novo item" (na Mesa) e use "Salvar como preset", ou use "→ Preset" num item da mesa.')]));
+  const blocos = TIPOS_PRESET.map(([tipo, rotulo]) => {
+    const list = h('div', {});
+    const render = () => safeRender(list, () => {
+      const ids = presetsDoTipo(tipo);
+      const vazio = tipo === 'item' ? 'Nenhum item salvo. Crie um item em Mesa → "Criar item" e use "Salvar como preset", ou use "→ Preset" num item da mesa.'
+        : tipo === 'npc' ? 'Nenhum NPC salvo. Crie um na aba NPCs e use "Salvar preset".'
+        : 'Nenhum preset ainda. Crie um abaixo, ou use "→ Preset" na aba do jogador.';
+      list.replaceChildren(...(ids.length ? ids.map(id => tipo === 'item' ? presetRow(id) : tipo === 'npc' ? presetNpcRow(id) : presetTextoRow(id, tipo))
+        : [h('p', { class: 'sala-discreto' }, vazio)]));
+    });
+    addView('presets', render);
+    render();
+    return [tipo, rotulo, h('div', {}, list, tipo === 'ritual' || tipo === 'habilidade' ? presetNovoForm(tipo) : null)];
   });
-  addView('presets', render);
+  return submenu('presets', blocos);
+}
+
+// ---------------------------------------------------------------- NPCs (mestre)
+const NPC_VAZIO = () => ({ nome: 'Novo NPC', pv: 10, pvMax: 10, pe: 0, peMax: 0, md: 0, mdMax: 10, notas: '' });
+const NPC_STATS = [['pv', 'pvMax', 'PV', 'pv'], ['pe', 'peMax', 'PE', 'pe'], ['md', 'mdMax', 'MD', 'md']];
+
+async function npcNovo(d) {
+  if (!state.code) return null;
+  try { const r = await push(ref(db, `rooms/${state.code}/npcs`), { ...NPC_VAZIO(), ...d }); return r.key; }
+  catch (e) { toast(friendly(e)); return null; }
+}
+function npcSet(nid, patch) {
+  const u = {};
+  for (const [k, v] of Object.entries(patch)) u[`rooms/${state.code}/npcs/${nid}/${k}`] = v;
+  return update(ref(db), u).catch(e => toast(friendly(e)));
+}
+function npcAjuste(nid, k, mk, dir) {
+  const n = state.npcs[nid];
+  if (!n) return;
+  const max = num(n[mk]);
+  let v = num(n[k]) + dir * (state.ui.step || 1);
+  v = Math.max(0, max > 0 ? Math.min(max, v) : v);
+  npcSet(nid, { [k]: v });
+}
+function npcIni(nid) {
+  const n = state.npcs[nid];
+  if (!n) return;
+  const r = 1 + Math.floor(Math.random() * 20);
+  return iniUpdate({ [`entries/n_${nid}`]: { nome: n.nome || 'NPC', valor: r, tipo: 'npc', npc: nid } });
+}
+async function npcRemover(nid) {
+  const n = state.npcs[nid];
+  if (!confirm(`Remover "${(n && n.nome) || 'NPC'}" da cena?`)) return;
+  const base = `rooms/${state.code}`, eid = 'n_' + nid;
+  const u = { [`${base}/npcs/${nid}`]: null, [`${base}/condicoes/${nid}`]: null };
+  const ini = state.ini || {};
+  if (ini.entries && ini.entries[eid]) {
+    u[`${base}/iniciativa/entries/${eid}`] = null;
+    if (ini.atual === eid) { const resto = iniSorted().filter(e => e.id !== eid); u[`${base}/iniciativa/atual`] = resto.length ? resto[0].id : null; }
+  }
+  try { await update(ref(db), u); } catch (e) { toast(friendly(e)); }
+}
+
+function npcCard(nid) {
+  const n = state.npcs[nid];
+  const nome = h('input', { class: 'sala-campo sala-expandir', value: n.nome || '' });
+  nome.addEventListener('change', () => {
+    const v = nome.value.trim() || 'NPC';
+    npcSet(nid, { nome: v });
+    const ent = state.ini && state.ini.entries && state.ini.entries['n_' + nid];
+    if (ent) iniUpdate({ [`entries/n_${nid}/nome`]: v });
+  });
+  const barras = h('div', { class: 'sala-barras' }, NPC_STATS.map(([k, mk, label, cls]) => {
+    const cur = num(n[k]), max = num(n[mk]);
+    const fill = h('i'); fill.style.width = (max > 0 ? Math.max(0, Math.min(100, (cur / max) * 100)) : 0) + '%';
+    return h('div', { class: 'sala-estatistica' },
+      h('div', { class: 'sala-barra ' + cls }, fill, h('span', {}, `${label} ${cur}/${max}`)),
+      h('div', { class: 'sala-ajuste' },
+        h('button', { class: 'sala-botao', onclick: () => npcAjuste(nid, k, mk, -1) }, '−'),
+        h('button', { class: 'sala-botao', onclick: () => npcAjuste(nid, k, mk, +1) }, '+')));
+  }));
+  const numero = k => { const i = h('input', { class: 'sala-campo', type: 'number', value: num(n[k]) }); i.addEventListener('change', () => npcSet(nid, { [k]: num(i.value) })); return i; };
+  const notas = h('textarea', { class: 'sala-campo', rows: 3 });
+  notas.value = n.notas || '';
+  notas.addEventListener('change', () => npcSet(nid, { notas: notas.value }));
+  const det = h('details', { class: 'sala-item', open: !!state.ui.npcAberto[nid] },
+    h('summary', {}, 'Detalhes'),
+    h('div', { class: 'sala-grupo-campos' },
+      NPC_STATS.flatMap(([k, mk, label]) => [fld(label + ' atual', numero(k)), fld(label + ' máx.', numero(mk))]),
+      fld('Notas', notas, 'wide')));
+  det.addEventListener('toggle', () => { state.ui.npcAberto[nid] = det.open; });
+  return h('div', { class: 'sala-card', 'data-npc': nid },
+    h('header', {}, nome),
+    barras,
+    h('div', { class: 'sala-condicoes' }, emblemas(nid, true)),
+    condicaoForm(nid),
+    det,
+    h('div', { class: 'sala-linha sala-margem-topo' },
+      h('button', { class: 'sala-botao', onclick: () => npcIni(nid) }, '→ Iniciativa'),
+      h('button', { class: 'sala-botao', onclick: () => savePreset({ ...n }, 'npc').catch(() => {}) }, 'Salvar preset'),
+      h('button', { class: 'sala-botao sala-perigo', onclick: () => npcRemover(nid) }, 'Remover')));
+}
+
+function npcsView() {
+  const list = h('div', { class: 'sala-lista' });
+  const render = () => safeRender(list, () => {
+    const ids = Object.keys(state.npcs).sort((a, b) => String(state.npcs[a].nome).localeCompare(String(state.npcs[b].nome), 'pt'));
+    list.replaceChildren(...(ids.length ? ids.map(npcCard) : [h('p', { class: 'sala-discreto' }, 'Nenhum NPC em cena. Crie um abaixo ou coloque um preset em cena.')]));
+  });
+  addView('npcs', render);
+  addView('condicoes', render);
   render();
-  return list;
+  const nome = h('input', { class: 'sala-campo sala-expandir', placeholder: 'Nome (ex: Lobo sombrio)' });
+  const pv = h('input', { class: 'sala-campo sala-largura-numero', type: 'number', placeholder: 'PV', value: 10 });
+  const pe = h('input', { class: 'sala-campo sala-largura-numero', type: 'number', placeholder: 'PE', value: 0 });
+  const md = h('input', { class: 'sala-campo sala-largura-numero', type: 'number', placeholder: 'MD', value: 10 });
+  return h('div', {}, list,
+    h('div', { class: 'sala-caixa sala-margem-topo' }, h('h4', { class: 'sala-subtitulo' }, 'Novo NPC'),
+      h('div', { class: 'sala-linha' }, nome, pv, pe, md,
+        h('button', { class: 'sala-botao', onclick: async () => {
+          const k = await npcNovo({ nome: nome.value.trim() || 'Novo NPC', pv: num(pv.value), pvMax: num(pv.value), pe: num(pe.value), peMax: num(pe.value), md: 0, mdMax: num(md.value) });
+          if (k) nome.value = '';
+        } }, '+ Criar')),
+      h('p', { class: 'sala-discreto' }, 'Os campos são PV, PE e MD máximos. Depois de criado, dá para ajustar tudo e salvar como preset.')));
 }
 
 // ---------------------------------------------------------------- iniciativa
@@ -1110,9 +1490,9 @@ const iniSorted = () => Object.entries((state.ini && state.ini.entries) || {})
   .map(([id, e]) => ({ id, ...e }))
   .sort((a, b) => num(b.valor) - num(a.valor) || String(a.nome).localeCompare(String(b.nome), 'pt'));
 
-async function iniUpdate(map) {
+async function iniUpdate(map, extra = {}) {
   const base = `rooms/${state.code}/iniciativa`;
-  const u = {};
+  const u = { ...extra };
   for (const [k, v] of Object.entries(map)) u[`${base}/${k}`] = v;
   try { await update(ref(db), u); } catch (e) { toast(friendly(e)); }
 }
@@ -1134,7 +1514,18 @@ function iniNext() {
   let next = idx + 1, rodada = num(ini.rodada) || 1;
   if (idx < 0) next = 0;
   else if (next >= list.length) { next = 0; rodada++; }
-  return iniUpdate({ atual: list[next].id, rodada, ativa: true });
+  // ao fim do turno, as condições de quem acabou de jogar perdem 1 turno
+  const extra = {}, acabou = [];
+  if (idx >= 0) {
+    const alvo = alvoIni(list[idx]);
+    for (const c of condicoesDe(alvo)) {
+      if (!(num(c.turnos) > 0)) continue;
+      const caminho = `rooms/${state.code}/condicoes/${alvo}/${c.cid}`;
+      if (c.turnos <= 1) { extra[caminho] = null; acabou.push(c.nome); } else extra[`${caminho}/turnos`] = c.turnos - 1;
+    }
+    if (acabou.length) toast(`${list[idx].nome}: ${acabou.join(', ')} terminou`);
+  }
+  return iniUpdate({ atual: list[next].id, rodada, ativa: true }, extra);
 }
 function iniReset() {
   const first = iniSorted()[0];
@@ -1180,7 +1571,8 @@ function iniRow(e, master, ini) {
   if (!master) {
     return h('div', { class: 'sala-iniciativa-linha' + (cur ? ' cur' : '') },
       h('span', { class: 'sala-iniciativa-valor' }, String(num(e.valor))),
-      h('span', { class: 'sala-iniciativa-nome' }, (cur ? '▶ ' : '') + (e.nome || '?') + (e.uid === uid ? ' (você)' : '')));
+      h('span', { class: 'sala-iniciativa-nome' }, (cur ? '▶ ' : '') + (e.nome || '?') + (e.uid === uid ? ' (você)' : '')),
+      h('span', { class: 'sala-condicoes' }, emblemas(alvoIni(e), false)));
   }
   const val = h('input', { class: 'sala-campo', type: 'number' });
   val.value = num(e.valor);
@@ -1190,6 +1582,7 @@ function iniRow(e, master, ini) {
   nm.addEventListener('change', () => { if (nm.value.trim()) iniUpdate({ [`entries/${e.id}/nome`]: nm.value.trim() }); });
   return h('div', { class: 'sala-iniciativa-linha' + (cur ? ' cur' : '') },
     h('span', { class: 'sala-iniciativa-valor' }, val), nm,
+    h('span', { class: 'sala-condicoes' }, emblemas(alvoIni(e), true)),
     h('button', { class: 'sala-botao', title: 'Dar o turno a este', onclick: () => iniUpdate({ atual: e.id, ativa: true }) }, '▶'),
     h('button', { class: 'sala-botao', title: 'Rolar d20', onclick: () => iniUpdate({ [`entries/${e.id}/valor`]: 1 + Math.floor(Math.random() * 20) }) }, 'd20'),
     h('button', { class: 'sala-botao sala-perigo', onclick: () => iniDel(e.id) }, '✕'));
@@ -1235,6 +1628,7 @@ function iniView(master) {
     });
   };
   addView('ini', render);
+  addView('condicoes', render);
   render();
   return h('div', {}, top, list, refs.self || null);
 }
@@ -1269,7 +1663,31 @@ function salaAvancado() {
     ids.forEach(id => { u[`${base}/players/${id}`] = null; u[`${base}/fichas/${id}`] = null; });
     try { await update(ref(db), u); } catch (e) { toast(friendly(e)); }
   };
+  const seg = h('code', { class: 'sala-codigo sm' });
+  let visivel = false;
+  const pintaSeg = () => {
+    seg.textContent = state.segredo ? (visivel ? state.segredo : '••••••••••••') : 'Esta sala ainda não tem código de mestre.';
+    if (btnVer) btnVer.textContent = visivel ? 'Ocultar' : 'Mostrar';
+    if (btnGerar) btnGerar.hidden = !!state.segredo;
+  };
+  const trocaSeg = async revogar => {
+    if (revogar && !confirm('Gerar um novo código e tirar o acesso de mestre de todos os outros aparelhos?')) return;
+    const u = { [`rooms/${state.code}/segredo`]: newSecret() };
+    if (revogar) u[`rooms/${state.code}/claim`] = null;
+    try { await update(ref(db), u); toast(revogar ? 'Novo código gerado; outros aparelhos foram desconectados' : 'Código de mestre gerado'); }
+    catch (e) { toast(friendly(e)); }
+  };
+  const btnGerar = h('button', { class: 'sala-botao', onclick: () => trocaSeg(false) }, 'Gerar código');
+  const btnVer = h('button', { class: 'sala-botao', onclick: () => { visivel = !visivel; pintaSeg(); } }, 'Mostrar');
+  addView('segredo', pintaSeg);
+  pintaSeg();
   return h('div', { class: 'sala-lista' },
+    h('div', { class: 'sala-caixa' }, h('h3', { class: 'sala-titulo' }, 'Acesso do mestre (outros aparelhos)'),
+      h('p', { class: 'sala-discreto' }, 'Quem tiver este código e o código da sala pode mestrar daqui. Guarde com cuidado: ele permite editar tudo da sala.'),
+      h('div', { class: 'sala-linha' }, seg, btnVer,
+        h('button', { class: 'sala-botao', onclick: () => state.segredo && navigator.clipboard && navigator.clipboard.writeText(state.segredo).then(() => toast('Código de mestre copiado')) }, 'Copiar'),
+        btnGerar,
+        h('button', { class: 'sala-botao sala-perigo', onclick: () => trocaSeg(true) }, 'Gerar novo e revogar outros'))),
     h('div', { class: 'sala-caixa' }, h('h3', { class: 'sala-titulo' }, 'Mesa'),
       h('div', { class: 'sala-linha' }, nome, h('button', { class: 'sala-botao', onclick: salvar }, 'Renomear'))),
     h('div', { class: 'sala-caixa' }, h('h3', { class: 'sala-titulo' }, 'Fichas'),
@@ -1355,6 +1773,10 @@ function masterHome() {
   const say = (t, bad) => { msg.textContent = t; msg.className = bad ? 'sala-erro' : 'sala-discreto'; };
   const nameIn = h('input', { class: 'sala-campo', placeholder: 'Nome da mesa (opcional)', maxlength: 40 });
   const list = h('div', { class: 'sala-lista' });
+  const salaIn = h('input', { class: 'sala-campo sala-campo-codigo', placeholder: 'SALA', maxlength: 8 });
+  const segIn = h('input', { class: 'sala-campo sala-expandir', placeholder: 'CÓDIGO DE MESTRE', maxlength: 16 });
+  salaIn.addEventListener('input', () => { salaIn.value = cleanCode(salaIn.value); });
+  segIn.addEventListener('input', () => { segIn.value = cleanSecret(segIn.value); });
   const enter = async code => {
     say('Abrindo…');
     try { await openMasterRoom(code); masterRoomView(); }
@@ -1385,7 +1807,16 @@ function masterHome() {
           try { const code = await createRoom(nameIn.value.trim()); await enter(code); } catch (e) { say(friendly(e), true); }
         } }, 'Criar sala')), msg),
       h('div', { class: 'sala-caixa' }, h('h3', { class: 'sala-titulo' }, 'Suas salas'), list),
-      h('p', { class: 'sala-discreto' }, 'A sala fica ligada ao navegador em que foi criada (login anônimo). Se limpar os dados do site, você perde o acesso de mestre a ela.')));
+      h('div', { class: 'sala-caixa' },
+        h('h3', { class: 'sala-titulo' }, 'Entrar com código de mestre'),
+        h('p', { class: 'sala-discreto' }, 'Para mestrar a mesma sala em outro aparelho: copie o código de mestre em Avançado → Acesso do mestre e informe aqui junto com o código da sala.'),
+        h('div', { class: 'sala-linha' }, salaIn, segIn,
+          h('button', { class: 'sala-botao', onclick: async () => {
+            say('Verificando…');
+            try { const c = await claimMaster(salaIn.value, segIn.value); await enter(c); }
+            catch (e) { say(friendly(e), true); }
+          } }, 'Entrar'))),
+      h('p', { class: 'sala-discreto' }, 'Cada aparelho entra com um login anônimo. Para continuar mestrando depois de limpar os dados do site, ou em outro aparelho, use o código de mestre da sala.')));
 }
 
 function masterRoomView() {
@@ -1397,6 +1828,9 @@ function masterRoomView() {
   state.rollBoxes.push(rolls);
   const dice = h('input', { class: 'sala-campo sala-expandir', placeholder: 'ex: 2d6+3' });
   const roll = () => { masterRoll(dice.value); };
+  const secreta = h('input', { type: 'checkbox' });
+  secreta.checked = !!state.ui.secreta;
+  secreta.addEventListener('change', () => { state.ui.secreta = secreta.checked; });
   dice.addEventListener('keydown', e => { if (e.key === 'Enter') roll(); });
   const step = h('select', { class: 'sala-campo sala-largura-auto' }, [1, 5, 10].map(n => h('option', { value: n }, n)));
   step.value = String(state.ui.step);
@@ -1414,9 +1848,11 @@ function masterRoomView() {
       h('div', {}, h('h3', { class: 'sala-titulo' }, 'Jogadores'), players, players._empty),
       h('div', {}, submenu('mestre', [
         ['iniciativa', 'Iniciativa', iniView(true)],
+        ['npcs', 'NPCs', npcsView()],
         ['mesa', 'Mesa', mesaView(true)],
         ['presets', 'Presets', presetsView()],
         ['rolagens', 'Rolagens', h('div', {},
+          h('label', { class: 'sala-opcao sala-margem-baixo', title: 'A rolagem só aparece para você e não vai para o histórico da sala' }, secreta, ' Secreta (só eu vejo)'),
           h('div', { class: 'sala-linha sala-margem-baixo' }, dice, h('button', { class: 'sala-botao', onclick: roll }, 'Rolar'),
             ['d4', 'd6', 'd8', 'd10', 'd12', 'd20'].map(d => h('button', { class: 'sala-botao', onclick: () => masterRoll('1' + d) }, d))),
           rolls)],
