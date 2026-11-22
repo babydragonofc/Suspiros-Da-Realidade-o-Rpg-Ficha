@@ -3780,3 +3780,261 @@ fear {
     padding: 0;
     width: 50px;
 }
+
+
+/* ==========================================================================
+   SALAS (rooms.js)
+   Tudo que a sala usa começa com .sl- . Usa as mesmas variáveis do site
+   (--main-clr, --ter-clr, --btn-bg...) e o mesmo visual: cantos retos,
+   fundos #111/#222, botões claros.
+   ========================================================================== */
+
+:root {
+    --sl-panel: #111;
+    --sl-panel-2: #222;
+    --sl-line: var(--ter-clr);
+    --sl-hp: #E01B24;
+    --sl-pe: #c061cb;
+    --sl-md: #ffffff;
+    --sl-ok: #4cd964;
+    --sl-bad: #E01B24;
+    --sl-turn: gold;
+}
+
+[hidden] { display: none !important; }
+
+/* campos de texto precisam poder ser selecionados (o site desliga user-select em tudo) */
+.sl-overlay, .sl-overlay *, #sala-content, #sala-content * { user-select: text; }
+.sl-overlay button, #sala-content button, .sl-overlay summary, #sala-content summary { user-select: none; }
+
+/* ---------- aba "Sala" do jogador ---------- */
+#sala-content {
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 8px;
+    box-sizing: border-box;
+}
+#sala-content::-webkit-scrollbar, .sl-overlay::-webkit-scrollbar, .sl-rolls::-webkit-scrollbar { display: none; }
+
+/* ---------- tela do mestre (sobreposição) ---------- */
+.sl-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: none;
+    overflow: auto;
+    background: #0d0d0d;
+    color: var(--main-clr);
+}
+.sl-overlay.open { display: block; }
+
+.sl-top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    background: #0d0d0d;
+    border-bottom: 1px solid var(--sl-line);
+}
+
+.sl-main {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+    gap: 16px;
+    padding: 14px;
+    color: var(--main-clr);
+}
+
+.sl-page { padding: 14px; max-width: 720px; margin: 0 auto; }
+
+/* ---------- blocos básicos ---------- */
+.sl-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    color: var(--main-clr);
+    font-size: 15px;
+}
+
+.sl-box, .sl-card, details.sl-sec {
+    background: var(--sl-panel);
+    border: 1px solid var(--sl-line);
+    padding: 10px 12px;
+}
+
+.sl-h {
+    margin: 0 0 8px;
+    font-family: 'DDC', sans-serif;
+    font-weight: 300;
+    font-size: 26px;
+    color: var(--main-clr);
+}
+.sl-h.lg { font-size: 34px; margin: 0; }
+
+.sl-code {
+    font-family: 'DDC', sans-serif;
+    font-size: 34px;
+    letter-spacing: 4px;
+    line-height: 1.1;
+}
+.sl-code.sm { font-size: 24px; }
+
+.sl-muted { margin: 2px 0; font-size: 12px; color: #aaa; }
+.sl-err { color: var(--sl-bad); font-size: 13px; }
+.sl-desc { font-size: 12px; color: #ccc; white-space: pre-wrap; }
+
+.sl-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.sl-grid { display: flex; flex-direction: column; gap: 8px; }
+
+/* utilitários (substituem os style="" que ficavam no JS) */
+.sl-grow   { flex: 1; }
+.sl-shrink { min-width: 0; }
+.sl-fixed  { flex: none; }
+.sl-wide   { min-width: 140px; }
+.sl-mt     { margin-top: 8px; }
+.sl-mb     { margin-bottom: 6px; }
+.sl-my     { margin: 6px 0; }
+.sl-ml     { margin-left: 8px; }
+.sl-qty    { width: 70px; }
+.sl-num    { width: 80px; }
+.sl-num.wide { width: 130px; }
+.sl-auto   { width: auto; }
+
+/* ---------- botões e campos (mesma cara de .btn / .input) ---------- */
+.sl-btn {
+    min-height: 30px;
+    padding: 0 14px;
+    background-color: var(--btn-bg);
+    color: var(--btn-tx);
+    border: none;
+    font-size: 12px;
+    font-weight: 550;
+    cursor: pointer;
+    transition: 0.2s ease-in;
+}
+.sl-btn:hover { background-color: var(--btn-hvr); }
+.sl-btn.on {
+    background-color: var(--btn-hvr);
+    box-shadow: 0 0 10px var(--btn-bg);
+}
+.sl-btn.sl-danger { background-color: #5a1a1a; color: var(--main-clr); }
+.sl-btn.sl-danger:hover { background-color: #7d2222; }
+
+.sl-in {
+    min-height: 30px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    max-width: 100%;
+    background-color: var(--btn-bg);
+    color: rgb(0, 0, 0);
+    border: none;
+    font-size: 13px;
+    font-weight: 550;
+}
+.sl-in.bad { outline: 2px solid var(--sl-bad); }
+textarea.sl-in { padding: 6px 10px; resize: vertical; width: 100%; }
+.sl-codein { width: 150px; font-size: 20px; letter-spacing: 4px; text-transform: uppercase; }
+
+/* ---------- card do jogador ---------- */
+.sl-card.me { border-color: var(--sl-ok); }
+.sl-card header { display: flex; align-items: center; gap: 8px; }
+.sl-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 20px; font-weight: 700; }
+
+.sl-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: #666; }
+.sl-dot.on { background: var(--sl-ok); box-shadow: 0 0 6px var(--sl-ok); }
+
+.sl-bars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+.sl-bar { position: relative; height: 24px; background: var(--sl-panel-2); overflow: hidden; }
+.sl-bar i { position: absolute; top: 0; bottom: 0; left: 0; width: 0; transition: 0.3s; }
+.sl-bar span {
+    position: relative;
+    z-index: 1;
+    display: block;
+    text-align: center;
+    line-height: 24px;
+    font-size: 13px;
+    font-weight: 700;
+    text-shadow: 0 0 3px #000;
+}
+.sl-bar.pv i { background: var(--sl-hp); }
+.sl-bar.pe i { background: var(--sl-pe); }
+.sl-bar.md i { background: var(--sl-md); }
+.sl-bar.md span { color: #fff; mix-blend-mode: difference; text-shadow: none; }
+
+.sl-adj { display: flex; gap: 4px; margin-top: 4px; }
+.sl-adj .sl-btn { flex: 1; padding: 0; }
+
+/* ---------- editor do mestre ---------- */
+.sl-body { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--sl-line); }
+.sl-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+
+.sl-fs { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
+.sl-f { display: flex; flex-direction: column; gap: 2px; min-width: 120px; flex: 1; }
+.sl-f.wide { flex-basis: 100%; }
+.sl-f label { font-size: 11px; color: #aaa; }
+.sl-chk { display: flex; align-items: center; gap: 4px; font-size: 13px; }
+
+details.sl-item {
+    margin: 6px 0;
+    padding: 4px 8px;
+    background: var(--sl-panel-2);
+    border: 1px solid #444;
+}
+details.sl-item > summary, details.sl-sec > summary { cursor: pointer; padding: 2px 0; }
+details.sl-sec { margin-bottom: 10px; }
+details.sl-sec > summary { font-family: 'DDC', sans-serif; font-size: 24px; }
+
+.sl-pergrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px 12px; }
+.sl-perrow { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+
+/* ---------- histórico de rolagens ---------- */
+.sl-rolls { max-height: 60vh; overflow-y: auto; }
+.sl-roll { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid #333; }
+.sl-roll .total { font-size: 24px; }
+.sl-roll.dmg .total { color: var(--sl-hp); }
+
+/* ---------- mesa de itens ---------- */
+.sl-mrow { display: flex; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid #333; }
+
+/* ---------- iniciativa ---------- */
+.sl-irow {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin: 3px 0;
+    padding: 4px 6px;
+    background: var(--sl-panel-2);
+    border: 1px solid transparent;
+}
+.sl-irow.cur { border-color: var(--sl-turn); box-shadow: 0 0 10px inset rgba(255, 215, 0, 0.35); }
+.sl-ival { min-width: 44px; font-size: 20px; font-weight: 700; text-align: center; }
+.sl-ival input { width: 60px; }
+.sl-iname { flex: 1; min-width: 80px; }
+
+/* ---------- aviso (toast) ---------- */
+.sl-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 30000;
+    max-width: 90vw;
+    padding: 10px 16px;
+    background: var(--sl-panel);
+    color: var(--main-clr);
+    border: 1px solid var(--sl-line);
+    font-size: 15px;
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+    .sl-main { grid-template-columns: 1fr; }
+    .sl-bars { grid-template-columns: 1fr; }
+}

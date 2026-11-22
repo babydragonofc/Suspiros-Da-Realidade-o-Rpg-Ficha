@@ -476,7 +476,7 @@ function buildCard(puid, master) {
           h('button', { class: 'sl-btn', onclick: () => adjust(puid, k, -1) }, '−'),
           h('button', { class: 'sl-btn', onclick: () => adjust(puid, k, +1) }, '+')) : null);
     })),
-    master ? (r.body = h('div', { class: 'sl-body', style: 'display:none' })) : null);
+    master ? (r.body = Object.assign(h('div', { class: 'sl-body' }), { hidden: true })) : null);
   if (master) {
     r.body.addEventListener('focusout', () => {
       if (r.body._dirty) { r.body._dirty = false; setTimeout(() => rebuildEditorIfOpen(puid), 80); }
@@ -530,8 +530,8 @@ function toggleExpand(puid) {
   const card = masterCard(puid);
   if (!card) return;
   const body = card._refs.body;
-  const open = body.style.display === 'none';
-  body.style.display = open ? 'block' : 'none';
+  const open = !!body.hidden;
+  body.hidden = !open;
   card._refs.toggle.textContent = open ? 'Fechar' : 'Abrir';
   if (open) buildEditor(puid, body);
 }
@@ -540,7 +540,7 @@ function rebuildEditorIfOpen(puid) {
   const card = masterCard(puid);
   if (!card) return;
   const body = card._refs.body;
-  if (body.style.display === 'none') return;
+  if (body.hidden) return;
   const a = document.activeElement;
   if (body.contains(a) && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) { body._dirty = true; return; }
   buildEditor(puid, body);
@@ -717,10 +717,10 @@ function tabInv(ctx) {
       fld('Capacidade (peso adicional)', inp('number', inv.additionalWeight, v => { inv.additionalWeight = v; }, ctx)),
       fld('Usando', inp('area', inv.usando, v => { inv.usando = v; }, ctx), 'wide')),
     h('p', { class: 'sl-muted' }, `Peso carregado: ${total} / ${num(inv.additionalWeight)} · Arma equipada: ${(inv.weapon && inv.weapon.name) || '—'}`,
-      inv.weapon && inv.weapon.name ? h('button', { class: 'sl-btn', style: 'margin-left:8px', onclick: () => { inv.weapon = {}; ctx.commit(); ctx.rerender(); } }, 'Desequipar') : null),
+      inv.weapon && inv.weapon.name ? h('button', { class: 'sl-btn sl-ml', onclick: () => { inv.weapon = {}; ctx.commit(); ctx.rerender(); } }, 'Desequipar') : null),
     sec('Inventário', inv.content, 'inv'),
     sec('Guardados', inv.guardados, 'gua'),
-    h('div', { class: 'sl-row', style: 'margin-top:8px' }, where, cat,
+    h('div', { class: 'sl-row sl-mt' }, where, cat,
       h('button', { class: 'sl-btn', onclick: () => {
         const it = newItem(cat.value);
         (where.value === 'inv' ? inv.content : inv.guardados).push(it);
@@ -770,7 +770,7 @@ function listTab(ctx, key) {
   });
   return h('div', {},
     items.length ? items : h('p', { class: 'sl-muted' }, 'Nada por aqui.'),
-    h('button', { class: 'sl-btn', style: 'margin-top:8px', onclick: () => {
+    h('button', { class: 'sl-btn sl-mt', onclick: () => {
       const it = isT ? { name: 'Novo trauma', description: '', dado: '', time: { numero: 'PER', tipoT: 'PER' }, isFavorite: false }
         : { name: 'Novo', description: '', dice: '', isFavorite: false };
       arr.push(it); ctx.justAdded = it; ctx.commit(); ctx.rerender();
@@ -897,11 +897,11 @@ async function placeItem(entry) {
 function mesaRow(id, m, master) {
   const it = parseItem(m.json, m.nome);
   return h('div', { class: 'sl-mrow' },
-    h('div', { style: 'flex:1;min-width:0' },
+    h('div', { class: 'sl-grow sl-shrink' },
       h('div', {}, h('b', {}, it.name || m.nome), h('span', { class: 'sl-muted' }, ' · por ' + (m.by || '?'))),
       h('div', { class: 'sl-muted' }, itemInfo(it)),
       it.description ? h('div', { class: 'sl-desc' }, it.description) : null),
-    h('div', { class: 'sl-row', style: 'flex:none' },
+    h('div', { class: 'sl-row sl-fixed' },
       master ? [h('button', { class: 'sl-btn', title: 'Salvar este item como preset', onclick: () => savePreset(it) }, '→ Preset'),
         h('button', { class: 'sl-btn sl-danger', onclick: () => removeFromTable(id) }, 'Remover')]
         : h('button', { class: 'sl-btn', onclick: () => grabItem(id) }, 'Pegar')));
@@ -916,7 +916,7 @@ function mesaForm() {
     draft = Object.assign(newItem(v), { name: draft.name, description: draft.description, weight: draft.weight });
     fill();
   }, nctx);
-  const qty = h('input', { class: 'sl-in', type: 'number', value: 1, min: 1, max: 20, style: 'width:70px' });
+  const qty = h('input', { class: 'sl-in sl-qty', type: 'number', value: 1, min: 1, max: 20 });
   fill();
   return h('details', { class: 'sl-item' },
     h('summary', {}, '+ Novo item'),
@@ -928,7 +928,7 @@ function mesaForm() {
 }
 
 function placeForm() {
-  const s = h('select', { class: 'sl-in', style: 'flex:1;min-width:150px' });
+  const s = h('select', { class: 'sl-in sl-grow sl-wide' });
   let map = [], chosen = null;
   const fill = () => {
     map = [];
@@ -942,7 +942,7 @@ function placeForm() {
   s.addEventListener('focus', fill);
   s.addEventListener('change', () => { const m = map[Number(s.value)]; chosen = m ? m.it : null; });
   fill();
-  return h('div', { class: 'sl-row', style: 'margin-top:8px' }, s,
+  return h('div', { class: 'sl-row sl-mt' }, s,
     h('button', { class: 'sl-btn', onclick: async () => {
       const m = map[Number(s.value)];
       if (!m) return toast('Escolha um item do seu inventário.');
@@ -977,8 +977,8 @@ function presetRow(id) {
   const it = parseItem(p.json, p.nome);
   const name = h('span', {}, it.name || p.nome);
   const sum = h('summary', {}, name, h('span', { class: 'sl-muted' }, ' ' + itemInfo(it)),
-    h('button', { class: 'sl-btn', style: 'margin-left:8px', onclick: e => { if (e.preventDefault) e.preventDefault(); putOnTable(it, 1, 'Mestre'); } }, '+ Mesa'));
-  const qty = h('input', { class: 'sl-in', type: 'number', value: 1, min: 1, max: 20, style: 'width:70px' });
+    h('button', { class: 'sl-btn sl-ml', onclick: e => { if (e.preventDefault) e.preventDefault(); putOnTable(it, 1, 'Mestre'); } }, '+ Mesa'));
+  const qty = h('input', { class: 'sl-in sl-qty', type: 'number', value: 1, min: 1, max: 20 });
   const ctx = {
     commit() {
       const c = stripItem(it);
@@ -1102,21 +1102,21 @@ function iniView(master) {
   const list = h('div', {});
   let top;
   if (master) {
-    const nm = h('input', { class: 'sl-in', placeholder: 'Nome (inimigo/NPC)', style: 'flex:1;min-width:120px' });
-    const vl = h('input', { class: 'sl-in', type: 'number', placeholder: 'Valor', style: 'width:80px' });
+    const nm = h('input', { class: 'sl-in sl-grow sl-wide', placeholder: 'Nome (inimigo/NPC)' });
+    const vl = h('input', { class: 'sl-in sl-num', type: 'number', placeholder: 'Valor' });
     top = h('div', {},
       h('div', { class: 'sl-row' },
         (refs.toggle = h('button', { class: 'sl-btn', onclick: iniToggle }, 'Ativar iniciativa')),
         h('button', { class: 'sl-btn', onclick: iniNext }, 'Próximo turno ▶'),
         h('button', { class: 'sl-btn', onclick: iniReset }, 'Reiniciar rodada'),
         (refs.round = h('span', { class: 'sl-muted' }))),
-      h('div', { class: 'sl-row', style: 'margin:6px 0' }, nm, vl,
+      h('div', { class: 'sl-row sl-my' }, nm, vl,
         h('button', { class: 'sl-btn', onclick: () => { iniAdd(nm.value.trim(), vl.value); nm.value = ''; vl.value = ''; } }, '+ Adicionar'),
         h('button', { class: 'sl-btn', onclick: iniAddPlayers }, '+ Jogadores'),
         h('button', { class: 'sl-btn sl-danger', onclick: iniClear }, 'Limpar lista')));
   } else {
-    const v = h('input', { class: 'sl-in', type: 'number', placeholder: 'Sua iniciativa', style: 'width:130px' });
-    refs.self = h('div', { class: 'sl-row', style: 'margin-top:6px;display:none' }, v,
+    const v = h('input', { class: 'sl-in sl-num wide', type: 'number', placeholder: 'Sua iniciativa' });
+    refs.self = h('div', { class: 'sl-row sl-mt' }, v,
       h('button', { class: 'sl-btn', onclick: () => setMyIni(v.value) }, 'Definir'),
       h('button', { class: 'sl-btn', onclick: () => {
         const r = 1 + Math.floor(Math.random() * 20);
@@ -1130,7 +1130,7 @@ function iniView(master) {
     const ini = state.ini || {};
     if (refs.toggle) refs.toggle.textContent = ini.ativa ? 'Desativar iniciativa' : 'Ativar iniciativa';
     if (refs.round) refs.round.textContent = ini.ativa ? `Rodada ${num(ini.rodada) || 1}` : (master ? 'Desativada' : 'A iniciativa não está ativa.');
-    if (refs.self) refs.self.style.display = ini.ativa ? '' : 'none';
+    if (refs.self) refs.self.hidden = !ini.ativa;
     safeRender(list, () => {
       const rows = (master || ini.ativa) ? iniSorted().map(e => iniRow(e, master, ini)) : [];
       list.replaceChildren(...(rows.length ? rows : (master || ini.ativa ? [h('p', { class: 'sl-muted' }, 'Ninguém na ordem ainda.')] : [])));
@@ -1168,7 +1168,7 @@ function renderPlayerSala() {
       h('div', { class: 'sl-box sl-row' },
         h('div', {}, h('div', { class: 'sl-muted' }, 'Sala' + (state.meta && state.meta.name ? ' · ' + state.meta.name : '')),
           h('div', { class: 'sl-code' }, state.code)),
-        h('div', { style: 'flex:1' }),
+        h('div', { class: 'sl-grow' }),
         h('button', { class: 'sl-btn', onclick: () => navigator.clipboard && navigator.clipboard.writeText(state.code).then(() => toast('Código copiado')) }, 'Copiar código'),
         h('button', { class: 'sl-btn sl-danger', onclick: () => { if (confirm('Sair da sala?')) leaveAsPlayer(); } }, 'Sair da sala')),
       h('div', { class: 'sl-box' }, h('h3', { class: 'sl-h' }, 'Jogadores'), players, players._empty),
@@ -1219,8 +1219,8 @@ function masterHome() {
   const masterListFill = () => {
     const rooms = lsGet(LS_MASTER, []);
     list.replaceChildren(...(rooms.length ? rooms.map(r => h('div', { class: 'sl-box sl-row' },
-      h('div', {}, h('b', {}, r.name), h('div', { class: 'sl-code', style: 'font-size:20px' }, r.code)),
-      h('div', { style: 'flex:1' }),
+      h('div', {}, h('b', {}, r.name), h('div', { class: 'sl-code sm' }, r.code)),
+      h('div', { class: 'sl-grow' }),
       h('button', { class: 'sl-btn', onclick: () => enter(r.code) }, 'Abrir'),
       h('button', { class: 'sl-btn sl-danger', onclick: async () => {
         if (!confirm(`Excluir a sala ${r.code} para todos? Isso apaga as fichas sincronizadas dela.`)) return;
@@ -1230,9 +1230,9 @@ function masterHome() {
   };
   masterListFill();
   overlay.replaceChildren(
-    h('div', { class: 'sl-top' }, h('b', { class: 'sl-h', style: 'font-size:20px' }, 'Sala do Mestre'),
-      h('div', { style: 'flex:1' }), h('button', { class: 'sl-btn', onclick: closeMaster }, 'Voltar ao menu')),
-    h('div', { class: 'sl-wrap', style: 'padding:14px;max-width:720px;margin:0 auto' },
+    h('div', { class: 'sl-top' }, h('b', { class: 'sl-h lg' }, 'Sala do Mestre'),
+      h('div', { class: 'sl-grow' }), h('button', { class: 'sl-btn', onclick: closeMaster }, 'Voltar ao menu')),
+    h('div', { class: 'sl-wrap sl-page' },
       CFG_OK ? null : h('div', { class: 'sl-box' }, h('p', { class: 'sl-err' }, 'Firebase não configurado. Preencha firebase-config.js.')),
       h('div', { class: 'sl-box' },
         h('h3', { class: 'sl-h' }, 'Criar nova sala'),
@@ -1251,10 +1251,10 @@ function masterRoomView() {
   state.containers.push({ el: players, master: true });
   const rolls = h('div', { class: 'sl-rolls' });
   state.rollBoxes.push(rolls);
-  const dice = h('input', { class: 'sl-in', placeholder: 'ex: 2d6+3', style: 'flex:1;min-width:90px' });
+  const dice = h('input', { class: 'sl-in sl-grow', placeholder: 'ex: 2d6+3' });
   const roll = () => { masterRoll(dice.value); };
   dice.addEventListener('keydown', e => { if (e.key === 'Enter') roll(); });
-  const step = h('select', { class: 'sl-in', style: 'width:auto' }, [1, 5, 10].map(n => h('option', { value: n }, n)));
+  const step = h('select', { class: 'sl-in sl-auto' }, [1, 5, 10].map(n => h('option', { value: n }, n)));
   step.value = String(state.ui.step);
   step.addEventListener('change', () => { state.ui.step = num(step.value) || 1; });
 
@@ -1263,7 +1263,7 @@ function masterRoomView() {
       h('button', { class: 'sl-btn', onclick: masterHome }, '← Salas'),
       h('div', {}, h('div', { class: 'sl-muted' }, (state.meta && state.meta.name) || 'Mesa'), h('div', { class: 'sl-code' }, state.code)),
       h('button', { class: 'sl-btn', onclick: () => navigator.clipboard && navigator.clipboard.writeText(state.code).then(() => toast('Código copiado')) }, 'Copiar código'),
-      h('div', { style: 'flex:1' }),
+      h('div', { class: 'sl-grow' }),
       h('label', { class: 'sl-muted' }, 'Passo dos botões − / + '), step,
       h('button', { class: 'sl-btn', onclick: closeMaster }, 'Fechar')),
     h('div', { class: 'sl-main' },
@@ -1273,9 +1273,9 @@ function masterRoomView() {
         section('Mesa de itens', mesaView(true)),
         section('Presets de itens', presetsView()),
         h('h3', { class: 'sl-h' }, 'Rolagens'),
-        h('div', { class: 'sl-row', style: 'margin-bottom:6px' }, dice, h('button', { class: 'sl-btn', onclick: roll }, 'Rolar'),
+        h('div', { class: 'sl-row sl-mb' }, dice, h('button', { class: 'sl-btn', onclick: roll }, 'Rolar'),
           ['d4', 'd6', 'd8', 'd10', 'd12', 'd20'].map(d => h('button', { class: 'sl-btn', onclick: () => masterRoll('1' + d) }, d))),
-        h('div', { class: 'sl-row', style: 'margin-bottom:6px' }, h('button', { class: 'sl-btn sl-danger', onclick: async () => {
+        h('div', { class: 'sl-row sl-mb' }, h('button', { class: 'sl-btn sl-danger', onclick: async () => {
           if (confirm('Limpar o histórico de rolagens?')) { try { await remove(ref(db, `rooms/${state.code}/rolls`)); } catch (e) { toast(friendly(e)); } }
         } }, 'Limpar histórico')),
         rolls)));
@@ -1283,70 +1283,10 @@ function masterRoomView() {
 }
 
 // ---------------------------------------------------------------- estilos
-const CSS = `
-.sl-wrap{display:flex;flex-direction:column;gap:12px;width:100%;color:#fff;font-size:14px;box-sizing:border-box}
-.sl-box{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:10px 12px}
-.sl-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.sl-h{margin:0 0 8px;font-size:16px;font-weight:700}
-.sl-code{font-size:26px;letter-spacing:4px;font-weight:700;line-height:1.1}
-.sl-muted{opacity:.7;font-size:12px;margin:2px 0}
-details.sl-sec{border:1px solid rgba(255,255,255,.18);border-radius:8px;background:rgba(0,0,0,.45);padding:6px 10px;margin-bottom:10px}
-details.sl-sec>summary{cursor:pointer;font-weight:700;font-size:16px;padding:2px 0}
-.sl-irow{display:flex;gap:6px;align-items:center;padding:4px 6px;border-radius:6px;margin:3px 0;border:1px solid transparent}
-.sl-irow.cur{background:rgba(255,200,0,.18);border-color:rgba(255,200,0,.7)}
-.sl-ival{min-width:44px;font-weight:700;font-size:16px;text-align:center}
-.sl-ival input{width:60px}
-.sl-iname{flex:1;min-width:80px}
-.sl-mrow{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.12)}
-.sl-desc{font-size:12px;opacity:.85;white-space:pre-wrap}
-.sl-err{color:#ff7373;font-size:13px}
-.sl-grid{display:flex;flex-direction:column;gap:8px}
-.sl-btn{background:#2a2a35;color:#fff;border:1px solid #555;border-radius:4px;padding:5px 10px;cursor:pointer;font:inherit;font-size:13px}
-.sl-btn:hover{background:#3b3b4a}
-.sl-btn.on{background:#555;border-color:#aaa}
-.sl-danger{border-color:#8a3030;background:#3a1b1b}
-.sl-danger:hover{background:#5a2323}
-.sl-in{background:#1b1b22;color:#fff;border:1px solid #444;border-radius:4px;padding:6px 8px;font:inherit;font-size:13px;box-sizing:border-box;max-width:100%}
-.sl-in.bad{border-color:#ff5555}
-textarea.sl-in{resize:vertical;width:100%}
-.sl-codein{text-transform:uppercase;letter-spacing:4px;width:140px;font-size:18px}
-.sl-card{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:8px 10px}
-.sl-card.me{border-color:#9cff9c}
-.sl-card header{display:flex;align-items:center;gap:8px}
-.sl-dot{width:9px;height:9px;border-radius:50%;background:#666;flex:none}
-.sl-dot.on{background:#4cd964;box-shadow:0 0 6px #4cd964}
-.sl-name{font-weight:700;font-size:16px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sl-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
-.sl-bar{position:relative;height:22px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden}
-.sl-bar i{position:absolute;top:0;bottom:0;left:0;width:0;transition:width .25s}
-.sl-bar span{position:relative;z-index:1;display:block;text-align:center;line-height:22px;font-size:12px;text-shadow:0 0 3px #000}
-.sl-bar.pv i{background:#b3261e}.sl-bar.pe i{background:#2563eb}.sl-bar.md i{background:#7e3fb8}
-.sl-adj{display:flex;gap:4px;margin-top:4px}.sl-adj .sl-btn{flex:1;padding:2px 0}
-.sl-body{margin-top:10px;border-top:1px solid rgba(255,255,255,.15);padding-top:8px}
-.sl-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
-.sl-fs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
-.sl-f{display:flex;flex-direction:column;gap:2px;min-width:120px;flex:1}
-.sl-f.wide{flex-basis:100%}
-.sl-f label{font-size:11px;opacity:.7}
-.sl-chk{display:flex;align-items:center;gap:4px;font-size:13px}
-details.sl-item{border:1px solid #333;border-radius:6px;margin:6px 0;padding:4px 8px;background:rgba(255,255,255,.04)}
-details.sl-item>summary{cursor:pointer;padding:2px 0}
-.sl-pergrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 12px}
-.sl-perrow{display:flex;justify-content:space-between;align-items:center;gap:6px}
-.sl-rolls{max-height:60vh;overflow-y:auto}
-.sl-roll{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1)}
-.sl-roll .total{font-size:22px}.sl-roll.dmg .total{color:#ff7b72}
-.sl-overlay{position:fixed;inset:0;z-index:20000;background:#0d0d10;color:#eee;overflow:auto;display:none}
-.sl-overlay.open{display:block}
-.sl-top{position:sticky;top:0;z-index:2;background:#0d0d10;border-bottom:1px solid #333;padding:10px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.sl-main{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,1fr);gap:16px;padding:14px;color:#fff}
-@media(max-width:800px){.sl-main{grid-template-columns:1fr}}
-.sl-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;border:1px solid #666;border-radius:8px;padding:10px 16px;z-index:30000;font-size:14px;max-width:90vw;text-align:center}
-`;
+// Todos os estilos da sala ficam em style.css (seção "SALAS").
 
 // ---------------------------------------------------------------- inicialização da interface
 function boot() {
-  document.head.append(h('style', {}, CSS));
   window.abrirSalaMestre = openMaster;
 
   // botão no menu inicial
@@ -1358,7 +1298,7 @@ function boot() {
   const menu = document.getElementById('mt-menu');
   const area = document.querySelector('#multiTask > main');
   if (menu && area) {
-    salaContent = h('div', { class: 'mt-content', id: 'sala-content', style: 'display:none;flex-direction:column;overflow-y:auto;padding:8px;box-sizing:border-box' });
+    salaContent = h('div', { class: 'mt-content', id: 'sala-content' });
     area.append(salaContent);
     const sep = h('div', { class: 'Sline' });
     const tabBtn = h('button', { class: 'mTBtn', onclick: function () { window.gameHabaSel(7, this); } }, 'Sala');
