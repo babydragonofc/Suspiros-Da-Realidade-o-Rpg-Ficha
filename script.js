@@ -7,7 +7,7 @@ function pS() {
 const nameInput = document.getElementById("name");
 const dateInput = document.getElementById("date");
 const ageInput = document.getElementById("age");
-const sexButtons = document.querySelectorAll('.sex-btn');
+const sexButtons = document.querySelectorAll('.botao-sexo');
 let selectedSex = null;
 
 const main = document.querySelector("main");
@@ -126,45 +126,45 @@ const raças = [
 ]
 
 const raceContainer = document.getElementById('race-box');
-const raceCards = document.querySelectorAll('.race-card');
+const raceCards = document.querySelectorAll('.card-raca');
 
 raceCards.forEach(card => {
-    card.querySelector('.raceBtn').addEventListener('click', (event) => {
+    card.querySelector('.botao-raca').addEventListener('click', (event) => {
         event.stopPropagation();
         if (card.classList.contains('active')) {
             card.classList.remove('active');
-            raceContainer.classList.remove('race-selected');
+            raceContainer.classList.remove('raca-selecionada');
             return;
         }
         raceCards.forEach(otherCard => otherCard.classList.remove('active'));
         card.classList.add('active');
-        raceContainer.classList.add('race-selected');
+        raceContainer.classList.add('raca-selecionada');
         
     });
 });
 
 document.addEventListener('click', (event) => {
-    const activeRaceCard = document.querySelector('.race-card.active');
-    if (activeRaceCard && !event.target.closest('.race-card.active')) {
+    const activeRaceCard = document.querySelector('.card-raca.active');
+    if (activeRaceCard && !event.target.closest('.card-raca.active')) {
         activeRaceCard.classList.remove('active');
-        raceContainer.classList.remove('race-selected');
+        raceContainer.classList.remove('raca-selecionada');
     }
 
-    const activeOcupationCard = document.querySelector('.ocupation-card.active');
-    if (activeOcupationCard && !event.target.closest('.ocupation-card.active')) {
+    const activeOcupationCard = document.querySelector('.card-ocupacao.active');
+    if (activeOcupationCard && !event.target.closest('.card-ocupacao.active')) {
         activeOcupationCard.classList.remove('active');
         ocupaçõesContainer.classList.remove('origin-selected');
     }
 
-    const activeOriginCard = document.querySelector('.origin-card.active');
-    if (activeOriginCard && !event.target.closest('.origin-card.active')) {
+    const activeOriginCard = document.querySelector('.card-origem.active');
+    if (activeOriginCard && !event.target.closest('.card-origem.active')) {
         activeOriginCard.classList.remove('active');
         ocupaçõesContainer.classList.remove('origin-selected');
     }
 });
 
 function raceChose(rs) {
-    if (raceContainer.classList.contains('race-selected')) {
+    if (raceContainer.classList.contains('raca-selecionada')) {
         escolhaDeRaças.style.display = "none";
         escolhaDeOcupação.style.display = "flex";
     }
@@ -340,7 +340,7 @@ function renderizarOcupações() {
     ocupaçõesContainer.innerHTML = "";
     ocupações.forEach(o => {
         const card = document.createElement("div");
-        card.className = "ocupation-card";
+        card.className = "card-ocupacao";
 
         let bonus = ""
         let Habilidades = ""
@@ -386,14 +386,14 @@ function renderizarOcupações() {
 
 
         card.innerHTML = `
-            <div class="corner-images">
-                <img src="img/corner2.svg" class="corner-image top-left" alt="">
-                <img src="img/corner2.svg" class="corner-image top-right" alt="">
-                <img src="img/corner2.svg" class="corner-image bottom-left" alt="">
-                <img src="img/corner2.svg" class="corner-image bottom-right" alt="">
+            <div class="ornamentos-cantos">
+                <img src="img/corner2.svg" class="ornamento-canto canto-sup-esq" alt="">
+                <img src="img/corner2.svg" class="ornamento-canto canto-sup-dir" alt="">
+                <img src="img/corner2.svg" class="ornamento-canto canto-inf-esq" alt="">
+                <img src="img/corner2.svg" class="ornamento-canto canto-inf-dir" alt="">
             </div>
             <h2 class="title">${o.nome}</h2>
-            <div class="ocupation-details">
+            <div class="detalhes-ocupacao">
                 <p class="text">${o.descricao}</p>
                 <hr>
                 <p class="text sm">Pericias: ${bonus} ; Habilidade: ${Habilidades}</p>
@@ -408,7 +408,7 @@ function renderizarOcupações() {
         });
 
         card.addEventListener('click', () => {
-            const currentlyActive = document.querySelector('.ocupation-card.active');
+            const currentlyActive = document.querySelector('.card-ocupacao.active');
             if (currentlyActive && currentlyActive !== card) {
                 currentlyActive.classList.remove('active');
             }
@@ -494,11 +494,11 @@ async function seleçãoConhecimento(pericias ,quant) {
         const nextBtn = document.querySelector("#knowledgeSelector .next");
 
         const seletorDePericias1 = document.querySelector("#knowledgeSelector .i");
-        const seletorDePericias2 = document.querySelector("#knowledgeSelector .ii");
-        const seletorDePericias3 = document.querySelector("#knowledgeSelector .iii");
-        const seletorDePericias4 = document.querySelector("#knowledgeSelector .iiii");
-        const seletorDePericias5 = document.querySelector("#knowledgeSelector .iiiii");
-        const seletorDePericias6 = document.querySelector("#knowledgeSelector .iiiiii");
+        const seletorDePericias2 = document.querySelector("#knowledgeSelector .conhecimento-2");
+        const seletorDePericias3 = document.querySelector("#knowledgeSelector .conhecimento-3");
+        const seletorDePericias4 = document.querySelector("#knowledgeSelector .conhecimento-4");
+        const seletorDePericias5 = document.querySelector("#knowledgeSelector .conhecimento-5");
+        const seletorDePericias6 = document.querySelector("#knowledgeSelector .conhecimento-6");
 
         const seletoresDePericia = [
             seletorDePericias1,
@@ -815,17 +815,17 @@ function renderizarOrigens() {
     origensContainer.innerHTML = "";
     origens.forEach(origem => {
         const card = document.createElement("div");
-        card.className = "origin-card";
+        card.className = "card-origem";
 
         card.innerHTML = `
-            <div class="corner-images">
-                <img src="img/corner2.svg" class="corner-image top-left" alt="">
-                <img src="img/corner2.svg" class="corner-image top-right" alt="">
-                <img src="img/corner2.svg" class="corner-image bottom-left" alt="">
-                <img src="img/corner2.svg" class="corner-image bottom-right" alt="">
+            <div class="ornamentos-cantos">
+                <img src="img/corner2.svg" class="ornamento-canto canto-sup-esq" alt="">
+                <img src="img/corner2.svg" class="ornamento-canto canto-sup-dir" alt="">
+                <img src="img/corner2.svg" class="ornamento-canto canto-inf-esq" alt="">
+                <img src="img/corner2.svg" class="ornamento-canto canto-inf-dir" alt="">
             </div>
             <h2 class="title">${origem.nome}</h2>
-            <div class="origin-details">
+            <div class="detalhes-origem">
                 <p class="text">${origem.descricao}</p>
                 <hr>
                 <button class="btn">Escolher</button>
@@ -839,7 +839,7 @@ function renderizarOrigens() {
         });
 
         card.addEventListener('click', () => {
-            const currentlyActive = document.querySelector('.origin-card.active');
+            const currentlyActive = document.querySelector('.card-origem.active');
             if (currentlyActive && currentlyActive !== card) {
                 currentlyActive.classList.remove('active');
             }
@@ -860,7 +860,7 @@ function selecionarOrigem(id) {
 
 // ====================== TIPOS ======================
 
-const typeInfo = document.getElementsByClassName("type-info")[0];
+const typeInfo = document.getElementsByClassName("info-tipo")[0];
 const typeName = document.getElementById("typeName");
 const typeDescription = document.getElementById("typeDescription");
 const typeBonus = document.getElementById("typeBonus");
@@ -917,14 +917,14 @@ function typeConfirmF() {
 }
 
 // ====================== FOCOS ======================  
-const focoInfo = document.getElementsByClassName("foco-info")[0];
+const focoInfo = document.getElementsByClassName("info-foco")[0];
 const focoName = document.getElementById("focoName");
 const focoDescription = document.getElementById("focoDescription");
 const focoEx = document.getElementById("focoEx");
 
-const focoCloseBtn = document.getElementsByClassName("focoClose")[0];
+const focoCloseBtn = document.getElementsByClassName("botao-fechar-foco")[0];
 
-const typeElements = document.getElementsByClassName("typeElements")[0];
+const typeElements = document.getElementsByClassName("elementos-do-tipo")[0];
 
 const Soporte = document.getElementById("Suporte");
 const Controle = document.getElementById("Controle");
@@ -945,7 +945,7 @@ function focoChose(id){
     focoDescription.innerHTML = focos[id].descricao;
     initTooltips(focoDescription);
     focoEx.innerHTML = focos[id].info;
-    document.getElementsByClassName("foco-btns")[0].style.display = "block"
+    document.getElementsByClassName("botoes-foco")[0].style.display = "block"
     document.getElementById("fH").style.display = "block"
     focoS = id;
 
@@ -1022,7 +1022,7 @@ function focoClose(){
 const elementosInfo = document.getElementsByClassName("elementos-info")[0];
 const elementosName = document.getElementById("element-title");
 
-const cards = document.getElementsByClassName("element-card");
+const cards = document.getElementsByClassName("card-elemento");
 const elementPoints = document.getElementById("element-points");
 const elementTooltip = document.getElementById("element-tooltip");
 const elementosNextBtn = document.getElementById("elementos-next-btn");
@@ -1043,8 +1043,8 @@ const elementosL = [
 
 function updateElementSelectability() {
     const focoValue = focos[2].value;
-    const simplesCards = document.querySelectorAll('.elementos-simples .element-card');
-    const avancadosCards = document.querySelectorAll('.elementos-avancados .element-card');
+    const simplesCards = document.querySelectorAll('.elementos-simples .card-elemento');
+    const avancadosCards = document.querySelectorAll('.elementos-avancados .card-elemento');
 
     // Reset all to enabled
     simplesCards.forEach(card => card.classList.remove('disabled'));
@@ -1087,8 +1087,8 @@ for (let i = 0; i < cards.length; i++) {
 
 function checkElementSelection() {
     const focoValue = focos[2].value;
-    const selectedSimples = document.querySelectorAll('.elementos-simples .element-card.selected').length;
-    const selectedAvancados = document.querySelectorAll('.elementos-avancados .element-card.selected').length;
+    const selectedSimples = document.querySelectorAll('.elementos-simples .card-elemento.selected').length;
+    const selectedAvancados = document.querySelectorAll('.elementos-avancados .card-elemento.selected').length;
 
     let isComplete = false;
 
@@ -1139,15 +1139,15 @@ function elementChose(id) {
     } else {
         if (focoValue == 1) {
             if (!isSimples) return;
-            const selected = document.querySelector('.element-card.selected');
+            const selected = document.querySelector('.card-elemento.selected');
             if (selected) selected.classList.remove('selected');
         } else if (focoValue == 2) {
             if (isSimples) return;
-            const selected = document.querySelector('.element-card.selected');
+            const selected = document.querySelector('.card-elemento.selected');
             if (selected) selected.classList.remove('selected');
         } else if (focoValue == 3) {
-            const simplesSelected = document.querySelector('.elementos-simples .element-card.selected');
-            const avancadoSelected = document.querySelector('.elementos-avancados .element-card.selected');
+            const simplesSelected = document.querySelector('.elementos-simples .card-elemento.selected');
+            const avancadoSelected = document.querySelector('.elementos-avancados .card-elemento.selected');
             if (isSimples) {
                 if (simplesSelected) simplesSelected.classList.remove('selected');
             } else {
@@ -1155,13 +1155,13 @@ function elementChose(id) {
             }
         } else if (focoValue == 4 || focoValue == 5) {
             if (!isSimples) return;
-            const simplesSelected = document.querySelectorAll('.elementos-simples .element-card.selected');
+            const simplesSelected = document.querySelectorAll('.elementos-simples .card-elemento.selected');
             if (simplesSelected.length >= 2) {
                 simplesSelected[0].classList.remove('selected');
             }
         } else if (focoValue >= 6) {
             if (isSimples) return;
-            const avancadosSelected = document.querySelectorAll('.elementos-avancados .element-card.selected');
+            const avancadosSelected = document.querySelectorAll('.elementos-avancados .card-elemento.selected');
             if (avancadosSelected.length >= 2) {
                 avancadosSelected[0].classList.remove('selected');
             }
@@ -1170,7 +1170,7 @@ function elementChose(id) {
     }
 
     // Update title and ficha.elementos
-    const selectedCards = document.querySelectorAll('.element-card.selected');
+    const selectedCards = document.querySelectorAll('.card-elemento.selected');
     let title = "";
     ficha.elementos = []; // Limpa o array antes de adicionar os novos elementos
     selectedCards.forEach((card, index) => {
@@ -1194,7 +1194,7 @@ function elementChose(id) {
 
 
 function elementNext() {
-    const selectedCards = document.querySelectorAll('.element-card.selected');
+    const selectedCards = document.querySelectorAll('.card-elemento.selected');
     ficha.elementos = []; // Limpa o array antes de adicionar os novos elementos
     selectedCards.forEach(card => {
         const cardId = Array.from(cards).indexOf(card);
@@ -1325,7 +1325,7 @@ function salvarStatusMaxEditados() {
 
 const mobileMTBtn = document.getElementById('MobileMTBtn');
 const mtMenu = document.getElementById('mt-menu');
-const mMTImage = document.getElementsByClassName('mMTImage')[0];
+const mMTImage = document.getElementsByClassName('aba-icone-menu')[0];
 
 if (mobileMTBtn) {
     mobileMTBtn.addEventListener('click', () => {

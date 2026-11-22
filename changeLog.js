@@ -1,5 +1,5 @@
 if (localStorage.getItem('versãoNaUltimaVezQueViuOChangeLog') != siteVersion) {
-    document.getElementById('changeLogBtn').classList.add('notion')
+    document.getElementById('changeLogBtn').classList.add('aviso-novidade')
 }
 
 let fichaComPericiasAntigas = false;
@@ -176,7 +176,7 @@ changeLog.forEach(ver => {
 
     //AAAAAAAAAAAAAAAAAAAA ESSA MERDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     const div = document.createElement('section')
-    div.classList = "versionPanel"
+    div.classList = "painel-versao"
 
     // header
     const header = document.createElement('header')

@@ -21,7 +21,7 @@ function panelOpen(id, title, content, sm = false) {
 
     if( id == "changeLog") {
         localStorage.setItem('versãoNaUltimaVezQueViuOChangeLog', siteVersion)
-        document.getElementById('changeLogBtn').classList.remove('notion')
+        document.getElementById('changeLogBtn').classList.remove('aviso-novidade')
     }
     const mainPanel = document.getElementById("main-panel");
     mainPanelDissolve.show()
@@ -51,9 +51,9 @@ function panelOpen(id, title, content, sm = false) {
     }
 
     if (id == "changeLog") {
-        box.classList.add('changeLogBox')
+        box.classList.add('caixa-changelog')
     }else {
-        if(box.classList.contains('changeLogBox')) box.classList.remove('changeLogBox')
+        if(box.classList.contains('caixa-changelog')) box.classList.remove('caixa-changelog')
     }
     
     const targetDiv = box.querySelector("#" + id);
@@ -115,10 +115,10 @@ function panelChange() {
 
 // Habas
 function gameHabaSel(id, btn) {
-    document.querySelector(".mTBtn.active").classList.remove("active")
+    document.querySelector(".aba-botao.active").classList.remove("active")
     btn.classList.add("active")
 
-    const contents = document.querySelectorAll('.mt-content');
+    const contents = document.querySelectorAll('.aba-conteudo');
     contents.forEach(content => {
         content.style.display = 'none';
     });
@@ -133,7 +133,7 @@ function gameHabaSel(id, btn) {
         renderPersonagem();
     }
 
-    document.getElementById('MobileMTBtn').innerHTML = btn.innerHTML + '<img src="img/menu.svg" alt="" class="mMTImage">';
+    document.getElementById('MobileMTBtn').innerHTML = btn.innerHTML + '<img src="img/menu.svg" alt="" class="aba-icone-menu">';
 }
 
 // Status 
@@ -330,17 +330,17 @@ function renderPericiasEditor() {
     editor.dataset.level = inferirNivelPericiasEditor();
 
     const wrapper = document.createElement('div');
-    wrapper.className = 'pericias-pyramid-editor';
+    wrapper.className = 'editor-pericias-piramide';
 
     const toolbar = document.createElement('div');
-    toolbar.className = 'pericias-editor-toolbar';
+    toolbar.className = 'editor-pericias-barra';
 
     const title = document.createElement('h3');
     title.className = 'title';
     title.textContent = 'Nivel';
 
     const levelControls = document.createElement('div');
-    levelControls.className = 'pericias-editor-level';
+    levelControls.className = 'editor-pericias-nivel';
 
     const minusBtn = document.createElement('button');
     minusBtn.className = 'btn';
@@ -365,7 +365,7 @@ function renderPericiasEditor() {
     wrapper.appendChild(toolbar);
 
     const content = document.createElement('div');
-    content.className = 'pericias-editor-content';
+    content.className = 'editor-pericias-conteudo';
     content.appendChild(criarEditorPiramide());
     content.appendChild(criarEditorListas());
     wrapper.appendChild(content);
@@ -442,10 +442,10 @@ function criarEditorPiramide() {
 
     for (let nivel = 5; nivel >= 1; nivel--) {
         const line = document.createElement('div');
-        line.className = 'perLine';
+        line.className = 'linha-pericias';
 
         const lineTitle = document.createElement('div');
-        lineTitle.className = 'perLineTitle' + (nivel % 2 === 0 ? ' white' : '');
+        lineTitle.className = 'titulo-linha-pericias' + (nivel % 2 === 0 ? ' white' : '');
         lineTitle.textContent = nivel;
         line.appendChild(lineTitle);
 
@@ -509,12 +509,12 @@ function criarEditorListas() {
 
     categorias.forEach((categoria, index) => {
         const group = document.createElement('section');
-        group.className = 'pericias-editor-group';
+        group.className = 'editor-pericias-grupo';
         group.dataset.category = categoria.id;
         group.style.display = index === selectedPericiasEditorCategory ? 'flex' : 'none';
 
         const itemPlace = document.createElement('div');
-        itemPlace.className = 'itemPlace pericias-editor-list';
+        itemPlace.className = 'linha-vagas editor-pericias-lista';
         itemPlace.dataset.category = categoria.id;
         group.appendChild(itemPlace);
 
@@ -543,7 +543,7 @@ function preencherEditorPiramide() {
 
     const usadas = new Set(ficha.pericias.slice(1).flat());
     getCategoriasPericias().forEach(categoria => {
-        const list = document.querySelector(`#periciasEditor .pericias-editor-list[data-category="${categoria.id}"]`);
+        const list = document.querySelector(`#periciasEditor .editor-pericias-lista[data-category="${categoria.id}"]`);
         categoria.pericias.forEach(pericia => {
             if (!usadas.has(pericia)) {
                 const itemPer = criarEditorItem(pericia, categoria.id)
@@ -566,7 +566,7 @@ function criarEditorItem(pericia, originalCategory) {
     item.appendChild(title);
 
     if (title.textContent.length > 11) {
-        item.classList.add('small-text');
+        item.classList.add('texto-pequeno');
     }
 
     item.addEventListener('pointerdown', startPericiasEditorDrag);
@@ -589,7 +589,7 @@ function startPericiasEditorDrag(event) {
     periciasEditorOffsetX = event.clientX - rect.left;
     periciasEditorOffsetY = event.clientY - rect.top;
 
-    if (periciasEditorOrigin.classList.contains('pericias-editor-list')) {
+    if (periciasEditorOrigin.classList.contains('editor-pericias-lista')) {
         periciasEditorPlaceholder = document.createElement('div');
         periciasEditorPlaceholder.className = 'drag-placeholder';
         periciasEditorPlaceholder.style.width = `${rect.width}px`;
@@ -622,7 +622,7 @@ document.addEventListener('pointerup', event => {
     periciasEditorDragItem.style.pointerEvents = '';
 
     const targetPlace = target?.closest('#periciasEditor .pericias-editor-place');
-    const targetList = target?.closest('#periciasEditor .pericias-editor-list');
+    const targetList = target?.closest('#periciasEditor .editor-pericias-lista');
     const originalList = getListaOriginalPericia(periciasEditorDragItem);
     const canDropOnTargetList = targetList && targetList.dataset.category === periciasEditorDragItem.dataset.originalCategory;
     const targetContainer = targetPlace || (canDropOnTargetList ? targetList : originalList);
@@ -663,7 +663,7 @@ function selectPericiasEditorCategoria(next) {
     const title = document.getElementById('periciasEditorCategoryTitle');
     if (title) title.textContent = categorias[selectedPericiasEditorCategory].name;
 
-    document.querySelectorAll('#periciasEditor .pericias-editor-group').forEach(group => {
+    document.querySelectorAll('#periciasEditor .editor-pericias-grupo').forEach(group => {
         group.style.display = group.dataset.category === categorias[selectedPericiasEditorCategory].id ? 'flex' : 'none';
     });
 }
@@ -675,8 +675,8 @@ function moverItemParaListaOriginal(item) {
 
 function getListaOriginalPericia(item) {
     const category = item.dataset.originalCategory || getCategoriaOriginalPericia(item.getAttribute('aria-value'));
-    return document.querySelector(`#periciasEditor .pericias-editor-list[data-category="${category}"]`)
-        || document.querySelector('#periciasEditor .pericias-editor-list');
+    return document.querySelector(`#periciasEditor .editor-pericias-lista[data-category="${category}"]`)
+        || document.querySelector('#periciasEditor .editor-pericias-lista');
 }
 
 function changePericiasEditorLevel(change) {
@@ -714,16 +714,16 @@ function renderPericiasEditorPlaces() {
     let validPyramid = true;
 
     document.querySelectorAll('#periciasEditor .pericias-editor-place').forEach(place => {
-        place.classList.remove('perUsefullPlace', 'perUselessPlace');
+        place.classList.remove('vaga-valida', 'vaga-invalida');
 
         const row = parseInt(place.dataset.row);
         const col = parseInt(place.dataset.col);
         const isUseful = rule[row][col];
         const hasItem = Boolean(place.querySelector('.item'));
 
-        if (isUseful) place.classList.add('perUsefullPlace');
+        if (isUseful) place.classList.add('vaga-valida');
         if (!isUseful && hasItem) {
-            place.classList.add('perUselessPlace');
+            place.classList.add('vaga-invalida');
             validPyramid = false;
         }
         if (hasItem) itensCount++;
@@ -863,18 +863,18 @@ function formatPericiaName(pericia) {
 //Controles 
 
 function registerScrollShadows() {
-    document.querySelectorAll(".scroll-container").forEach(container => {    
+    document.querySelectorAll(".container-rolagem").forEach(container => {    
         function updateShadows() {
             const scrollTop = container.scrollTop;
             const maxScroll = container.scrollHeight - container.clientHeight;
     
             container.classList.toggle(
-                "has-top-shadow",
+                "sombra-topo",
                 scrollTop > 0
             );
     
             container.classList.toggle(
-                "has-bottom-shadow",
+                "sombra-base",
                 scrollTop < maxScroll - 1
             );
         }

@@ -15,7 +15,7 @@ function renderMagias() {
 
     sortedMagias.forEach(magic => {
         const box = document.createElement('div');
-        box.className = "magic-card";
+        box.className = "carta-magia";
             if(!isMobileDevice()) {
                 box.addEventListener('mouseenter', () => {
                     box.classList.add('hover')
@@ -33,16 +33,16 @@ function renderMagias() {
                 })
             }
         const innerBox = document.createElement('div');
-        innerBox.className = "magic-card-inner";
+        innerBox.className = "carta-magia-interior";
         box.appendChild(innerBox);
 
         const frontSide = document.createElement('div');
-        frontSide.className = "magic-card-front";
+        frontSide.className = "carta-magia-frente";
         const backSide = document.createElement('div');
-        backSide.className = "magic-card-back";
+        backSide.className = "carta-magia-verso";
 
         if (magic.isFavorite) {
-            frontSide.classList.add('favorited'); // Add a class for styling favorited items
+            frontSide.classList.add('favoritado'); // Add a class for styling favorited items
         }
 
         const magicNameEl = document.createElement('h2');
@@ -52,13 +52,13 @@ function renderMagias() {
         frontSide.appendChild(magicNameEl);
 
         const magicDescriptionEl = document.createElement('p');
-        magicDescriptionEl.className = "magicDesc scroll-container";
+        magicDescriptionEl.className = "descricao-magia container-rolagem";
         magicDescriptionEl.innerHTML = magic.description.replaceAll("\n", "<br>");
         backSide.appendChild(magicDescriptionEl);
 
         // Add favorite star icon
         const favoriteStar = document.createElement('span');
-        favoriteStar.className = 'favorite-star';
+        favoriteStar.className = 'estrela-favorito';
         favoriteStar.innerHTML = '&#9733;'; // Unicode star character
         if (magic.isFavorite) {
             favoriteStar.style.display = "block";
@@ -68,7 +68,7 @@ function renderMagias() {
         frontSide.appendChild(favoriteStar);
 
         const btnsDiv = document.createElement('div');
-        btnsDiv.className = "btns-div";
+        btnsDiv.className = "grupo-botoes";
         backSide.appendChild(btnsDiv);
 
         if (magic.dice) {
@@ -110,7 +110,7 @@ function renderHabilidades() {
 
     sortedHabilidades.forEach(ability => {
         const box = document.createElement('div');
-        box.className = "ability-card";
+        box.className = "carta-habilidade";
         if(!isMobileDevice()) {
                 box.addEventListener('mouseenter', () => {
                     box.classList.add('hover')
@@ -128,16 +128,16 @@ function renderHabilidades() {
                 })
             }
         const innerBox = document.createElement('div');
-        innerBox.className = "ability-card-inner";
+        innerBox.className = "carta-habilidade-interior";
         box.appendChild(innerBox);
 
         const frontSide = document.createElement('div');
-        frontSide.className = "ability-card-front";
+        frontSide.className = "carta-habilidade-frente";
         const backSide = document.createElement('div');
-        backSide.className = "ability-card-back";
+        backSide.className = "carta-habilidade-verso";
 
         if (ability.isFavorite) {
-            frontSide.classList.add('favorited'); // Add a class for styling favorited items
+            frontSide.classList.add('favoritado'); // Add a class for styling favorited items
         }
 
         const abilityNameEl = document.createElement('h2');
@@ -147,7 +147,7 @@ function renderHabilidades() {
         frontSide.appendChild(abilityNameEl);
 
         const abilityDescriptionEl = document.createElement('p');
-        abilityDescriptionEl.className = "abilityDesc scroll-container";
+        abilityDescriptionEl.className = "descricao-habilidade container-rolagem";
 
         abilityDescriptionEl.textContent = ability.description;
         abilityDescriptionEl.style.whiteSpace = "pre-line";
@@ -155,7 +155,7 @@ function renderHabilidades() {
 
         // Add favorite star icon
         const favoriteStar = document.createElement('span');
-        favoriteStar.className = 'favorite-star';
+        favoriteStar.className = 'estrela-favorito';
         favoriteStar.innerHTML = '&#9733;'; // Unicode star character
         if (ability.isFavorite) {
             favoriteStar.style.display = "block";
@@ -165,7 +165,7 @@ function renderHabilidades() {
         frontSide.appendChild(favoriteStar);
 
         const btnsDiv = document.createElement('div');
-        btnsDiv.className = "btns-div";
+        btnsDiv.className = "grupo-botoes";
         backSide.appendChild(btnsDiv);
 
         if (ability.dice) {
@@ -208,7 +208,7 @@ function renderTraumas() {
 
     sortedTraumas.forEach(trauma => {
         const traumaCard = document.createElement('div');
-        traumaCard.className = 'trauma-card';
+        traumaCard.className = 'carta-trauma';
         traumaCard.textContent = trauma.name;
         traumaCard.dataset.traumaId = trauma.id; // Assuming trauma objects have an 'id' property
         
@@ -325,7 +325,7 @@ function showMagicInfo(magic) {
     magicInfo.appendChild(duplicateBtn);
 
     const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn delete-btn';
+    deleteBtn.className = 'btn botao-excluir';
     deleteBtn.textContent = 'Excluir';
     deleteBtn.onclick = () => {
         const magicIndex = ficha.magias.findIndex(m => m.name === magic.name); // Find by name, assuming names are unique enough for deletion
@@ -435,7 +435,7 @@ renderHabilidades(); // Re-render to show the new item
     abilityInfo.appendChild(duplicateBtn);
 
     const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn delete-btn';
+    deleteBtn.className = 'btn botao-excluir';
     deleteBtn.textContent = 'Excluir';
     deleteBtn.onclick = () => {
         const abilityIndex = ficha.habilidades.findIndex(a => a.name === ability.name); // Find by name, assuming names are unique enough for deletion
@@ -541,7 +541,7 @@ function showTraumaInfo(trauma) { // Now accepts the trauma object
     traumaInfo.appendChild(duplicateBtn);
 
     const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn delete-btn';
+    deleteBtn.className = 'btn botao-excluir';
     deleteBtn.textContent = 'Excluir';
     deleteBtn.onclick = () => {
         const traumaIndex = ficha.traumas.findIndex(t => t.name === trauma.name); // Find by name, assuming names are unique enough for deletion

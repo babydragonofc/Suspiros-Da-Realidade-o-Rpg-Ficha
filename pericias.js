@@ -41,7 +41,7 @@ document.querySelectorAll('.place').forEach(el => {
     new Place(el);
 });
 
-document.querySelectorAll('.itemPlace').forEach(container => {
+document.querySelectorAll('.linha-vagas').forEach(container => {
     container.querySelectorAll('.item').forEach(item => {
         item.homeContainer = container;
     });
@@ -350,8 +350,8 @@ function gPP(n) {
 
 renderPerPlaces()
 function renderPerPlaces() {
-    document.querySelectorAll('.perUsefullPlace, .perUselessPlace').forEach(element => {
-        element.classList.remove('perUsefullPlace', 'perUselessPlace');
+    document.querySelectorAll('.vaga-valida, .vaga-invalida').forEach(element => {
+        element.classList.remove('vaga-valida', 'vaga-invalida');
     });
 
     const rule = levelsRules[level].map;
@@ -376,12 +376,12 @@ function renderPerPlaces() {
             const placeId = (linha)*5 + coluna + 1
             const element = gPP(placeId)
 
-            if (placeRule) element.classList.add('perUsefullPlace')
+            if (placeRule) element.classList.add('vaga-valida')
             const value = getValue(element);
             if (!placeRule && value?.trim()) {
-                element.classList.add('perUselessPlace');
+                element.classList.add('vaga-invalida');
             }
-            if( element.classList.contains('perUselessPlace')){
+            if( element.classList.contains('vaga-invalida')){
                 piramidRule = false;
             }
             if(getValue(place) != '') {
@@ -427,7 +427,7 @@ function perListsPlacesGen(on) {
     if (!itensPlace[selectedItemPlace]) selectedItemPlace = 0;
 
     if(!on) {
-        document.querySelectorAll('#escolhaDePericia-Content .itemPlace').forEach(el => {
+        document.querySelectorAll('#escolhaDePericia-Content .linha-vagas').forEach(el => {
             el.style.display = "none"
         }); 
 
@@ -435,7 +435,7 @@ function perListsPlacesGen(on) {
         if (selectedList) selectedList.style.display = "flex"
         if (header) header.style.display = "flex"
     } else {
-        document.querySelectorAll('#escolhaDePericia-Content .itemPlace').forEach(el => {
+        document.querySelectorAll('#escolhaDePericia-Content .linha-vagas').forEach(el => {
             el.style.display = "flex"
         }); 
         if (header) header.style.display = "none"
@@ -451,7 +451,7 @@ function selectItemPlace(type) {
     const title = document.querySelector('#perLists header section h2')
     if (title) title.textContent = itensPlace[selectedItemPlace].name;
 
-    document.querySelectorAll('#escolhaDePericia-Content .itemPlace').forEach(el => {
+    document.querySelectorAll('#escolhaDePericia-Content .linha-vagas').forEach(el => {
         el.style.display = "none"
     }); 
 
@@ -518,7 +518,7 @@ function displayPericias() {
     for (let i = 0; i < 6; i++) {
             const el = document.createElement('div')
             el.id = "perListLvl" + i
-            el.classList = "pBlock"
+            el.classList = "bloco-pericias"
     
             let secondDice
             const header = document.createElement('header')
@@ -537,14 +537,14 @@ function displayPericias() {
             header.innerHTML = `Nível ${i} ${dados}`
             el.appendChild(header)
             const perElBoxInt = document.createElement('div')
-            perElBoxInt.classList = "perDisplayBlockInt"
+            perElBoxInt.classList = "lista-pericia"
             el.appendChild(perElBoxInt)
             if(i == 0) {
                 perElBoxInt.style.display = 'none'
                 const hideNShowBtn = document.createElement('button')
-                hideNShowBtn.classList = "hideNShowBtn"
+                hideNShowBtn.classList = "botao-mostrar-ocultar"
                 const icon = document.createElement('img')
-                icon.classList = "mMTImage"
+                icon.classList = "aba-icone-menu"
                 icon.src = "img/menu.svg"
 
                 hideNShowBtn.appendChild(icon)
@@ -580,7 +580,7 @@ function displayPericias() {
 
             ficha.pericias[i].forEach(per => {
                 const perElBox = document.createElement('div')
-                perElBox.classList = "perDisplayBlock"
+                perElBox.classList = "linha-pericia"
                 if (per == '') return;
 
 

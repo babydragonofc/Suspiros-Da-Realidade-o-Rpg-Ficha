@@ -201,7 +201,7 @@ function renderMods() {
             document.createElement('button');
 
         removeBtn.className =
-            'btn delete-btn';
+            'btn botao-excluir';
 
         removeBtn.textContent = 'Remover';
 
@@ -440,18 +440,18 @@ function renderCustomStatuses() {
 
             box.className = 'custom-status-card';
             box.innerHTML = `      
-            <div class="barBlock">
+            <div class="bloco-barra">
                 <div id="${id}Bar" class="bar">
-                    <div id="${id}AfterBar" class="customAfterBar"></div>
-                    <div class="barDiv"> 
+                    <div id="${id}AfterBar" class="barra-extra"></div>
+                    <div class="barra-interna"> 
                         <p id="${id}Value"></p>
                     </div>
-                    <div id="${id}BarFill" class="barFill"></div>
+                    <div id="${id}BarFill" class="barra-preenchimento"></div>
                 </div>
 
-                <div class='statusBtns'>
-                    <button class="barBtn" onclick="changeStatusValue('-', '${name}', true)"> < </button>
-                    <button class="barBtn" onclick="changeStatusValue('+', '${name}', true)"> > </button>
+                <div class='botoes-status'>
+                    <button class="botao-barra" onclick="changeStatusValue('-', '${name}', true)"> < </button>
+                    <button class="botao-barra" onclick="changeStatusValue('+', '${name}', true)"> > </button>
                 </div>
             </div>
             `;

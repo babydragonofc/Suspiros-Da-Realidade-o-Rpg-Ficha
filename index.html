@@ -13,7 +13,7 @@
 
 <div class="panel" id="main-panel">
     <div class="box">
-        <p class="exit-box" onclick="panelClose()">x</p>
+        <p class="botao-sair" onclick="panelClose()">x</p>
 
         <div class="content" id="agradecimentos">
             <h3 class="title" >Agradecimentos</h3>
@@ -54,9 +54,9 @@
             
                 <section style="display: flex; flex-direction: column; gap: 10px;">
                     <section class="file-upload-wrapper">
-                        <input type="file" id="modFileInput" accept=".json" class="input" hidden onchange="document.getElementsByClassName('btn-personalizado')[0].classList.toggle('preenchido', this.value.length > 0)">
+                        <input type="file" id="modFileInput" accept=".json" class="input" hidden onchange="document.getElementsByClassName('botao-arquivo')[0].classList.toggle('preenchido', this.value.length > 0)">
                 
-                        <label for="modFileInput" class="btn btn-personalizado"> Selecionar Arquivo </label>
+                        <label for="modFileInput" class="btn botao-arquivo"> Selecionar Arquivo </label>
                     </section>
                 
                     <button class="btn" onclick="importMod()">Importar Mod</button>
@@ -72,12 +72,12 @@
         <div class="content" id="knowledgeSelector">
             <span>1 / 1 pericias escolhidas </span>
             <button class="btn next hide">Proximo</button>
-            <button class="btn i"     >Artes</button>
-            <button class="btn ii"    >Medicina</button>
-            <button class="btn iii"   >Ciências</button>
-            <button class="btn iiii"  >História</button>
-            <button class="btn iiiii" >Burocracia</button>
-            <button class="btn iiiiii">Atualidades</button>
+            <button class="btn conhecimento-1"     >Artes</button>
+            <button class="btn conhecimento-2"    >Medicina</button>
+            <button class="btn conhecimento-3"   >Ciências</button>
+            <button class="btn conhecimento-4"  >História</button>
+            <button class="btn conhecimento-5" >Burocracia</button>
+            <button class="btn conhecimento-6">Atualidades</button>
         </div>
         <!-- ================= MAGIA ================= -->
         <div class="content" id="MagicCreate">
@@ -115,18 +115,18 @@
             <h1 class="title">Criar Item</h1>
             <section >
                 <section id="infoGroup">
-                    <section class="infoBlock">
-                        <section class="addItemInfo">
+                    <section class="bloco-info">
+                        <section class="info-adicionar-item">
                             <p class="text white">Nome</p>
                             <input type="text" id="itemName" class="input">
                         </section>
                         
-                        <section class="addItemInfo">
+                        <section class="info-adicionar-item">
                             <p class="text white">Peso</p>
                             <input type="number" id="itemWeight" class="input">
                         </section>
 
-                        <section class="addItemInfo">
+                        <section class="info-adicionar-item">
                             <p class="text white">Local</p>
                             <select class="input" style="width:100%;" id="itemLocal" class="input">
                                 <option value="inventario">Inventário</option>
@@ -134,8 +134,8 @@
                             </select>
                         </section>
                     </section>
-                    <section class="infoBlock">
-                        <section class="addItemInfo" style="height: -webkit-fill-available;">
+                    <section class="bloco-info">
+                        <section class="info-adicionar-item" style="height: -webkit-fill-available;">
                             <p class="text white">Descrição</p>
                             <textarea id="itemDescription" class="input" style="resize: none;"></textarea>
                         </section>
@@ -248,7 +248,7 @@
         <button class="btn" onclick="load()">Carregar</button>
         <section class="file-upload-wrapper">
             <input type="file" id="arquivoJSON" class="btn" style="display: none;" accept=".json">
-            <label for="arquivoJSON" class="btn btn-personalizado">Importar Ficha</label>
+            <label for="arquivoJSON" class="btn botao-arquivo">Importar Ficha</label>
         </section> 
 
         <div style="display: flex; flex-direction: column;">
@@ -263,8 +263,8 @@
         <!--<button class="btn" onclick="irParaJogo()">Ir para o Jogo (Debug)</button>-->
         
         <footer>
-            <p class="textBtn" onclick='panelOpen("changeLog", null, null, true)' id="changeLogBtn">Change Log</p>
-            <p class="textBtn" onclick='panelOpen("agradecimentos", null, null, true)' id="changeLogBtn">Créditos</p>
+            <p class="botao-texto-link" onclick='panelOpen("changeLog", null, null, true)' id="changeLogBtn">Change Log</p>
+            <p class="botao-texto-link" onclick='panelOpen("agradecimentos", null, null, true)' id="changeLogBtn">Créditos</p>
         </footer>
     </main>
 
@@ -290,26 +290,26 @@
                 <div>
                     <p class="text">Sexo</p>
                     <div style="display: flex;"> 
-                        <button class="btn sex-btn" data-sex="masculino"><img src="img/mas.svg" alt=""></button>
-                        <button class="btn sex-btn" data-sex="feminino"><img src="img/fem.svg" alt=""></button>
+                        <button class="btn botao-sexo" data-sex="masculino"><img src="img/mas.svg" alt=""></button>
+                        <button class="btn botao-sexo" data-sex="feminino"><img src="img/fem.svg" alt=""></button>
                     </div>
                 </div>
             </div>
-            <button class="pBtn" id="p1">Proximo</button>
+            <button class="botao-contorno" id="p1">Proximo</button>
         </div>
         <div id="escolhaDeRaças">
             <h3 class="title">Raças</h3>
             <hr>
             <span class="text">Em Suspiros da Realidade, existem 4 raças que vivem entre si em 'harmonia'</span>
             <div id="race-box">
-                <div class="race-card">
-                    <button class="raceBtn">HUMANO</button>
-                    <div class="race-details">
-                        <div class="corner-images">
-                            <img src="img/corner.svg" class="corner-image top-left" alt="">
-                            <img src="img/corner.svg" class="corner-image top-right" alt="">
-                            <img src="img/corner.svg" class="corner-image bottom-left" alt="">
-                            <img src="img/corner.svg" class="corner-image bottom-right" alt="">
+                <div class="card-raca">
+                    <button class="botao-raca">HUMANO</button>
+                    <div class="detalhes-raca">
+                        <div class="ornamentos-cantos">
+                            <img src="img/corner.svg" class="ornamento-canto canto-sup-esq" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-sup-dir" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-inf-esq" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-inf-dir" alt="">
                         </div>
                         <h2 class="title">HUMANO</h2>
                         <p> 
@@ -322,17 +322,17 @@
                             15 PV base; 5 PE base; 20 MD base; <br>
                             3 pontos de Traços.
                         </span>
-                        <button class="btn choose-btn" onclick="raceChose(0)">Escolher</button>
+                        <button class="btn botao-escolher" onclick="raceChose(0)">Escolher</button>
                     </div>
                 </div>
-                <div class="race-card">
-                    <button class="raceBtn">ZOMANO</button>
-                    <div class="race-details">
-                        <div class="corner-images">
-                            <img src="img/corner.svg" class="corner-image top-left" alt="">
-                            <img src="img/corner.svg" class="corner-image top-right" alt="">
-                            <img src="img/corner.svg" class="corner-image bottom-left" alt="">
-                            <img src="img/corner.svg" class="corner-image bottom-right" alt="">
+                <div class="card-raca">
+                    <button class="botao-raca">ZOMANO</button>
+                    <div class="detalhes-raca">
+                        <div class="ornamentos-cantos">
+                            <img src="img/corner.svg" class="ornamento-canto canto-sup-esq" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-sup-dir" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-inf-esq" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-inf-dir" alt="">
                         </div>
                         <h2 class="title">ZOMANO</h2>
                         <p> 
@@ -345,17 +345,17 @@
                         20 PV base; 15 de PE base; 10 MD base.<br>
                         4 pontos de Traços.
                         </span>
-                        <button class="btn choose-btn" onclick="raceChose(1)">Escolher</button>
+                        <button class="btn botao-escolher" onclick="raceChose(1)">Escolher</button>
                     </div>
                 </div>
-                <div class="race-card">
-                    <button class="raceBtn">VAMPIRO</button>
-                    <div class="race-details">
-                        <div class="corner-images">
-                            <img src="img/corner.svg" class="corner-image top-left" alt="">
-                            <img src="img/corner.svg" class="corner-image top-right" alt="">
-                            <img src="img/corner.svg" class="corner-image bottom-left" alt="">
-                            <img src="img/corner.svg" class="corner-image bottom-right" alt="">
+                <div class="card-raca">
+                    <button class="botao-raca">VAMPIRO</button>
+                    <div class="detalhes-raca">
+                        <div class="ornamentos-cantos">
+                            <img src="img/corner.svg" class="ornamento-canto canto-sup-esq" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-sup-dir" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-inf-esq" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-inf-dir" alt="">
                         </div>
                         <h2 class="title">VAMPIRO</h2>
                         <p> 
@@ -368,17 +368,17 @@
                         10 PV base; 10 de PE base; 22 MD base.<br>
                         3 pontos de Traços.
                         </span>
-                        <button class="btn choose-btn" onclick="raceChose(2)">Escolher</button>
+                        <button class="btn botao-escolher" onclick="raceChose(2)">Escolher</button>
                     </div>
                 </div>
-                <div class="race-card">
-                    <button class="raceBtn">DEMÔNIO</button>
-                    <div class="race-details">
-                        <div class="corner-images">
-                            <img src="img/corner.svg" class="corner-image top-left" alt="">
-                            <img src="img/corner.svg" class="corner-image top-right" alt="">
-                            <img src="img/corner.svg" class="corner-image bottom-left" alt="">
-                            <img src="img/corner.svg" class="corner-image bottom-right" alt="">
+                <div class="card-raca">
+                    <button class="botao-raca">DEMÔNIO</button>
+                    <div class="detalhes-raca">
+                        <div class="ornamentos-cantos">
+                            <img src="img/corner.svg" class="ornamento-canto canto-sup-esq" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-sup-dir" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-inf-esq" alt="">
+                            <img src="img/corner.svg" class="ornamento-canto canto-inf-dir" alt="">
                         </div>
                         <h2 class="title">DEMÔNIO</h2>
                         <p> 
@@ -391,7 +391,7 @@
                         20 PV base; 15 de PE base; 20 MD base.<br>
                         2 pontos de Traços.
                         </span>
-                        <button class="btn choose-btn" onclick="raceChose(3)">Escolher</button>
+                        <button class="btn botao-escolher" onclick="raceChose(3)">Escolher</button>
                     </div>
                 </div>
             </div>
@@ -413,11 +413,11 @@
             <div id="escolhaDeTipoMagico">
                 <h3 class="title">Tipo</h3>
                 <div class="types">
-                    <div class="type-card" onclick="typeChose(0)"><img src="img/alma.svg" alt=""></div>
-                    <div class="type-card" onclick="typeChose(1)"><img src="img/energia.svg" alt=""></div>
-                    <div class="type-card" onclick="typeChose(2)"><img src="img/corpo.svg" alt=""></div>
+                    <div class="card-tipo" onclick="typeChose(0)"><img src="img/alma.svg" alt=""></div>
+                    <div class="card-tipo" onclick="typeChose(1)"><img src="img/energia.svg" alt=""></div>
+                    <div class="card-tipo" onclick="typeChose(2)"><img src="img/corpo.svg" alt=""></div>
                 </div>
-                <div class="type-info">
+                <div class="info-tipo">
                     <div style="display: flex;align-items: flex-end;justify-content: space-between;flex-direction: row-reverse;">
                         <h2 class="title" id="typeName">Tipo</h2>
                         <p class="text" id="typeDescription">Manifestação do ser</p>
@@ -433,24 +433,24 @@
                     <h2 class="title">Focos</h2>
                     <div style="display: flex;flex-direction: row;align-items: center;width: 47px;">
                         <h2 class="title" id="pts">1</h2>
-                        <short class="MagiaFicha ConhecimentoMagico" id="ptsTxt">pontos <span class="icon-svg" style="--svg-icon: url('img/conhecimentoPts.svg')"></span> </short>
+                        <short class="MagiaFicha ConhecimentoMagico" id="ptsTxt">pontos <span class="icon-svg" style="--icone: url('img/conhecimentoPts.svg')"></span> </short>
                     </div>
 
                 </div>
                 <div class="focos">
-                    <div class="foco-card C" onclick="focoChose(0)"><img src="img/alma.svg" alt=""><span id="Suporte">0</span></div>
-                    <div class="foco-card CC" onclick="focoChose(1)"><img src="img/alma.svg" alt=""><span id="Controle">0</span></div>
-                    <div class="foco-card CCC" onclick="focoChose(2)"><img src="img/alma.svg" alt=""><span id="Elemental">0</span></div>
-                    <div class="foco-card CCCC" onclick="focoChose(3)"><img src="img/alma.svg" alt=""><span id="Dinamico">1</span></div>
+                    <div class="card-foco foco-sup-esq" onclick="focoChose(0)"><img src="img/alma.svg" alt=""><span id="Suporte">0</span></div>
+                    <div class="card-foco foco-sup-dir" onclick="focoChose(1)"><img src="img/alma.svg" alt=""><span id="Controle">0</span></div>
+                    <div class="card-foco foco-inf-esq" onclick="focoChose(2)"><img src="img/alma.svg" alt=""><span id="Elemental">0</span></div>
+                    <div class="card-foco foco-inf-dir" onclick="focoChose(3)"><img src="img/alma.svg" alt=""><span id="Dinamico">1</span></div>
 
-                    <button class="focoClose" onclick="focoClose()">Continuar</button>
+                    <button class="botao-fechar-foco" onclick="focoClose()">Continuar</button>
                 </div>
                 <div id="foco-info-box">
-                    <div class="foco-info">
+                    <div class="info-foco">
                         <div style="display: flex;align-items: flex-end;justify-content: space-between; flex-direction: row-reverse;">
-                            <h2 class="title" id="focoName"></h2> <div class="foco-btns">
-                                <button class="focosM" onclick="removeMagicPt()">-</button>
-                                <button class="focosM" onclick="putMagicPt()">+</button>
+                            <h2 class="title" id="focoName"></h2> <div class="botoes-foco">
+                                <button class="botao-foco" onclick="removeMagicPt()">-</button>
+                                <button class="botao-foco" onclick="putMagicPt()">+</button>
                             </div>
                         </div>
                         <hr id="fH" style="display: none;">
@@ -458,32 +458,32 @@
                                     
                         <p class="text sm" id="focoEx"></p>
                     </div>
-                    <div class="typeElements">
+                    <div class="elementos-do-tipo">
                         <hr>
                         <span>
-                            <span class="typeElementsInfo">
-                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (1).svg')"></span></short> : 1 elemento Simples; 
+                            <span class="info-elementos-do-tipo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--icone: url('img/star (1).svg')"></span></short> : 1 elemento Simples; 
                             </span><br>
-                            <span class="typeElementsInfo">
-                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (2).svg')"></span></short> : 1 elemento avançado; 
+                            <span class="info-elementos-do-tipo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--icone: url('img/star (2).svg')"></span></short> : 1 elemento avançado; 
                             </span><br>
-                            <span class="typeElementsInfo">
-                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (3).svg')"></span></short> : 1 elemento simples e 1 avançado; 
+                            <span class="info-elementos-do-tipo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--icone: url('img/star (3).svg')"></span></short> : 1 elemento simples e 1 avançado; 
                             </span><br>
-                            <span class="typeElementsInfo">
-                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (4).svg')"></span></short> : 2 elementos simples; 
+                            <span class="info-elementos-do-tipo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--icone: url('img/star (4).svg')"></span></short> : 2 elementos simples; 
                             </span><br>
-                            <span class="typeElementsInfo">
-                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--svg-icon: url('img/star (6).svg')"></span></short> : 2 elementos avançados;
+                            <span class="info-elementos-do-tipo">
+                                <short class="MagiaFicha ConhecimentoMagico top"><span class="icon-svg" style="--icone: url('img/star (6).svg')"></span></short> : 2 elementos avançados;
                             </span>
                                 
                         </span>
                     </div>
                 </div>
-                <button class="btn pBtn" id="foco-next-btn" style="display: none;">Próximo</button>
+                <button class="btn botao-contorno" id="foco-next-btn" style="display: none;">Próximo</button>
             </div>
             <div id="elementos">
-                <div class="elementsTitle">
+                <div class="titulo-elementos">
                     <h2 class="title">Elementos - <span class="title" id="element-points">0</span></h2>
                     <p class="text sm" style="width: 148px; text-align: end;margin: 0 0 16px 0;">Os elementos são as forças matrizes do mundo, divididos em simples e avançados.</p>
                 </div>
@@ -493,22 +493,22 @@
                         <hr>
                     </div>
                     <div class="elementos-simples">
-                        <button class="element-card" onclick="elementChose(0)"><img src="img/elemento (3).svg" alt=""></button>
-                        <button class="element-card" onclick="elementChose(1)"><img src="img/elemento (4).svg" alt=""></button>
-                        <button class="element-card" onclick="elementChose(2)"><img src="img/elemento (1).svg" alt=""></button>
-                        <button class="element-card" onclick="elementChose(3)"><img src="img/elemento (2).svg" alt=""></button>
-                        <button class="element-card" onclick="elementChose(4)"><img src="img/elemento (5).svg" alt=""></button>
-                        <button class="element-card" onclick="elementChose(5)"><img src="img/elemento (6).svg" alt=""></button>
-                        <button class="element-card" onclick="elementChose(6)"><img src="img/elemento (7).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(0)"><img src="img/elemento (3).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(1)"><img src="img/elemento (4).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(2)"><img src="img/elemento (1).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(3)"><img src="img/elemento (2).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(4)"><img src="img/elemento (5).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(5)"><img src="img/elemento (6).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(6)"><img src="img/elemento (7).svg" alt=""></button>
                     </div>
                     <div class="elementos-avancados-titulo">
                         <h3 class="title">Avançados</h3>
                         <hr>
                     </div>
                     <div class="elementos-avancados">
-                        <button class="element-card" onclick="elementChose(7)"><img src="img/elemento (1).svg" alt=""></button>
-                        <button class="element-card" onclick="elementChose(8)"><img src="img/elemento (2).svg" alt=""></button>
-                        <button class="element-card" onclick="elementChose(9)"><img src="img/elemento (3).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(7)"><img src="img/elemento (1).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(8)"><img src="img/elemento (2).svg" alt=""></button>
+                        <button class="card-elemento" onclick="elementChose(9)"><img src="img/elemento (3).svg" alt=""></button>
                     </div>
                 </div>
                 <div class="elementos-info-box">
@@ -518,7 +518,7 @@
                             <h3 class="title" id="element-title"></h3>
                             <img src="img/hr.svg" class="reverse" alt="">
                         </div>
-                        <button class="btn pBtn" id="elementos-next-btn" onclick="elementNext()">Proximo</button>
+                        <button class="btn botao-contorno" id="elementos-next-btn" onclick="elementNext()">Proximo</button>
                     </div>
                 </div>
             </div>
@@ -539,40 +539,40 @@
             <div id="escolhaDePericia-Content">
                 <div id="perPlaces">
                     <div id="perGrid">
-                        <div class="perLine">
-                            <div class="perLineTitle">5</div>
+                        <div class="linha-pericias">
+                            <div class="titulo-linha-pericias">5</div>
                             <div class="place" id="place1"></div>
                             <div class="place" id="place2"></div>
                             <div class="place" id="place3"></div>
                             <div class="place" id="place4"></div>
                             <div class="place" id="place5"></div>
                         </div>
-                        <div class="perLine">
-                            <div class="perLineTitle white">4</div>
+                        <div class="linha-pericias">
+                            <div class="titulo-linha-pericias white">4</div>
                             <div class="place" id="place6"></div>
                             <div class="place" id="place7"></div>
                             <div class="place" id="place8"></div>
                             <div class="place" id="place9"></div>
                             <div class="place" id="place10"></div>
                         </div>
-                        <div class="perLine">
-                            <div class="perLineTitle">3</div>
+                        <div class="linha-pericias">
+                            <div class="titulo-linha-pericias">3</div>
                             <div class="place" id="place11"></div>
                             <div class="place" id="place12"></div>
                             <div class="place" id="place13"></div>
                             <div class="place" id="place14"></div>
                             <div class="place" id="place15"></div>
                         </div>
-                        <div class="perLine">
-                            <div class="perLineTitle white">2</div>
+                        <div class="linha-pericias">
+                            <div class="titulo-linha-pericias white">2</div>
                             <div class="place" id="place16"></div>
                             <div class="place" id="place17"></div>
                             <div class="place" id="place18"></div>
                             <div class="place" id="place19"></div>
                             <div class="place" id="place20"></div>
                         </div>
-                        <div class="perLine">
-                            <div class="perLineTitle">1</div>
+                        <div class="linha-pericias">
+                            <div class="titulo-linha-pericias">1</div>
                             <div class="place" id="place21"></div>
                             <div class="place" id="place22"></div>
                             <div class="place" id="place23"></div>
@@ -596,52 +596,52 @@
                         </div>
                     </header>
 
-                    <div id="perListFisicas" class="itemPlace">
+                    <div id="perListFisicas" class="linha-vagas">
                         <div class="item" aria-value="força"><h2>Força</h2></div>
-                        <div class="item small-text" aria-value="constituição"><h2>Constituição</h2></div>
+                        <div class="item texto-pequeno" aria-value="constituição"><h2>Constituição</h2></div>
                         <div class="item" aria-value="luta"><h2>Luta</h2></div>
                         <div class="item" aria-value="pontaria"><h2>Pontaria</h2></div>
                     </div>
                     
-                    <div id="perListArmas" class="itemPlace">
-                        <div class="item small-text" aria-value="armas_brancas"><h2>Armas Brancas</h2></div>
+                    <div id="perListArmas" class="linha-vagas">
+                        <div class="item texto-pequeno" aria-value="armas_brancas"><h2>Armas Brancas</h2></div>
                         <div class="item" aria-value="pistolas"><h2>Pistolas</h2></div>
                         <div class="item" aria-value="rifle"><h2>Rifle</h2></div>
-                        <div class="item small-text" aria-value="longo_alcance"><h2>Longo Alcance</h2></div>
+                        <div class="item texto-pequeno" aria-value="longo_alcance"><h2>Longo Alcance</h2></div>
                         
                     </div>
-                    <div id="perListFisicas2" class="itemPlace">
+                    <div id="perListFisicas2" class="linha-vagas">
                         <div class="item" aria-value="destreza"><h2>Destreza</h2></div>
                         <div class="item" aria-value="acrobacia"><h2>Acrobacia</h2></div>
-                        <div class="item small-text" aria-value="furtividade"><h2>Furtividade</h2></div>
+                        <div class="item texto-pequeno" aria-value="furtividade"><h2>Furtividade</h2></div>
                         <div class="item" aria-value="pilotagem"><h2>Pilotagem</h2></div>
                     </div>
     
-                    <div id="perListSociais" class="itemPlace">
+                    <div id="perListSociais" class="linha-vagas">
                         <div class="item" aria-value="conversação"><h2>Conversação</h2></div>
-                        <div class="item small-text" aria-value="intimidação"><h2>Intimidação</h2></div>
+                        <div class="item texto-pequeno" aria-value="intimidação"><h2>Intimidação</h2></div>
                         <div class="item" aria-value="psicologia"><h2>Psicologia</h2></div>
                     </div>
                     
-                    <div id="perListInvestigacao" class="itemPlace">
+                    <div id="perListInvestigacao" class="linha-vagas">
                         <div class="item" aria-value="percepção"><h2>Percepção</h2></div>
                         <div class="item" aria-value="crime"><h2>Crime</h2></div>
                         <div class="item" aria-value="pesquisar"><h2>Pesquisar</h2></div>
                         <div class="item" aria-value="tecnologia"><h2>Tecnologia</h2></div>
                         <div class="item" aria-value="mecanica"><h2>Mecânica</h2></div>
-                        <div class="item small-text" aria-value="sobrevivencia"><h2>Sobrevivência</h2></div>
+                        <div class="item texto-pequeno" aria-value="sobrevivencia"><h2>Sobrevivência</h2></div>
                     </div>
         
-                    <div id="perListConhecimento" class="itemPlace">
-                        <div class="item small-text" aria-value="artes"><h2>Artes</h2></div>
-                        <div class="item small-text" aria-value="atualidades"><h2>Atualidades</h2></div>
+                    <div id="perListConhecimento" class="linha-vagas">
+                        <div class="item texto-pequeno" aria-value="artes"><h2>Artes</h2></div>
+                        <div class="item texto-pequeno" aria-value="atualidades"><h2>Atualidades</h2></div>
                         <div class="item" aria-value="ciencia"><h2>Ciências</h2></div>
                         <div class="item" aria-value="humanas"><h2>Humanas</h2></div>
                         <div class="item" aria-value="burocracia"><h2>Burocracia</h2></div>
                         <div class="item" aria-value="medicina"><h2>Medicina</h2></div>
                     </div>
         
-                    <div id="perListMentais" class="itemPlace">
+                    <div id="perListMentais" class="linha-vagas">
                         <div class="item" aria-value="vontade"><h2>Vontade</h2></div>
                         <div class="item" aria-value="ocultismo"><h2>Ocultismo</h2></div>
                         <div class="item" aria-value="magia"><h2>Magia</h2></div>
@@ -661,51 +661,51 @@
     <header>
       <button id="MobileMTBtn">
         Magias/ Rituais
-        <img src="img/menu.svg" alt="" class="mMTImage">
+        <img src="img/menu.svg" alt="" class="aba-icone-menu">
       </button>
       <div id="mt-menu">
-        <button class="mTBtn active" onclick="gameHabaSel(0, this)" style="font-size: 10px; overflow: clip;">Magias/ Rituais</button>
-        <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(1, this)">Habilidades</button>
-        <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(2, this)">Inventário</button>
-        <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(3, this)">Rolagens</button>
-        <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(4, this)">Personagem</button>
-        <div class="Sline"></div>
-        <button class="mTBtn" onclick="gameHabaSel(5, this)">Diario*</button>
-        <div class="Sline"></div>
-        <button class="mTBtn" onclick="save()">Salvar</button>
+        <button class="aba-botao active" onclick="gameHabaSel(0, this)" style="font-size: 10px; overflow: clip;">Magias/ Rituais</button>
+        <div class="linha-curta"></div>
+        <button class="aba-botao" onclick="gameHabaSel(1, this)">Habilidades</button>
+        <div class="linha-curta"></div>
+        <button class="aba-botao" onclick="gameHabaSel(2, this)">Inventário</button>
+        <div class="linha-curta"></div>
+        <button class="aba-botao" onclick="gameHabaSel(3, this)">Rolagens</button>
+        <div class="linha-curta"></div>
+        <button class="aba-botao" onclick="gameHabaSel(4, this)">Personagem</button>
+        <div class="linha-curta"></div>
+        <button class="aba-botao" onclick="gameHabaSel(5, this)">Diario*</button>
+        <div class="linha-curta"></div>
+        <button class="aba-botao" onclick="save()">Salvar</button>
         <div class="line"></div>
-        <button class="mTBtn last" onclick="gameHabaSel(6, this)">Opções</button>
+        <button class="aba-botao last" onclick="gameHabaSel(6, this)">Opções</button>
       </div>
     </header>
 
     <main style="height: 100%;">
       <!-- ============ MAGIAS ============ -->
-      <div class="mt-content active" id="magias-content">
+      <div class="aba-conteudo active" id="magias-content">
         <h3 class="title">Magias & Rituais</h3>
         <div class="magias-content"></div>
 
-        <div class="central" style="justify-content: flex-end;">
+        <div class="centralizado" style="justify-content: flex-end;">
           <button class="btn" onclick="startMagicCreation()">+</button>
         </div>
       </div>
 
       <!-- ============ HABILIDADES ============ -->
-      <div class="mt-content" id="habilidades-content" style="display: none;">
+      <div class="aba-conteudo" id="habilidades-content" style="display: none;">
         <h3 class="title">Habilidades</h3>
         <div class="habilidades-content"></div>
 
-        <div class="central">
+        <div class="centralizado">
           <button class="btn" onclick="startAbilityCreation()">+</button>
         </div>
       </div>
 
       <!-- ============ INVENTÁRIO ============ -->
-      <div class="mt-content" id="inventario-content" style="display: none; overflow-y: auto;">
-        <div class="inv-side">
+      <div class="aba-conteudo" id="inventario-content" style="display: none; overflow-y: auto;">
+        <div class="lado-inventario">
           <div style="display: flex; height: 100%; flex-direction: column;">
             <p class="text" style="margin-left: 1em;">Inventário</p>
             <div id="inventory"></div>
@@ -717,27 +717,27 @@
             <textarea id="useInput" style="resize: none;" placeholder="Escreva aqui ..."></textarea>
 
             <p class="text">Arma</p>
-            <div class="arma-area">
+            <div class="area-arma">
               <p class="text pre">Adicione uma arma clicando no Inventário</p>
               <p class="text pre">+</p>
             </div>
 
             <p class="text">Peso</p>
-            <div class="peso-area" onclick="document.getElementById('additional-weight-panel').style.display = 'flex'; document.getElementById('additionalWeightInput').value = ficha.inventario.additionalWeight;">
+            <div class="area-peso" onclick="document.getElementById('additional-weight-panel').style.display = 'flex'; document.getElementById('additionalWeightInput').value = ficha.inventario.additionalWeight;">
               <p class="text sm" id="pesoAddDisplay">/0</p>
               <h2 class="title" id="pesoDisplay">0</h2>
             </div>
           </div>
         </div>
 
-        <div class="inv-side d">
+        <div class="lado-inventario d">
           <p class="text">Guardados</p>
           <div id="guardados"></div>
         </div>
       </div>
 
       <!-- ============ ROLAGENS ============ -->
-      <div class="mt-content" id="dados-content" style="display: none;">
+      <div class="aba-conteudo" id="dados-content" style="display: none;">
           <h3 class="title">Rolagem de Dado</h3>
           <input type="text" id="diceInput" class="dice">
           <button class="btn" id="diceBtnRoll" onclick="rollDice()">Rolar Dado</button>        
@@ -745,7 +745,7 @@
       </div>
 
       <!-- ============ PERSONAGEM ============ -->
-      <div class="mt-content" id="personagem-content" style="display: none;">
+      <div class="aba-conteudo" id="personagem-content" style="display: none;">
           <div class="personagem-content">
               <div class="personagem-info-basica">
                 <div>
@@ -809,13 +809,13 @@
       <!-- ============ Diario ============ -->
 
       
-      <div class="mt-content" id="diario-content" style="display: none;align-items: center;">
+      <div class="aba-conteudo" id="diario-content" style="display: none;align-items: center;">
         <h3 class="title">Diario</h3>
         <p class="text">*Removido por tempo indeterminado</p>
       </div>
 
       <!-- ============ OPÇÕES ============ -->
-       <div class="mt-content" id="options-content" style="display: none;">
+       <div class="aba-conteudo" id="options-content" style="display: none;">
             <h3 class="title">Opções</h3>
             <div id="options-container">
                 <p>Papel De Parede</p>
@@ -861,50 +861,50 @@
   </div>
 
   <div id="periciasDisplayer">
-    <button class="close-btn-per" onclick="closePer()">x</button>
+    <button class="botao-fechar-pericias" onclick="closePer()">x</button>
     <div id="perTop">
         <div id="playerImg">
         </div>
         <div id="statusModifierEdit">
-            <button onclick="changestatusModifier(1)" id="1-dM" class="diceModiferBtn btn white on">1</button>
-            <button onclick="changestatusModifier(5)" id="5-dM" class="diceModiferBtn btn white">5</button>
-            <button onclick="changestatusModifier(10)" id="10-dM" class="diceModiferBtn btn white">10</button>
-            <button onclick="changestatusModifier(50)" id="50-dM" class="diceModiferBtn btn white">50</button>
+            <button onclick="changestatusModifier(1)" id="1-dM" class="botao-modificador-dado btn white on">1</button>
+            <button onclick="changestatusModifier(5)" id="5-dM" class="botao-modificador-dado btn white">5</button>
+            <button onclick="changestatusModifier(10)" id="10-dM" class="botao-modificador-dado btn white">10</button>
+            <button onclick="changestatusModifier(50)" id="50-dM" class="botao-modificador-dado btn white">50</button>
         </div>
-        <div class="barBlock">
-            <div id="hpBar" class="bar">
-                <div class="barDiv">
+        <div class="bloco-barra">
+            <div id="hpBar" class="barra">
+                <div class="barra-interna">
                     <p id="hpValue">10</p>
                 </div>
-                <div id="hpBarFill" class="barFill"></div>
+                <div id="hpBarFill" class="barra-preenchimento"></div>
             </div>
-            <div class="statusBtns">
-                <button class="barBtn" onclick="changeStatusValue('-', 'vida')"><</button>
-                <button class="barBtn" onclick="changeStatusValue('+', 'vida')">></button>
+            <div class="botoes-status">
+                <button class="botao-barra" onclick="changeStatusValue('-', 'vida')"><</button>
+                <button class="botao-barra" onclick="changeStatusValue('+', 'vida')">></button>
             </div>
         </div>
-        <div class="barBlock">
-            <div id="peBar" class="bar">
-                <div class="barDiv">
+        <div class="bloco-barra">
+            <div id="peBar" class="barra">
+                <div class="barra-interna">
                     <p id="epValue"></p>
                 </div>
-                <div id="peBarFill" class="barFill"></div>
+                <div id="peBarFill" class="barra-preenchimento"></div>
             </div>
-            <div class="statusBtns">
-                <button class="barBtn" onclick="changeStatusValue('-', 'energia')"><</button>
-                <button class="barBtn" onclick="changeStatusValue('+', 'energia')">></button>
+            <div class="botoes-status">
+                <button class="botao-barra" onclick="changeStatusValue('-', 'energia')"><</button>
+                <button class="botao-barra" onclick="changeStatusValue('+', 'energia')">></button>
             </div>
         </div>
-        <div class="barBlock">
-            <div id="spBar" class="bar">
-                <div class="barDiv">
+        <div class="bloco-barra">
+            <div id="spBar" class="barra">
+                <div class="barra-interna">
                     <p id="spValue"></p>
                 </div>
-                <div id="spBarFill" class="barFill"></div>
+                <div id="spBarFill" class="barra-preenchimento"></div>
             </div>
-            <div class="statusBtns">
-                <button class="barBtn" onclick="changeStatusValue('-', 'medo')"><</button>
-                <button class="barBtn" onclick="changeStatusValue('+', 'medo')">></button>
+            <div class="botoes-status">
+                <button class="botao-barra" onclick="changeStatusValue('-', 'medo')"><</button>
+                <button class="botao-barra" onclick="changeStatusValue('+', 'medo')">></button>
             </div>
         </div>
         <div id="custom-status-container" style="width: 100%;"></div>
@@ -914,9 +914,9 @@
 
         <div id="vantagens">
             <h2 class="title" style="font-size: 50px; transform: translateY(-14px);">Vantagem</h2>
-            <button class="barBtn" onclick="diminuirVantagem()">-</button>
+            <button class="botao-barra" onclick="diminuirVantagem()">-</button>
             <dice class="white" id="dadoVantagem" data-dice></dice>
-            <button class="barBtn" onclick="aumentarVantagem()">+</button>
+            <button class="botao-barra" onclick="aumentarVantagem()">+</button>
         </div>
     </div>
 
@@ -941,7 +941,7 @@
 
     <div id="dice-multiplier-panel" class="panel" style="display: none;">
         <div class="box">
-            <p class="exit-box" onclick="closeDiceMultiplierPanel()">x</p>
+            <p class="botao-sair" onclick="closeDiceMultiplierPanel()">x</p>
             <p class="text" style="color: white;">Quantos dados?</p>
             <div id="dice-multiplier-options"></div>
         </div>
@@ -949,7 +949,7 @@
 
     <div id="additional-weight-panel" class="panel" style="display: none;">
         <div class="box">
-            <p class="exit-box" onclick="const panel = document.getElementById('additional-weight-panel').style.display = 'none';">x</p>
+            <p class="botao-sair" onclick="const panel = document.getElementById('additional-weight-panel').style.display = 'none';">x</p>
             <p class="text" style="color: white;">Editar Peso Adicional</p>
             <input type="number" id="additionalWeightInput" class="input" placeholder="Novo peso">
             <button class="btn" onclick="renderMaxWeight()">Salvar</button>
@@ -974,9 +974,9 @@
     </div>
 
     <div id="periciasEditorBox">
-        <div class="periciasEditorBoxContent">
+        <div class="conteudo-editor-pericias">
             <h2 class="title">Editar Pericias</h2>
-            <button class="closeBox" onclick="salvarPericiasEditadas(), salvarStatusMaxEditados()">Salvar e Voltar</button>
+            <button class="botao-fechar-caixa" onclick="salvarPericiasEditadas(), salvarStatusMaxEditados()">Salvar e Voltar</button>
         </div>
             <div id="periciasEditor"></div>
             <div id="statusMaxEditor"></div>

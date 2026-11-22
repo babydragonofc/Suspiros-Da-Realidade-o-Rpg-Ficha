@@ -271,14 +271,14 @@ function initTooltips(scope = document) {
             tooltip.querySelector(".text.sm").textContent = data.descricaoExtra? data.descricaoExtra: "";
 
             // Remove o botão de perícias se já existir
-            const existingBtn = tooltip.querySelector('.pericias-btn');
+            const existingBtn = tooltip.querySelector('.botao-pericias');
             if (existingBtn) {
                 existingBtn.remove();
             }
 
             if (categoria === 'Atributo' && data.pericias) {
                 const periciasBtn = document.createElement('button');
-                periciasBtn.className = 'btn pericias-btn';
+                periciasBtn.className = 'btn botao-pericias';
                 periciasBtn.textContent = 'Perícias';
                 tooltip.querySelector('div:last-child').appendChild(periciasBtn);
 
@@ -291,7 +291,7 @@ function initTooltips(scope = document) {
 
                     rightTooltip.innerHTML = '';
                     const periciasList = document.createElement('div');
-                    periciasList.className = 'pericias-list';
+                    periciasList.className = 'lista-pericias';
                     
                     data.pericias.forEach(p => {
                         const shortEl = document.createElement('short');

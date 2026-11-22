@@ -204,14 +204,14 @@ function renderInventory() {
 
     sortedInventory.forEach(item => {
         const itemCard = document.createElement('div');
-        itemCard.className = 'item-card';
+        itemCard.className = 'card-item';
         itemCard.dataset.itemId = item.id;
         if (item.isFavorite) {
-            itemCard.classList.add('favorited');
+            itemCard.classList.add('favoritado');
         }
 
         const itemHeader = document.createElement('div');
-        itemHeader.className = 'item-header';
+        itemHeader.className = 'cabecalho-item';
         let itemText = item.name;
         if (item.type == "weapon") {
             itemText += ` (${item.ammunition}/${item.maxAmmunition})`;
@@ -221,7 +221,7 @@ function renderInventory() {
 
         // Add favorite star icon
         const favoriteStar = document.createElement('span');
-        favoriteStar.className = 'favorite-star';
+        favoriteStar.className = 'estrela-favorito';
         favoriteStar.innerHTML = '&#9733;'; // Unicode star character
         if (item.isFavorite) {
             favoriteStar.style.display = "block";
@@ -232,7 +232,7 @@ function renderInventory() {
         itemHeader.appendChild(favoriteStar); // Append to header for better positioning
 
         const itemContent = document.createElement('div');
-        itemContent.className = 'item-content';
+        itemContent.className = 'conteudo-item';
 
         const infoButton = document.createElement('button');
         infoButton.textContent = 'Info';
@@ -298,7 +298,7 @@ function renderInventory() {
         });
 
         if (ficha.inventario.weapon && ficha.inventario.weapon.id === item.id) {
-            itemCard.classList.add('equipped');
+            itemCard.classList.add('equipado');
         }
 
         inventoryContainer.appendChild(itemCard);
@@ -317,20 +317,20 @@ function renderGuardados() {
 
     sortedGuardados.forEach(item => {
         const itemCard = document.createElement('div');
-        itemCard.className = 'item-card';
+        itemCard.className = 'card-item';
         itemCard.dataset.itemId = item.id;
         if (item.isFavorite) {
-            itemCard.classList.add('favorited');
+            itemCard.classList.add('favoritado');
         }
 
         const itemHeader = document.createElement('div');
-        itemHeader.className = 'item-header';
+        itemHeader.className = 'cabecalho-item';
         itemHeader.textContent = item.name;
         itemCard.appendChild(itemHeader);
 
         // Add favorite star icon
         const favoriteStar = document.createElement('span');
-        favoriteStar.className = 'favorite-star';
+        favoriteStar.className = 'estrela-favorito';
         favoriteStar.innerHTML = '&#9733;'; // Unicode star character
         if (item.isFavorite) {
             favoriteStar.style.display = "block";
@@ -340,7 +340,7 @@ function renderGuardados() {
         itemHeader.appendChild(favoriteStar); // Append to header for better positioning
 
         const itemContent = document.createElement('div');
-        itemContent.className = 'item-content';
+        itemContent.className = 'conteudo-item';
 
         const infoButton = document.createElement('button');
         infoButton.textContent = 'Info';
@@ -404,7 +404,7 @@ function renderGuardados() {
 }
 
 function renderWeaponArea() {
-    const weaponArea = document.querySelector('.arma-area');
+    const weaponArea = document.querySelector('.area-arma');
     const weapon = ficha.inventario.weapon;
 
     // Sem arma equipada
@@ -481,7 +481,7 @@ function renderWeaponArea() {
                 : ""
         }
 
-        <div class="btn-container">
+        <div class="container-botoes">
             <button class="btn" id="weaponAttackBtn">
                 ${isFireWeapon ? "Atirar" : "Atacar"}
             </button>
@@ -497,7 +497,7 @@ function renderWeaponArea() {
                     : ""
             }
 
-            <button class="btn delete-btn" id="weaponRemoveBtn">
+            <button class="btn botao-excluir" id="weaponRemoveBtn">
                 Remover
             </button>
         </div>
@@ -551,7 +551,7 @@ function renderTotalWeight() {
 function showItemActions(itemId, event, location) {
     const itemElement = document.getElementById(itemId)
     if (itemElement) itemElement.classList.toggle('active')
-    const existingMenu = document.querySelector('.item-action-menu');
+    const existingMenu = document.querySelector('.menu-acoes-item');
     if (existingMenu) {
         existingMenu.remove();
     }
@@ -562,7 +562,7 @@ function showItemActions(itemId, event, location) {
     const rect = itemCard.getBoundingClientRect();
 
     const menu = document.createElement('div');
-    menu.className = 'item-action-menu';
+    menu.className = 'menu-acoes-item';
 
     const infoButton = document.createElement('button');
     infoButton.textContent = 'Info';
@@ -669,7 +669,7 @@ function showItemInfo(item, location) {
 
     // Delete Button (already exists, but needs to be updated to use item.id)
     const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'btn delete-btn';
+    deleteBtn.className = 'btn botao-excluir';
     deleteBtn.textContent = 'Excluir';
     deleteBtn.onclick = () => {
         deleteItem(item.id, location);
@@ -695,7 +695,7 @@ function moveItem(itemId, from) {
     renderInventory();
     renderGuardados();
     renderTotalWeight();
-    const existingMenu = document.querySelector('.item-action-menu');
+    const existingMenu = document.querySelector('.menu-acoes-item');
     if (existingMenu) {
         existingMenu.remove();
     }
@@ -720,7 +720,7 @@ function deleteItem(itemId, location) {
             renderGuardados();
         }
         renderTotalWeight();
-        const existingMenu = document.querySelector('.item-action-menu');
+        const existingMenu = document.querySelector('.menu-acoes-item');
         if (existingMenu) {
             existingMenu.remove();
         }
@@ -740,7 +740,7 @@ function useItem(itemId) {
         rollDice(item.data.dice, "damage");  
     }
 
-    const existingMenu = document.querySelector('.item-action-menu');
+    const existingMenu = document.querySelector('.menu-acoes-item');
     if (existingMenu) {
         existingMenu.remove();
     }

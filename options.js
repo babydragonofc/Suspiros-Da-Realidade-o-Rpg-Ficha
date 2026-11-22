@@ -83,14 +83,14 @@ function setWallpaper(value) {
     document.querySelector('body').style.backgroundImage = 'url(img/backgrounds/'+backgrounds[value]+')'
     const root = document.documentElement;
     const bgr =  backgroundsRoots[value]
-    root.style.setProperty ('--main-clr', bgr.main);
-    root.style.setProperty ('--sec-clr', bgr.sec);
-    root.style.setProperty ('--btn-bg', bgr.btnBg);
-    root.style.setProperty ('--btn-hvr', bgr.btnHvr);
-    root.style.setProperty ('--btn-tx', bgr.btnTx);
-    root.style.setProperty ('--ter-clr', bgr.ter);
-    root.style.setProperty ('--un-tab-clr', bgr.uTb);
-    root.style.setProperty ('--slider-clr', bgr.sc);
+    root.style.setProperty ('--cor-principal', bgr.main);
+    root.style.setProperty ('--cor-secundaria', bgr.sec);
+    root.style.setProperty ('--botao-fundo', bgr.btnBg);
+    root.style.setProperty ('--botao-fundo-hover', bgr.btnHvr);
+    root.style.setProperty ('--botao-texto', bgr.btnTx);
+    root.style.setProperty ('--cor-terciaria', bgr.ter);
+    root.style.setProperty ('--cor-aba-inativa', bgr.uTb);
+    root.style.setProperty ('--cor-controle', bgr.sc);
     
     verifyAutoSave()
 }
@@ -107,14 +107,14 @@ function setCustomWallpaper(settings) {
 
     const root = document.documentElement;
 
-    root.style.setProperty ('--main-clr', settings.main);
-    root.style.setProperty ('--sec-clr', settings.sec);
-    root.style.setProperty ('--btn-bg', settings.btnBg);
-    root.style.setProperty ('--btn-hvr', settings.btnHvr);
-    root.style.setProperty ('--btn-tx', settings.btnTx);
-    root.style.setProperty ('--ter-clr', settings.ter);
-    root.style.setProperty ('--un-tab-clr', settings.uTb);
-    root.style.setProperty ('--slider-clr', settings.sc);
+    root.style.setProperty ('--cor-principal', settings.main);
+    root.style.setProperty ('--cor-secundaria', settings.sec);
+    root.style.setProperty ('--botao-fundo', settings.btnBg);
+    root.style.setProperty ('--botao-fundo-hover', settings.btnHvr);
+    root.style.setProperty ('--botao-texto', settings.btnTx);
+    root.style.setProperty ('--cor-terciaria', settings.ter);
+    root.style.setProperty ('--cor-aba-inativa', settings.uTb);
+    root.style.setProperty ('--cor-controle', settings.sc);
 
     verifyAutoSave()
 }
@@ -140,7 +140,7 @@ function changestatusModifier(value) {
 
 function turnPerTranslucid() {
     ficha.options.translucidPer = !ficha.options.translucidPer
-    document.getElementById('periciasDisplayer').classList.toggle('translucid')
+    document.getElementById('periciasDisplayer').classList.toggle('translucido')
     if (!ficha.options.translucidPer) periciasDisplayer.style.backgroundImage = "" ;
     const translucidPerOp = ficha.options.translucidPer? "(on)": "(off)"
     document.getElementById('translucidPerBtn').innerHTML = "Pericias translucidas " + translucidPerOp;
@@ -159,7 +159,7 @@ function turnPerBlur() {
 document.getElementById('perBlurInput').addEventListener('change', function() {
     ficha.options.blurPerValue = this.value
     const root = document.documentElement;
-    root.style.setProperty ('--blur-per', ficha.options.blurPerValue + "px");
+    root.style.setProperty ('--desfoque-pericias', ficha.options.blurPerValue + "px");
     verifyAutoSave()
 })
 
@@ -199,7 +199,7 @@ function loadUserOptions() {
     document.getElementById('translucidPerBtn').innerHTML = "Pericias translucidas " + translucidPerOp;
 
     const root = document.documentElement;
-    root.style.setProperty ('--blur-per', ficha.options.blurPerValue + "px");
+    root.style.setProperty ('--desfoque-pericias', ficha.options.blurPerValue + "px");
 
     if (ficha.options.statusModifier) {
         statusModifierEdit.style.display = 'flex'
@@ -208,7 +208,7 @@ function loadUserOptions() {
     }
     if(ficha.options.translucidPer) {
         periciasDisplayer.style.backgroundImage = document.querySelector('body').style.backgroundImage ;
-        document.getElementById('periciasDisplayer').classList.add('translucid')
+        document.getElementById('periciasDisplayer').classList.add('translucido')
     }
     else {
         periciasDisplayer.style.backgroundImage = "" ;

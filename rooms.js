@@ -48,8 +48,8 @@ function h(tag, props, ...kids) {
 }
 
 function toast(msg) {
-  document.querySelectorAll('.sl-toast').forEach(t => t.remove());
-  const t = h('div', { class: 'sl-toast' }, msg);
+  document.querySelectorAll('.sala-aviso').forEach(t => t.remove());
+  const t = h('div', { class: 'sala-aviso' }, msg);
   document.body.append(t);
   setTimeout(() => t.remove(), 4000);
 }
@@ -72,7 +72,7 @@ const state = {
   iniSeen: false, mesaSeen: false,
   presence: null,
   lastApplied: null,
-  ui: { step: 1, tab: {} }
+  ui: { step: 1, tab: {}, sub: {} }
 };
 let app, auth, db, uid = null, ready = null;
 let lastPushed = null, applying = false, syncTimer = null;
@@ -105,9 +105,10 @@ const SKIP = new Set(['mods', 'customStatus', 'options', 'customWallpaper', 'ass
 const BIO_FIELDS = ['familia', 'gostos', 'desgostos', 'medos', 'contatos', 'historia', 'comportamento', 'dinheiro'];
 const STATS = [['vida', 'vidaMax', 'PV', 'pv'], ['energia', 'energiaMax', 'PE', 'pe'], ['medo', 'medoMax', 'MD', 'md']];
 
+const SKIP_PUSH = new Set(['mods', 'customStatus', 'options', 'customWallpaper']);
 function snapshotFicha() {
   const o = {};
-  for (const k of Object.keys(ficha)) if (!SKIP.has(k)) o[k] = ficha[k];
+  for (const k of Object.keys(ficha)) if (!SKIP_PUSH.has(k)) o[k] = ficha[k];
   return JSON.stringify(o);
 }
 
@@ -446,37 +447,37 @@ function masterRoll(exprRaw) {
 function fillRolls(box) {
   const rows = [...state.rolls].reverse().map(r => {
     const t = num(r.ts) ? new Date(num(r.ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
-    return h('div', { class: 'sl-roll' + (r.kind === 'damage' ? ' dmg' : '') },
+    return h('div', { class: 'sala-rolagem' + (r.kind === 'damage' ? ' dmg' : '') },
       h('div', {},
         h('div', {}, h('b', {}, r.who || '?'), ' · ', r.label || 'Dado'),
-        h('div', { class: 'sl-muted' }, [r.expr, r.detail].filter(Boolean).join(' — ')),
-        h('div', { class: 'sl-muted' }, t)),
+        h('div', { class: 'sala-discreto' }, [r.expr, r.detail].filter(Boolean).join(' — ')),
+        h('div', { class: 'sala-discreto' }, t)),
       h('b', { class: 'total' }, String(r.total)));
   });
-  box.replaceChildren(...(rows.length ? rows : [h('p', { class: 'sl-muted' }, 'Nenhuma rolagem ainda.')]));
+  box.replaceChildren(...(rows.length ? rows : [h('p', { class: 'sala-discreto' }, 'Nenhuma rolagem ainda.')]));
 }
 function renderRolls() { state.rollBoxes.forEach(fillRolls); }
 
 // ---------------------------------------------------------------- cards (vista rápida)
 function buildCard(puid, master) {
   const r = {};
-  const card = h('div', { class: 'sl-card' + (puid === uid ? ' me' : ''), 'data-uid': puid },
+  const card = h('div', { class: 'sala-card' + (puid === uid ? ' me' : ''), 'data-uid': puid },
     h('header', {},
-      (r.dot = h('span', { class: 'sl-dot' })),
-      (r.name = h('span', { class: 'sl-name' })),
-      (r.race = h('span', { class: 'sl-muted' })),
-      master ? (r.toggle = h('button', { class: 'sl-btn', onclick: () => toggleExpand(puid) }, 'Abrir')) : null,
-      master ? h('button', { class: 'sl-btn sl-danger', title: 'Remover da sala', onclick: () => kick(puid) }, '✕') : null),
-    h('div', { class: 'sl-bars' }, STATS.map(([k, , label, cls]) => {
+      (r.dot = h('span', { class: 'sala-indicador' })),
+      (r.name = h('span', { class: 'sala-nome' })),
+      (r.race = h('span', { class: 'sala-discreto' })),
+      master ? (r.toggle = h('button', { class: 'sala-botao', onclick: () => toggleExpand(puid) }, 'Abrir')) : null,
+      master ? h('button', { class: 'sala-botao sala-perigo', title: 'Remover da sala', onclick: () => kick(puid) }, '✕') : null),
+    h('div', { class: 'sala-barras' }, STATS.map(([k, , label, cls]) => {
       const fill = h('i'); const txt = h('span');
       r[k] = { fill, txt, label };
-      return h('div', { class: 'sl-stat' },
-        h('div', { class: 'sl-bar ' + cls }, fill, txt),
-        master ? h('div', { class: 'sl-adj' },
-          h('button', { class: 'sl-btn', onclick: () => adjust(puid, k, -1) }, '−'),
-          h('button', { class: 'sl-btn', onclick: () => adjust(puid, k, +1) }, '+')) : null);
+      return h('div', { class: 'sala-estatistica' },
+        h('div', { class: 'sala-barra ' + cls }, fill, txt),
+        master ? h('div', { class: 'sala-ajuste' },
+          h('button', { class: 'sala-botao', onclick: () => adjust(puid, k, -1) }, '−'),
+          h('button', { class: 'sala-botao', onclick: () => adjust(puid, k, +1) }, '+')) : null);
     })),
-    master ? (r.body = Object.assign(h('div', { class: 'sl-body' }), { hidden: true })) : null);
+    master ? (r.body = Object.assign(h('div', { class: 'sala-corpo' }), { hidden: true })) : null);
   if (master) {
     r.body.addEventListener('focusout', () => {
       if (r.body._dirty) { r.body._dirty = false; setTimeout(() => rebuildEditorIfOpen(puid), 80); }
@@ -518,8 +519,8 @@ function syncCards(container, master) {
 function renderAll() { state.containers.forEach(c => syncCards(c.el, c.master)); }
 
 // ---------------------------------------------------------------- editor do mestre
-const TABS = [['status', 'Status'], ['pericias', 'Perícias'], ['inv', 'Inventário'], ['magias', 'Magias'],
-  ['hab', 'Habilidades'], ['traumas', 'Traumas'], ['bio', 'Personagem']];
+const TABS = [['dados', 'Dados'], ['status', 'Status'], ['pericias', 'Perícias'], ['inv', 'Inventário'], ['magias', 'Magias'],
+  ['hab', 'Habilidades'], ['traumas', 'Traumas'], ['bio', 'Biografia'], ['avancado', 'Avançado']];
 
 function masterCard(puid) {
   const c = state.containers.find(x => x.master);
@@ -549,7 +550,7 @@ function rebuildEditorIfOpen(puid) {
 function buildEditor(puid, body) {
   body.replaceChildren();
   const entry = state.fichas[puid];
-  if (!entry || !entry.ficha) { body.append(h('p', { class: 'sl-muted' }, 'Carregando ficha…')); return; }
+  if (!entry || !entry.ficha) { body.append(h('p', { class: 'sala-discreto' }, 'Carregando ficha…')); return; }
   const f = entry.ficha;
   const ctx = {
     puid, f, justAdded: null,
@@ -560,30 +561,30 @@ function buildEditor(puid, body) {
     },
     rerender() { renderTab(); }
   };
-  let tab = state.ui.tab[puid] || 'status';
-  const tabsEl = h('div', { class: 'sl-tabs' });
-  const content = h('div', { class: 'sl-tabbody' });
+  let tab = state.ui.tab[puid] || 'dados';
+  const tabsEl = h('div', { class: 'sala-abas' });
+  const content = h('div', { class: 'sala-aba-corpo' });
   const renderTab = () => {
     tabsEl.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
     content.replaceChildren(TAB_FN[tab](ctx));
   };
   TABS.forEach(([id, label]) => tabsEl.append(
-    h('button', { class: 'sl-btn', 'data-t': id, onclick: () => { tab = id; state.ui.tab[puid] = id; renderTab(); } }, label)));
+    h('button', { class: 'sala-botao', 'data-t': id, onclick: () => { tab = id; state.ui.tab[puid] = id; renderTab(); } }, label)));
   body.append(tabsEl, content);
   renderTab();
 }
 
 // ---- campos
-const fld = (label, input, cls = '') => h('div', { class: 'sl-f ' + cls }, h('label', {}, label), input);
+const fld = (label, input, cls = '') => h('div', { class: 'sala-campo-rotulado ' + cls }, h('label', {}, label), input);
 
 function inp(type, value, onSet, ctx) {
-  const i = h(type === 'area' ? 'textarea' : 'input', { class: 'sl-in', rows: type === 'area' ? 3 : null, type: type === 'area' ? null : type });
+  const i = h(type === 'area' ? 'textarea' : 'input', { class: 'sala-campo', rows: type === 'area' ? 3 : null, type: type === 'area' ? null : type });
   i.value = value ?? '';
   i.addEventListener('change', () => { onSet(type === 'number' ? num(i.value) : i.value); ctx.commit(); });
   return i;
 }
 function sel(options, value, onSet, ctx) {
-  const s = h('select', { class: 'sl-in' }, options.map(o => { const [v, l] = Array.isArray(o) ? o : [o, o]; return h('option', { value: v }, l); }));
+  const s = h('select', { class: 'sala-campo' }, options.map(o => { const [v, l] = Array.isArray(o) ? o : [o, o]; return h('option', { value: v }, l); }));
   s.value = value ?? '';
   s.addEventListener('change', () => { onSet(s.value); ctx.commit(); });
   return s;
@@ -592,10 +593,10 @@ function chk(label, checked, onSet, ctx) {
   const c = h('input', { type: 'checkbox' });
   c.checked = !!checked;
   c.addEventListener('change', () => { onSet(c.checked); ctx.commit(); });
-  return h('label', { class: 'sl-chk' }, c, ' ' + label);
+  return h('label', { class: 'sala-opcao' }, c, ' ' + label);
 }
 function diceInp(value, onSet, ctx) {
-  const i = h('input', { class: 'sl-in', placeholder: 'ex: 1d20+5' });
+  const i = h('input', { class: 'sala-campo', placeholder: 'ex: 1d20+5' });
   i.value = value || '';
   i.addEventListener('change', () => {
     const v = i.value.trim();
@@ -612,10 +613,10 @@ function tabStatus(ctx) {
   const names = { vida: 'Vida (PV)', energia: 'Energia (PE)', medo: 'Medo (MD)' };
   const keys = Object.keys(f.status).filter(k => !k.endsWith('Max'));
   return h('div', {},
-    keys.map(k => h('div', { class: 'sl-fs' },
+    keys.map(k => h('div', { class: 'sala-grupo-campos' },
       fld(names[k] || k, inp('number', f.status[k], v => { f.status[k] = v; }, ctx)),
       fld((names[k] || k) + ' — máx.', inp('number', f.status[k + 'Max'], v => { f.status[k + 'Max'] = v; }, ctx)))),
-    h('div', { class: 'sl-fs' },
+    h('div', { class: 'sala-grupo-campos' },
       fld('Defesa ativa (%)', inp('number', f.modificadores.defesaAtiva, v => { f.modificadores.defesaAtiva = v; }, ctx)),
       fld('Deslocamento', inp('number', f.modificadores.deslocamento, v => { f.modificadores.deslocamento = v; }, ctx)),
       fld('Reflexos', inp('number', f.modificadores.reflexos, v => { f.modificadores.reflexos = v; }, ctx))));
@@ -624,15 +625,15 @@ function tabStatus(ctx) {
 // ---- aba Perícias
 function tabPericias(ctx) {
   const f = ctx.f;
-  if (!Array.isArray(f.pericias)) return h('p', { class: 'sl-muted' }, 'Esta ficha usa o formato antigo de perícias e não pode ser editada aqui.');
+  if (!Array.isArray(f.pericias)) return h('p', { class: 'sala-discreto' }, 'Esta ficha usa o formato antigo de perícias e não pode ser editada aqui.');
   while (f.pericias.length < 6) f.pericias.push([]);
   const lvlOf = n => { for (let i = 5; i >= 0; i--) if ((f.pericias[i] || []).includes(n)) return i; return 0; };
   const names = [...new Set(f.pericias.flat().filter(Boolean))]
     .sort((a, b) => lvlOf(b) - lvlOf(a) || a.localeCompare(b, 'pt'));
   const opts = [[0, '0 — sem treino'], [1, '1'], [2, '2'], [3, '3'], [4, '4'], [5, '5']];
   return h('div', {},
-    h('p', { class: 'sl-muted' }, 'Mudar o nível de uma perícia não recalcula PV/PE/MD máximos; ajuste-os na aba Status.'),
-    h('div', { class: 'sl-pergrid' }, names.map(n => h('div', { class: 'sl-perrow' },
+    h('p', { class: 'sala-discreto' }, 'Mudar o nível de uma perícia não recalcula PV/PE/MD máximos; ajuste-os na aba Status.'),
+    h('div', { class: 'sala-pericias-grade' }, names.map(n => h('div', { class: 'sala-pericia-linha' },
       h('span', {}, fmtName(n)),
       sel(opts, lvlOf(n), v => {
         f.pericias.forEach(arr => { const i = arr.indexOf(n); if (i !== -1) arr.splice(i, 1); });
@@ -681,19 +682,19 @@ function itemEditor(ctx, list, it, place) {
   it.data = it.data || {};
   const d = it.data;
   const title = () => (it.isFavorite ? '★ ' : '') + (it.name || '(sem nome)');
-  const sum = h('summary', {}, title(), h('span', { class: 'sl-muted' }, ` · ${it.type || '?'} · peso ${num(it.weight)}`));
+  const sum = h('summary', {}, title(), h('span', { class: 'sala-discreto' }, ` · ${it.type || '?'} · peso ${num(it.weight)}`));
   const syncWeapon = () => { if (inv.weapon && inv.weapon.id === it.id) inv.weapon = JSON.parse(JSON.stringify(it)); };
   const S = fn => v => { fn(v); syncWeapon(); };
   const fields = itemFieldList(it, ctx, S, () => { sum.firstChild.textContent = title(); }, true);
   const other = place === 'inv' ? inv.guardados : inv.content;
-  return h('details', { class: 'sl-item', open: ctx.justAdded === it },
+  return h('details', { class: 'sala-item', open: ctx.justAdded === it },
     sum,
-    h('div', { class: 'sl-fs' }, fields),
-    h('div', { class: 'sl-row' },
-      h('button', { class: 'sl-btn', onclick: () => {
+    h('div', { class: 'sala-grupo-campos' }, fields),
+    h('div', { class: 'sala-linha' },
+      h('button', { class: 'sala-botao', onclick: () => {
         list.splice(list.indexOf(it), 1); other.push(it); ctx.commit(); ctx.rerender();
       } }, place === 'inv' ? 'Guardar' : 'Mover p/ inventário'),
-      h('button', { class: 'sl-btn sl-danger', onclick: () => {
+      h('button', { class: 'sala-botao sala-perigo', onclick: () => {
         if (!confirm(`Excluir "${it.name}"?`)) return;
         if (inv.weapon && inv.weapon.id === it.id) inv.weapon = {};
         list.splice(list.indexOf(it), 1); ctx.commit(); ctx.rerender();
@@ -710,18 +711,18 @@ function tabInv(ctx) {
   const where = sel([['inv', 'Inventário'], ['gua', 'Guardados']], 'inv', () => {}, { commit() {} });
   const cat = sel([['item', 'Item'], ['arma', 'Arma'], ['municao', 'Munição']], 'item', () => {}, { commit() {} });
   const sec = (t, list, place) => h('div', {},
-    h('h4', { class: 'sl-h' }, t),
-    list.length ? list.map(it => itemEditor(ctx, list, it, place)) : h('p', { class: 'sl-muted' }, 'Vazio.'));
+    h('h4', { class: 'sala-titulo' }, t),
+    list.length ? list.map(it => itemEditor(ctx, list, it, place)) : h('p', { class: 'sala-discreto' }, 'Vazio.'));
   return h('div', {},
-    h('div', { class: 'sl-fs' },
+    h('div', { class: 'sala-grupo-campos' },
       fld('Capacidade (peso adicional)', inp('number', inv.additionalWeight, v => { inv.additionalWeight = v; }, ctx)),
       fld('Usando', inp('area', inv.usando, v => { inv.usando = v; }, ctx), 'wide')),
-    h('p', { class: 'sl-muted' }, `Peso carregado: ${total} / ${num(inv.additionalWeight)} · Arma equipada: ${(inv.weapon && inv.weapon.name) || '—'}`,
-      inv.weapon && inv.weapon.name ? h('button', { class: 'sl-btn sl-ml', onclick: () => { inv.weapon = {}; ctx.commit(); ctx.rerender(); } }, 'Desequipar') : null),
+    h('p', { class: 'sala-discreto' }, `Peso carregado: ${total} / ${num(inv.additionalWeight)} · Arma equipada: ${(inv.weapon && inv.weapon.name) || '—'}`,
+      inv.weapon && inv.weapon.name ? h('button', { class: 'sala-botao sala-margem-esquerda', onclick: () => { inv.weapon = {}; ctx.commit(); ctx.rerender(); } }, 'Desequipar') : null),
     sec('Inventário', inv.content, 'inv'),
     sec('Guardados', inv.guardados, 'gua'),
-    h('div', { class: 'sl-row sl-mt' }, where, cat,
-      h('button', { class: 'sl-btn', onclick: () => {
+    h('div', { class: 'sala-linha sala-margem-topo' }, where, cat,
+      h('button', { class: 'sala-botao', onclick: () => {
         const it = newItem(cat.value);
         (where.value === 'inv' ? inv.content : inv.guardados).push(it);
         ctx.justAdded = it; ctx.commit(); ctx.rerender();
@@ -745,7 +746,7 @@ function listTab(ctx, key) {
       fld('Dado', diceInp(it[dk], v => { it[dk] = v; }, ctx))
     ];
     if (isT) {
-      const ti = h('input', { class: 'sl-in', placeholder: '2H, 1D ou PER' });
+      const ti = h('input', { class: 'sala-campo', placeholder: '2H, 1D ou PER' });
       ti.value = timeStr(it);
       ti.addEventListener('change', () => {
         const s = ti.value.trim().toUpperCase();
@@ -760,17 +761,17 @@ function listTab(ctx, key) {
     fields.push(
       fld('Descrição', inp('area', it.description, v => { it.description = v; }, ctx), 'wide'),
       chk('Favorito', it.isFavorite, v => { it.isFavorite = v; sum.textContent = title(); }, ctx));
-    return h('details', { class: 'sl-item', open: ctx.justAdded === it },
+    return h('details', { class: 'sala-item', open: ctx.justAdded === it },
       sum,
-      h('div', { class: 'sl-fs' }, fields),
-      h('div', { class: 'sl-row' }, h('button', { class: 'sl-btn sl-danger', onclick: () => {
+      h('div', { class: 'sala-grupo-campos' }, fields),
+      h('div', { class: 'sala-linha' }, h('button', { class: 'sala-botao sala-perigo', onclick: () => {
         if (!confirm(`Excluir "${it.name}"?`)) return;
         arr.splice(arr.indexOf(it), 1); ctx.commit(); ctx.rerender();
       } }, 'Excluir')));
   });
   return h('div', {},
-    items.length ? items : h('p', { class: 'sl-muted' }, 'Nada por aqui.'),
-    h('button', { class: 'sl-btn sl-mt', onclick: () => {
+    items.length ? items : h('p', { class: 'sala-discreto' }, 'Nada por aqui.'),
+    h('button', { class: 'sala-botao sala-margem-topo', onclick: () => {
       const it = isT ? { name: 'Novo trauma', description: '', dado: '', time: { numero: 'PER', tipoT: 'PER' }, isFavorite: false }
         : { name: 'Novo', description: '', dice: '', isFavorite: false };
       arr.push(it); ctx.justAdded = it; ctx.commit(); ctx.rerender();
@@ -783,26 +784,122 @@ function tabBio(ctx) {
   f.biografia = f.biografia || {};
   const b = f.biografia;
   const lab = { familia: 'Família', gostos: 'Gostos', desgostos: 'Desgostos', medos: 'Medos', contatos: 'Contatos próximos', historia: 'História', comportamento: 'Comportamento' };
-  const nm = x => (x && typeof x === 'object' ? x.nome : '') || '—';
   return h('div', {},
-    h('div', { class: 'sl-fs' },
-      fld('Nome', inp('text', f.nome, v => { f.nome = v; }, ctx)),
-      fld('Idade', inp('text', f.idade, v => { f.idade = v; }, ctx)),
-      fld('Nascimento', inp('text', f.dataNascimento, v => { f.dataNascimento = v; }, ctx)),
-      fld('Dinheiro', inp('text', b.dinheiro, v => { b.dinheiro = v; }, ctx))),
-    h('p', { class: 'sl-muted' }, `Raça: ${nm(f['raça'])} · Ocupação: ${nm(f['ocupação'])} · Origem: ${nm(f.origem)}`),
+    h('div', { class: 'sala-grupo-campos' }, fld('Dinheiro', inp('text', b.dinheiro, v => { b.dinheiro = v; }, ctx))),
     Object.keys(lab).map(k => fld(lab[k], inp('area', b[k], v => { b[k] = v; }, ctx), 'wide')));
 }
 
+// ---- aba Dados: identidade do personagem
+function objetoNomeado(f, chave) {                      // raça/ocupação/origem são objetos {nome,...}
+  if (!f[chave] || typeof f[chave] !== 'object') f[chave] = { nome: '' };
+  return f[chave];
+}
+function tabDados(ctx) {
+  const f = ctx.f;
+  f.status = f.status || {};
+  const raca = objetoNomeado(f, 'raça'); raca.status = raca.status || { Pv: 0, Pe: 0, Md: 0 };
+  const ocup = objetoNomeado(f, 'ocupação'), orig = objetoNomeado(f, 'origem');
+  return h('div', {},
+    h('div', { class: 'sala-grupo-campos' },
+      fld('Nome', inp('text', f.nome, v => { f.nome = v; }, ctx)),
+      fld('Idade', inp('text', f.idade, v => { f.idade = v; }, ctx)),
+      fld('Sexo', inp('text', f.sexo, v => { f.sexo = v; }, ctx)),
+      fld('Nascimento', inp('text', f.dataNascimento, v => { f.dataNascimento = v; }, ctx))),
+    h('div', { class: 'sala-grupo-campos' },
+      fld('Raça', inp('text', raca.nome, v => { raca.nome = v; }, ctx)),
+      fld('Ocupação', inp('text', ocup.nome, v => { ocup.nome = v; }, ctx)),
+      fld('Origem', inp('text', orig.nome, v => { orig.nome = v; }, ctx))),
+    h('p', { class: 'sala-discreto' }, 'Bônus de status da raça'),
+    h('div', { class: 'sala-grupo-campos' },
+      fld('PV', inp('number', raca.status.Pv, v => { raca.status.Pv = v; }, ctx)),
+      fld('PE', inp('number', raca.status.Pe, v => { raca.status.Pe = v; }, ctx)),
+      fld('MD', inp('number', raca.status.Md, v => { raca.status.Md = v; }, ctx))),
+    h('div', { class: 'sala-grupo-campos' },
+      fld('Pontos disponíveis', inp('number', f.pontos, v => { f.pontos = v; }, ctx)),
+      fld('Conhecimento mágico', inp('number', f.ConhecimentoMagico, v => { f.ConhecimentoMagico = v; }, ctx))));
+}
+
+// ---- aba Avançado: baixar, substituir, restaurar
+function baixarFicha(puid) {
+  const e = state.fichas[puid];
+  if (!e || !e.ficha) return toast('A ficha desse jogador ainda está carregando.');
+  baixarArquivo(nomeArquivo(e.ficha.nome) + '.json', JSON.stringify(e.ficha));
+  toast('Ficha baixada');
+}
+
+function tabAvancado(ctx) {
+  const { f, puid } = ctx;
+  const e = state.fichas[puid] || {};
+  const p = state.players[puid] || {};
+  const arq = h('input', { type: 'file', accept: '.json,application/json', hidden: true });
+  arq.addEventListener('change', async () => {
+    const file = arq.files[0]; arq.value = '';
+    if (!file) return;
+    let novo;
+    try { novo = JSON.parse(await file.text()); } catch { return toast('Arquivo inválido (não é JSON).'); }
+    if (!novo || typeof novo !== 'object' || Array.isArray(novo) || !novo.nome) return toast('Esse arquivo não parece uma ficha.');
+    if (!confirm(`Substituir TODA a ficha de ${f.nome || 'este jogador'} pela do arquivo "${file.name}"? Isso não pode ser desfeito.`)) return;
+    for (const k of Object.keys(f)) delete f[k];
+    for (const k of Object.keys(novo)) if (!SKIP_PUSH.has(k)) f[k] = novo[k];
+    ctx.commit(); ctx.rerender(); toast('Ficha substituída');
+  });
+  const maxAll = () => {
+    f.status = f.status || {};
+    for (const [k, mk] of STATS) f.status[k] = num(f.status[mk]);
+    ctx.commit(); ctx.rerender(); toast('PV, PE e MD no máximo');
+  };
+  const zeraMedo = () => { f.status = f.status || {}; f.status.medo = 0; ctx.commit(); ctx.rerender(); };
+  return h('div', {},
+    h('p', { class: 'sala-discreto' },
+      `Última edição: ${e.editedBy === 'master' ? 'mestre' : 'jogador'}` + (e.rev ? ' · ' + new Date(e.rev).toLocaleString('pt-BR') : '') +
+      (p.online ? ' · jogador online' : ' · jogador offline')),
+    h('div', { class: 'sala-grupo-campos' },
+      h('button', { class: 'sala-botao', onclick: () => baixarFicha(puid) }, 'Baixar ficha (.json)'),
+      h('button', { class: 'sala-botao', onclick: () => arq.click() }, 'Substituir por arquivo…'), arq),
+    h('p', { class: 'sala-discreto' }, 'O arquivo baixado abre normalmente em "Carregar ficha" do site. Substituir troca a ficha inteira do jogador, na hora.'),
+    h('div', { class: 'sala-grupo-campos' },
+      h('button', { class: 'sala-botao', onclick: maxAll }, 'PV, PE e MD no máximo'),
+      h('button', { class: 'sala-botao', onclick: zeraMedo }, 'Zerar medo')),
+    h('div', { class: 'sala-grupo-campos' },
+      h('button', { class: 'sala-botao sala-perigo', onclick: () => kick(puid) }, 'Remover da sala')));
+}
+
 const TAB_FN = {
-  status: tabStatus, pericias: tabPericias, inv: tabInv, bio: tabBio,
+  dados: tabDados, avancado: tabAvancado, status: tabStatus, pericias: tabPericias, inv: tabInv, bio: tabBio,
   magias: c => listTab(c, 'magias'), hab: c => listTab(c, 'habilidades'), traumas: c => listTab(c, 'traumas')
 };
 
 // ---------------------------------------------------------------- blocos de interface compartilhados
 function addView(kind, render) { state.views.push({ kind, render }); }
 function renderKind(kind) { state.views.forEach(v => { if (v.kind === kind) v.render(); }); }
-const section = (title, node) => h('details', { class: 'sl-sec', open: true }, h('summary', {}, title), node);
+// Submenu: uma linha de botões e um painel por botão (todos montados uma vez; só o ativo aparece)
+function submenu(key, items) {
+  const bar = h('div', { class: 'sala-submenu' });
+  const panels = {};
+  let atual = state.ui.sub[key];
+  if (!items.some(i => i[0] === atual)) atual = items[0][0];
+  const show = id => {
+    atual = id; state.ui.sub[key] = id;
+    bar.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.t === id));
+    for (const k of Object.keys(panels)) panels[k].hidden = k !== id;
+  };
+  const wrap = h('div', {}, bar);
+  for (const [id, label, node] of items) {
+    bar.append(h('button', { class: 'sala-botao', 'data-t': id, onclick: () => show(id) }, label));
+    panels[id] = Object.assign(h('div', { class: 'sala-subpainel' }, node), { hidden: true });
+    wrap.append(panels[id]);
+  }
+  show(atual);
+  return wrap;
+}
+
+function baixarArquivo(nome, texto) {
+  const url = URL.createObjectURL(new Blob([texto], { type: 'application/json' }));
+  const a = h('a', { href: url, download: nome });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+const nomeArquivo = t => String(t || 'ficha').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '_') || 'ficha';
 
 // Redesenha uma lista, mas espera o usuário sair do campo em que está digitando
 function safeRender(box, fn) {
@@ -896,39 +993,38 @@ async function placeItem(entry) {
 
 function mesaRow(id, m, master) {
   const it = parseItem(m.json, m.nome);
-  return h('div', { class: 'sl-mrow' },
-    h('div', { class: 'sl-grow sl-shrink' },
-      h('div', {}, h('b', {}, it.name || m.nome), h('span', { class: 'sl-muted' }, ' · por ' + (m.by || '?'))),
-      h('div', { class: 'sl-muted' }, itemInfo(it)),
-      it.description ? h('div', { class: 'sl-desc' }, it.description) : null),
-    h('div', { class: 'sl-row sl-fixed' },
-      master ? [h('button', { class: 'sl-btn', title: 'Salvar este item como preset', onclick: () => savePreset(it) }, '→ Preset'),
-        h('button', { class: 'sl-btn sl-danger', onclick: () => removeFromTable(id) }, 'Remover')]
-        : h('button', { class: 'sl-btn', onclick: () => grabItem(id) }, 'Pegar')));
+  return h('div', { class: 'sala-mesa-linha' },
+    h('div', { class: 'sala-expandir sala-encolher' },
+      h('div', {}, h('b', {}, it.name || m.nome), h('span', { class: 'sala-discreto' }, ' · por ' + (m.by || '?'))),
+      h('div', { class: 'sala-discreto' }, itemInfo(it)),
+      it.description ? h('div', { class: 'sala-descricao' }, it.description) : null),
+    h('div', { class: 'sala-linha sala-fixo' },
+      master ? [h('button', { class: 'sala-botao', title: 'Salvar este item como preset', onclick: () => savePreset(it) }, '→ Preset'),
+        h('button', { class: 'sala-botao sala-perigo', onclick: () => removeFromTable(id) }, 'Remover')]
+        : h('button', { class: 'sala-botao', onclick: () => grabItem(id) }, 'Pegar')));
 }
 
 function mesaForm() {
   let draft = newItem('item');
   const nctx = { commit() {} };
-  const box = h('div', { class: 'sl-fs' });
+  const box = h('div', { class: 'sala-grupo-campos' });
   const fill = () => box.replaceChildren(...itemFieldList(draft, nctx));
   const cat = sel([['item', 'Item'], ['arma', 'Arma'], ['municao', 'Munição']], 'item', v => {
     draft = Object.assign(newItem(v), { name: draft.name, description: draft.description, weight: draft.weight });
     fill();
   }, nctx);
-  const qty = h('input', { class: 'sl-in sl-qty', type: 'number', value: 1, min: 1, max: 20 });
+  const qty = h('input', { class: 'sala-campo sala-largura-quantidade', type: 'number', value: 1, min: 1, max: 20 });
   fill();
-  return h('details', { class: 'sl-item' },
-    h('summary', {}, '+ Novo item'),
-    h('div', { class: 'sl-fs' }, fld('Categoria', cat)),
+  return h('div', {},
+    h('div', { class: 'sala-grupo-campos' }, fld('Categoria', cat)),
     box,
-    h('div', { class: 'sl-row' }, fld('Quantidade', qty),
-      h('button', { class: 'sl-btn', onclick: () => putOnTable(draft, qty.value, 'Mestre') }, 'Colocar na mesa'),
-      h('button', { class: 'sl-btn', onclick: () => savePreset(draft) }, 'Salvar como preset')));
+    h('div', { class: 'sala-linha' }, fld('Quantidade', qty),
+      h('button', { class: 'sala-botao', onclick: () => putOnTable(draft, qty.value, 'Mestre') }, 'Colocar na mesa'),
+      h('button', { class: 'sala-botao', onclick: () => savePreset(draft) }, 'Salvar como preset')));
 }
 
 function placeForm() {
-  const s = h('select', { class: 'sl-in sl-grow sl-wide' });
+  const s = h('select', { class: 'sala-campo sala-expandir sala-largo' });
   let map = [], chosen = null;
   const fill = () => {
     map = [];
@@ -942,8 +1038,8 @@ function placeForm() {
   s.addEventListener('focus', fill);
   s.addEventListener('change', () => { const m = map[Number(s.value)]; chosen = m ? m.it : null; });
   fill();
-  return h('div', { class: 'sl-row sl-mt' }, s,
-    h('button', { class: 'sl-btn', onclick: async () => {
+  return h('div', { class: 'sala-linha sala-margem-topo' }, s,
+    h('button', { class: 'sala-botao', onclick: async () => {
       const m = map[Number(s.value)];
       if (!m) return toast('Escolha um item do seu inventário.');
       await placeItem(m); chosen = null; fill();
@@ -954,11 +1050,13 @@ function mesaView(master) {
   const list = h('div', {});
   const render = () => {
     const ids = Object.keys(state.mesa).sort((a, b) => num(state.mesa[a].ts) - num(state.mesa[b].ts));
-    list.replaceChildren(...(ids.length ? ids.map(id => mesaRow(id, state.mesa[id], master)) : [h('p', { class: 'sl-muted' }, 'A mesa está vazia.')]));
+    list.replaceChildren(...(ids.length ? ids.map(id => mesaRow(id, state.mesa[id], master)) : [h('p', { class: 'sala-discreto' }, 'A mesa está vazia.')]));
   };
   addView('mesa', render);
   render();
-  return h('div', {}, list, master ? mesaForm() : placeForm());
+  return master
+    ? submenu('mesa-mestre', [['mesa', 'Na mesa', list], ['novo', 'Criar item', mesaForm()]])
+    : submenu('mesa-jogador', [['mesa', 'Na mesa', list], ['colocar', 'Colocar item meu', placeForm()]]);
 }
 
 // ---------------------------------------------------------------- presets (mestre)
@@ -976,9 +1074,9 @@ function presetRow(id) {
   const p = state.presets[id];
   const it = parseItem(p.json, p.nome);
   const name = h('span', {}, it.name || p.nome);
-  const sum = h('summary', {}, name, h('span', { class: 'sl-muted' }, ' ' + itemInfo(it)),
-    h('button', { class: 'sl-btn sl-ml', onclick: e => { if (e.preventDefault) e.preventDefault(); putOnTable(it, 1, 'Mestre'); } }, '+ Mesa'));
-  const qty = h('input', { class: 'sl-in sl-qty', type: 'number', value: 1, min: 1, max: 20 });
+  const sum = h('summary', {}, name, h('span', { class: 'sala-discreto' }, ' ' + itemInfo(it)),
+    h('button', { class: 'sala-botao sala-margem-esquerda', onclick: e => { if (e.preventDefault) e.preventDefault(); putOnTable(it, 1, 'Mestre'); } }, '+ Mesa'));
+  const qty = h('input', { class: 'sala-campo sala-largura-quantidade', type: 'number', value: 1, min: 1, max: 20 });
   const ctx = {
     commit() {
       const c = stripItem(it);
@@ -986,11 +1084,11 @@ function presetRow(id) {
         .catch(e => toast(friendly(e)));
     }
   };
-  return h('details', { class: 'sl-item' }, sum,
-    h('div', { class: 'sl-fs' }, itemFieldList(it, ctx, undefined, () => { name.textContent = it.name || '(sem nome)'; })),
-    h('div', { class: 'sl-row' }, fld('Quantidade', qty),
-      h('button', { class: 'sl-btn', onclick: () => putOnTable(it, qty.value, 'Mestre') }, 'Colocar na mesa'),
-      h('button', { class: 'sl-btn sl-danger', onclick: () => {
+  return h('details', { class: 'sala-item' }, sum,
+    h('div', { class: 'sala-grupo-campos' }, itemFieldList(it, ctx, undefined, () => { name.textContent = it.name || '(sem nome)'; })),
+    h('div', { class: 'sala-linha' }, fld('Quantidade', qty),
+      h('button', { class: 'sala-botao', onclick: () => putOnTable(it, qty.value, 'Mestre') }, 'Colocar na mesa'),
+      h('button', { class: 'sala-botao sala-perigo', onclick: () => {
         if (confirm(`Excluir o preset "${it.name}"?`)) remove(ref(db, `rooms/${state.code}/presets/${id}`)).catch(e => toast(friendly(e)));
       } }, 'Excluir preset')));
 }
@@ -1000,7 +1098,7 @@ function presetsView() {
   const render = () => safeRender(list, () => {
     const ids = Object.keys(state.presets).sort((a, b) => String(state.presets[a].nome).localeCompare(String(state.presets[b].nome), 'pt'));
     list.replaceChildren(...(ids.length ? ids.map(presetRow)
-      : [h('p', { class: 'sl-muted' }, 'Nenhum preset ainda. Crie um item em "+ Novo item" (na Mesa) e use "Salvar como preset", ou use "→ Preset" num item da mesa.')]));
+      : [h('p', { class: 'sala-discreto' }, 'Nenhum preset ainda. Crie um item em "+ Novo item" (na Mesa) e use "Salvar como preset", ou use "→ Preset" num item da mesa.')]));
   });
   addView('presets', render);
   render();
@@ -1080,21 +1178,21 @@ function setMyIni(valor) {
 function iniRow(e, master, ini) {
   const cur = !!(ini.ativa && ini.atual === e.id);
   if (!master) {
-    return h('div', { class: 'sl-irow' + (cur ? ' cur' : '') },
-      h('span', { class: 'sl-ival' }, String(num(e.valor))),
-      h('span', { class: 'sl-iname' }, (cur ? '▶ ' : '') + (e.nome || '?') + (e.uid === uid ? ' (você)' : '')));
+    return h('div', { class: 'sala-iniciativa-linha' + (cur ? ' cur' : '') },
+      h('span', { class: 'sala-iniciativa-valor' }, String(num(e.valor))),
+      h('span', { class: 'sala-iniciativa-nome' }, (cur ? '▶ ' : '') + (e.nome || '?') + (e.uid === uid ? ' (você)' : '')));
   }
-  const val = h('input', { class: 'sl-in', type: 'number' });
+  const val = h('input', { class: 'sala-campo', type: 'number' });
   val.value = num(e.valor);
   val.addEventListener('change', () => iniUpdate({ [`entries/${e.id}/valor`]: num(val.value) }));
-  const nm = h('input', { class: 'sl-in sl-iname' });
+  const nm = h('input', { class: 'sala-campo sala-iniciativa-nome' });
   nm.value = e.nome || '';
   nm.addEventListener('change', () => { if (nm.value.trim()) iniUpdate({ [`entries/${e.id}/nome`]: nm.value.trim() }); });
-  return h('div', { class: 'sl-irow' + (cur ? ' cur' : '') },
-    h('span', { class: 'sl-ival' }, val), nm,
-    h('button', { class: 'sl-btn', title: 'Dar o turno a este', onclick: () => iniUpdate({ atual: e.id, ativa: true }) }, '▶'),
-    h('button', { class: 'sl-btn', title: 'Rolar d20', onclick: () => iniUpdate({ [`entries/${e.id}/valor`]: 1 + Math.floor(Math.random() * 20) }) }, 'd20'),
-    h('button', { class: 'sl-btn sl-danger', onclick: () => iniDel(e.id) }, '✕'));
+  return h('div', { class: 'sala-iniciativa-linha' + (cur ? ' cur' : '') },
+    h('span', { class: 'sala-iniciativa-valor' }, val), nm,
+    h('button', { class: 'sala-botao', title: 'Dar o turno a este', onclick: () => iniUpdate({ atual: e.id, ativa: true }) }, '▶'),
+    h('button', { class: 'sala-botao', title: 'Rolar d20', onclick: () => iniUpdate({ [`entries/${e.id}/valor`]: 1 + Math.floor(Math.random() * 20) }) }, 'd20'),
+    h('button', { class: 'sala-botao sala-perigo', onclick: () => iniDel(e.id) }, '✕'));
 }
 
 function iniView(master) {
@@ -1102,28 +1200,28 @@ function iniView(master) {
   const list = h('div', {});
   let top;
   if (master) {
-    const nm = h('input', { class: 'sl-in sl-grow sl-wide', placeholder: 'Nome (inimigo/NPC)' });
-    const vl = h('input', { class: 'sl-in sl-num', type: 'number', placeholder: 'Valor' });
+    const nm = h('input', { class: 'sala-campo sala-expandir sala-largo', placeholder: 'Nome (inimigo/NPC)' });
+    const vl = h('input', { class: 'sala-campo sala-largura-numero', type: 'number', placeholder: 'Valor' });
     top = h('div', {},
-      h('div', { class: 'sl-row' },
-        (refs.toggle = h('button', { class: 'sl-btn', onclick: iniToggle }, 'Ativar iniciativa')),
-        h('button', { class: 'sl-btn', onclick: iniNext }, 'Próximo turno ▶'),
-        h('button', { class: 'sl-btn', onclick: iniReset }, 'Reiniciar rodada'),
-        (refs.round = h('span', { class: 'sl-muted' }))),
-      h('div', { class: 'sl-row sl-my' }, nm, vl,
-        h('button', { class: 'sl-btn', onclick: () => { iniAdd(nm.value.trim(), vl.value); nm.value = ''; vl.value = ''; } }, '+ Adicionar'),
-        h('button', { class: 'sl-btn', onclick: iniAddPlayers }, '+ Jogadores'),
-        h('button', { class: 'sl-btn sl-danger', onclick: iniClear }, 'Limpar lista')));
+      h('div', { class: 'sala-linha' },
+        (refs.toggle = h('button', { class: 'sala-botao', onclick: iniToggle }, 'Ativar iniciativa')),
+        h('button', { class: 'sala-botao', onclick: iniNext }, 'Próximo turno ▶'),
+        h('button', { class: 'sala-botao', onclick: iniReset }, 'Reiniciar rodada'),
+        (refs.round = h('span', { class: 'sala-discreto' }))),
+      h('div', { class: 'sala-linha sala-margem-vertical' }, nm, vl,
+        h('button', { class: 'sala-botao', onclick: () => { iniAdd(nm.value.trim(), vl.value); nm.value = ''; vl.value = ''; } }, '+ Adicionar'),
+        h('button', { class: 'sala-botao', onclick: iniAddPlayers }, '+ Jogadores'),
+        h('button', { class: 'sala-botao sala-perigo', onclick: iniClear }, 'Limpar lista')));
   } else {
-    const v = h('input', { class: 'sl-in sl-num wide', type: 'number', placeholder: 'Sua iniciativa' });
-    refs.self = h('div', { class: 'sl-row sl-mt' }, v,
-      h('button', { class: 'sl-btn', onclick: () => setMyIni(v.value) }, 'Definir'),
-      h('button', { class: 'sl-btn', onclick: () => {
+    const v = h('input', { class: 'sala-campo sala-largura-numero wide', type: 'number', placeholder: 'Sua iniciativa' });
+    refs.self = h('div', { class: 'sala-linha sala-margem-topo' }, v,
+      h('button', { class: 'sala-botao', onclick: () => setMyIni(v.value) }, 'Definir'),
+      h('button', { class: 'sala-botao', onclick: () => {
         const r = 1 + Math.floor(Math.random() * 20);
         v.value = r; setMyIni(r);
         logRoll({ label: 'Iniciativa', expr: '1d20', total: r, detail: `d20 (${r})` });
       } }, 'Rolar d20'));
-    refs.round = h('div', { class: 'sl-muted' });
+    refs.round = h('div', { class: 'sala-discreto' });
     top = h('div', {}, refs.round);
   }
   const render = () => {
@@ -1133,12 +1231,57 @@ function iniView(master) {
     if (refs.self) refs.self.hidden = !ini.ativa;
     safeRender(list, () => {
       const rows = (master || ini.ativa) ? iniSorted().map(e => iniRow(e, master, ini)) : [];
-      list.replaceChildren(...(rows.length ? rows : (master || ini.ativa ? [h('p', { class: 'sl-muted' }, 'Ninguém na ordem ainda.')] : [])));
+      list.replaceChildren(...(rows.length ? rows : (master || ini.ativa ? [h('p', { class: 'sala-discreto' }, 'Ninguém na ordem ainda.')] : [])));
     });
   };
   addView('ini', render);
   render();
   return h('div', {}, top, list, refs.self || null);
+}
+
+// ---------------------------------------------------------------- opções avançadas da sala (mestre)
+function baixarTodasFichas() {
+  const lista = Object.keys(state.fichas).map(id => state.fichas[id].ficha).filter(Boolean);
+  if (!lista.length) return toast('Nenhuma ficha carregada ainda.');
+  baixarArquivo(`sala_${state.code}_fichas.json`, JSON.stringify({ sala: state.code, mesa: (state.meta && state.meta.name) || '', baixadoEm: new Date().toISOString(), fichas: lista }, null, 1));
+  toast(`${lista.length} ficha(s) baixada(s) em um arquivo`);
+}
+async function limparNo(caminho, texto) {
+  if (!confirm(texto)) return;
+  try { await remove(ref(db, `rooms/${state.code}/${caminho}`)); toast('Pronto'); } catch (e) { toast(friendly(e)); }
+}
+function salaAvancado() {
+  const nome = h('input', { class: 'sala-campo sala-expandir', maxlength: 40 });
+  nome.value = (state.meta && state.meta.name) || '';
+  const salvar = async () => {
+    const n = nome.value.trim() || 'Mesa';
+    try {
+      await update(ref(db), { [`rooms/${state.code}/meta/name`]: n });
+      const l = lsGet(LS_MASTER, []); l.forEach(r => { if (r.code === state.code) r.name = n; }); lsSet(LS_MASTER, l);
+      toast('Nome da mesa alterado');
+    } catch (e) { toast(friendly(e)); }
+  };
+  const todos = async () => {
+    const ids = Object.keys(state.players);
+    if (!ids.length) return toast('Não há jogadores na sala.');
+    if (!confirm(`Remover os ${ids.length} jogadores da sala? As fichas dentro da sala serão apagadas (cada jogador mantém a dele no navegador).`)) return;
+    const base = `rooms/${state.code}`, u = {};
+    ids.forEach(id => { u[`${base}/players/${id}`] = null; u[`${base}/fichas/${id}`] = null; });
+    try { await update(ref(db), u); } catch (e) { toast(friendly(e)); }
+  };
+  return h('div', { class: 'sala-lista' },
+    h('div', { class: 'sala-caixa' }, h('h3', { class: 'sala-titulo' }, 'Mesa'),
+      h('div', { class: 'sala-linha' }, nome, h('button', { class: 'sala-botao', onclick: salvar }, 'Renomear'))),
+    h('div', { class: 'sala-caixa' }, h('h3', { class: 'sala-titulo' }, 'Fichas'),
+      h('div', { class: 'sala-linha' },
+        h('button', { class: 'sala-botao', onclick: baixarTodasFichas }, 'Baixar todas as fichas (1 arquivo)')),
+      h('p', { class: 'sala-discreto' }, 'Para baixar uma ficha só, abra o jogador e use a aba Avançado.')),
+    h('div', { class: 'sala-caixa' }, h('h3', { class: 'sala-titulo' }, 'Limpeza'),
+      h('div', { class: 'sala-linha' },
+        h('button', { class: 'sala-botao', onclick: () => limparNo('mesa', 'Remover todos os itens da mesa?') }, 'Limpar mesa'),
+        h('button', { class: 'sala-botao', onclick: () => limparNo('rolls', 'Limpar o histórico de rolagens?') }, 'Limpar rolagens'),
+        h('button', { class: 'sala-botao', onclick: iniClear }, 'Limpar iniciativa'),
+        h('button', { class: 'sala-botao sala-perigo', onclick: todos }, 'Remover todos os jogadores'))));
 }
 
 // ---------------------------------------------------------------- tela do jogador (aba "Sala")
@@ -1152,46 +1295,47 @@ function renderPlayerSala() {
   state.views = [];
 
   if (!CFG_OK) {
-    salaContent.append(h('div', { class: 'sl-wrap' }, h('div', { class: 'sl-box' },
-      h('h3', { class: 'sl-h' }, 'Salas'),
+    salaContent.append(h('div', { class: 'sala-conteudo' }, h('div', { class: 'sala-caixa' },
+      h('h3', { class: 'sala-titulo' }, 'Salas'),
       h('p', {}, 'As salas ainda não estão configuradas. Preencha o arquivo firebase-config.js com os dados do seu projeto Firebase.'))));
     return;
   }
 
   if (state.role === 'player' && state.code) {
-    const players = h('div', { class: 'sl-grid' });
-    players._empty = h('p', { class: 'sl-muted' }, 'Aguardando jogadores…');
+    const players = h('div', { class: 'sala-lista' });
+    players._empty = h('p', { class: 'sala-discreto' }, 'Aguardando jogadores…');
     state.containers.push({ el: players, master: false });
-    const rolls = h('div', { class: 'sl-rolls' });
+    const rolls = h('div', { class: 'sala-rolagens' });
     state.rollBoxes.push(rolls);
-    salaContent.append(h('div', { class: 'sl-wrap' },
-      h('div', { class: 'sl-box sl-row' },
-        h('div', {}, h('div', { class: 'sl-muted' }, 'Sala' + (state.meta && state.meta.name ? ' · ' + state.meta.name : '')),
-          h('div', { class: 'sl-code' }, state.code)),
-        h('div', { class: 'sl-grow' }),
-        h('button', { class: 'sl-btn', onclick: () => navigator.clipboard && navigator.clipboard.writeText(state.code).then(() => toast('Código copiado')) }, 'Copiar código'),
-        h('button', { class: 'sl-btn sl-danger', onclick: () => { if (confirm('Sair da sala?')) leaveAsPlayer(); } }, 'Sair da sala')),
-      h('div', { class: 'sl-box' }, h('h3', { class: 'sl-h' }, 'Jogadores'), players, players._empty),
-      h('div', { class: 'sl-box' }, section('Iniciativa', iniView(false))),
-      h('div', { class: 'sl-box' }, section('Mesa de itens', mesaView(false))),
-      h('div', { class: 'sl-box' }, h('h3', { class: 'sl-h' }, 'Histórico de rolagens'), rolls)));
+    salaContent.append(h('div', { class: 'sala-conteudo' },
+      h('div', { class: 'sala-caixa sala-linha' },
+        h('div', {}, h('div', { class: 'sala-discreto' }, 'Sala' + (state.meta && state.meta.name ? ' · ' + state.meta.name : '')),
+          h('div', { class: 'sala-codigo' }, state.code)),
+        h('div', { class: 'sala-expandir' }),
+        h('button', { class: 'sala-botao', onclick: () => navigator.clipboard && navigator.clipboard.writeText(state.code).then(() => toast('Código copiado')) }, 'Copiar código'),
+        h('button', { class: 'sala-botao sala-perigo', onclick: () => { if (confirm('Sair da sala?')) leaveAsPlayer(); } }, 'Sair da sala')),
+      h('div', { class: 'sala-caixa' }, submenu('jogador', [
+        ['jogadores', 'Jogadores', h('div', {}, players, players._empty)],
+        ['iniciativa', 'Iniciativa', iniView(false)],
+        ['mesa', 'Mesa', mesaView(false)],
+        ['rolagens', 'Rolagens', rolls]]))));
     renderAll(); fillRolls(rolls);
     return;
   }
 
-  const msg = h('p', { class: 'sl-muted' }, 'Peça o código ao mestre.');
-  const code = h('input', { class: 'sl-in sl-codein', placeholder: 'CÓDIGO', maxlength: 8 });
+  const msg = h('p', { class: 'sala-discreto' }, 'Peça o código ao mestre.');
+  const code = h('input', { class: 'sala-campo sala-campo-codigo', placeholder: 'CÓDIGO', maxlength: 8 });
   code.addEventListener('input', () => { code.value = cleanCode(code.value); });
   const go = async () => {
-    msg.className = 'sl-muted'; msg.textContent = 'Entrando…';
+    msg.className = 'sala-discreto'; msg.textContent = 'Entrando…';
     try { await joinAsPlayer(code.value); renderPlayerSala(); toast('Você entrou na sala ' + state.code); }
-    catch (e) { msg.className = 'sl-err'; msg.textContent = friendly(e); }
+    catch (e) { msg.className = 'sala-erro'; msg.textContent = friendly(e); }
   };
   code.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
-  salaContent.append(h('div', { class: 'sl-wrap' }, h('div', { class: 'sl-box' },
-    h('h3', { class: 'sl-h' }, 'Entrar em uma sala'),
-    h('p', { class: 'sl-muted' }, 'Ao entrar, nome, PV, PE e MD ficam visíveis para a mesa e o mestre passa a ver (e poder editar) a sua ficha. As rolagens aparecem no histórico da sala.'),
-    h('div', { class: 'sl-row' }, code, h('button', { class: 'sl-btn', onclick: go }, 'Entrar')),
+  salaContent.append(h('div', { class: 'sala-conteudo' }, h('div', { class: 'sala-caixa' },
+    h('h3', { class: 'sala-titulo' }, 'Entrar em uma sala'),
+    h('p', { class: 'sala-discreto' }, 'Ao entrar, nome, PV, PE e MD ficam visíveis para a mesa e o mestre passa a ver (e poder editar) a sua ficha. As rolagens aparecem no histórico da sala.'),
+    h('div', { class: 'sala-linha' }, code, h('button', { class: 'sala-botao', onclick: go }, 'Entrar')),
     msg)));
 }
 
@@ -1199,7 +1343,7 @@ function renderPlayerSala() {
 let overlay;
 
 function openMaster() {
-  if (!overlay) { overlay = h('div', { class: 'sl-overlay' }); document.body.append(overlay); }
+  if (!overlay) { overlay = h('div', { class: 'sala-sobreposicao' }); document.body.append(overlay); }
   overlay.classList.add('open');
   masterHome();
 }
@@ -1207,10 +1351,10 @@ function closeMaster() { disconnectRoom(); overlay.classList.remove('open'); }
 
 function masterHome() {
   disconnectRoom();
-  const msg = h('p', { class: 'sl-muted' });
-  const say = (t, bad) => { msg.textContent = t; msg.className = bad ? 'sl-err' : 'sl-muted'; };
-  const nameIn = h('input', { class: 'sl-in', placeholder: 'Nome da mesa (opcional)', maxlength: 40 });
-  const list = h('div', { class: 'sl-grid' });
+  const msg = h('p', { class: 'sala-discreto' });
+  const say = (t, bad) => { msg.textContent = t; msg.className = bad ? 'sala-erro' : 'sala-discreto'; };
+  const nameIn = h('input', { class: 'sala-campo', placeholder: 'Nome da mesa (opcional)', maxlength: 40 });
+  const list = h('div', { class: 'sala-lista' });
   const enter = async code => {
     say('Abrindo…');
     try { await openMasterRoom(code); masterRoomView(); }
@@ -1218,67 +1362,65 @@ function masterHome() {
   };
   const masterListFill = () => {
     const rooms = lsGet(LS_MASTER, []);
-    list.replaceChildren(...(rooms.length ? rooms.map(r => h('div', { class: 'sl-box sl-row' },
-      h('div', {}, h('b', {}, r.name), h('div', { class: 'sl-code sm' }, r.code)),
-      h('div', { class: 'sl-grow' }),
-      h('button', { class: 'sl-btn', onclick: () => enter(r.code) }, 'Abrir'),
-      h('button', { class: 'sl-btn sl-danger', onclick: async () => {
+    list.replaceChildren(...(rooms.length ? rooms.map(r => h('div', { class: 'sala-caixa sala-linha' },
+      h('div', {}, h('b', {}, r.name), h('div', { class: 'sala-codigo sm' }, r.code)),
+      h('div', { class: 'sala-expandir' }),
+      h('button', { class: 'sala-botao', onclick: () => enter(r.code) }, 'Abrir'),
+      h('button', { class: 'sala-botao sala-perigo', onclick: async () => {
         if (!confirm(`Excluir a sala ${r.code} para todos? Isso apaga as fichas sincronizadas dela.`)) return;
         try { await init(); await remove(ref(db, `rooms/${r.code}`)); } catch (e) { say(friendly(e), true); return; }
         lsSet(LS_MASTER, lsGet(LS_MASTER, []).filter(x => x.code !== r.code)); masterListFill();
-      } }, 'Excluir'))) : [h('p', { class: 'sl-muted' }, 'Nenhuma sala criada neste navegador.')]));
+      } }, 'Excluir'))) : [h('p', { class: 'sala-discreto' }, 'Nenhuma sala criada neste navegador.')]));
   };
   masterListFill();
   overlay.replaceChildren(
-    h('div', { class: 'sl-top' }, h('b', { class: 'sl-h lg' }, 'Sala do Mestre'),
-      h('div', { class: 'sl-grow' }), h('button', { class: 'sl-btn', onclick: closeMaster }, 'Voltar ao menu')),
-    h('div', { class: 'sl-wrap sl-page' },
-      CFG_OK ? null : h('div', { class: 'sl-box' }, h('p', { class: 'sl-err' }, 'Firebase não configurado. Preencha firebase-config.js.')),
-      h('div', { class: 'sl-box' },
-        h('h3', { class: 'sl-h' }, 'Criar nova sala'),
-        h('div', { class: 'sl-row' }, nameIn, h('button', { class: 'sl-btn', onclick: async () => {
+    h('div', { class: 'sala-topo' }, h('b', { class: 'sala-titulo lg' }, 'Sala do Mestre'),
+      h('div', { class: 'sala-expandir' }), h('button', { class: 'sala-botao', onclick: closeMaster }, 'Voltar ao menu')),
+    h('div', { class: 'sala-conteudo sala-pagina' },
+      CFG_OK ? null : h('div', { class: 'sala-caixa' }, h('p', { class: 'sala-erro' }, 'Firebase não configurado. Preencha firebase-config.js.')),
+      h('div', { class: 'sala-caixa' },
+        h('h3', { class: 'sala-titulo' }, 'Criar nova sala'),
+        h('div', { class: 'sala-linha' }, nameIn, h('button', { class: 'sala-botao', onclick: async () => {
           say('Criando…');
           try { const code = await createRoom(nameIn.value.trim()); await enter(code); } catch (e) { say(friendly(e), true); }
         } }, 'Criar sala')), msg),
-      h('div', { class: 'sl-box' }, h('h3', { class: 'sl-h' }, 'Suas salas'), list),
-      h('p', { class: 'sl-muted' }, 'A sala fica ligada ao navegador em que foi criada (login anônimo). Se limpar os dados do site, você perde o acesso de mestre a ela.')));
+      h('div', { class: 'sala-caixa' }, h('h3', { class: 'sala-titulo' }, 'Suas salas'), list),
+      h('p', { class: 'sala-discreto' }, 'A sala fica ligada ao navegador em que foi criada (login anônimo). Se limpar os dados do site, você perde o acesso de mestre a ela.')));
 }
 
 function masterRoomView() {
   state.containers = []; state.rollBoxes = []; state.views = [];
-  const players = h('div', { class: 'sl-grid' });
-  players._empty = h('p', { class: 'sl-muted' }, 'Nenhum jogador entrou ainda. Passe o código da sala.');
+  const players = h('div', { class: 'sala-lista' });
+  players._empty = h('p', { class: 'sala-discreto' }, 'Nenhum jogador entrou ainda. Passe o código da sala.');
   state.containers.push({ el: players, master: true });
-  const rolls = h('div', { class: 'sl-rolls' });
+  const rolls = h('div', { class: 'sala-rolagens' });
   state.rollBoxes.push(rolls);
-  const dice = h('input', { class: 'sl-in sl-grow', placeholder: 'ex: 2d6+3' });
+  const dice = h('input', { class: 'sala-campo sala-expandir', placeholder: 'ex: 2d6+3' });
   const roll = () => { masterRoll(dice.value); };
   dice.addEventListener('keydown', e => { if (e.key === 'Enter') roll(); });
-  const step = h('select', { class: 'sl-in sl-auto' }, [1, 5, 10].map(n => h('option', { value: n }, n)));
+  const step = h('select', { class: 'sala-campo sala-largura-auto' }, [1, 5, 10].map(n => h('option', { value: n }, n)));
   step.value = String(state.ui.step);
   step.addEventListener('change', () => { state.ui.step = num(step.value) || 1; });
 
   overlay.replaceChildren(
-    h('div', { class: 'sl-top' },
-      h('button', { class: 'sl-btn', onclick: masterHome }, '← Salas'),
-      h('div', {}, h('div', { class: 'sl-muted' }, (state.meta && state.meta.name) || 'Mesa'), h('div', { class: 'sl-code' }, state.code)),
-      h('button', { class: 'sl-btn', onclick: () => navigator.clipboard && navigator.clipboard.writeText(state.code).then(() => toast('Código copiado')) }, 'Copiar código'),
-      h('div', { class: 'sl-grow' }),
-      h('label', { class: 'sl-muted' }, 'Passo dos botões − / + '), step,
-      h('button', { class: 'sl-btn', onclick: closeMaster }, 'Fechar')),
-    h('div', { class: 'sl-main' },
-      h('div', {}, h('h3', { class: 'sl-h' }, 'Jogadores'), players, players._empty),
-      h('div', {},
-        section('Iniciativa', iniView(true)),
-        section('Mesa de itens', mesaView(true)),
-        section('Presets de itens', presetsView()),
-        h('h3', { class: 'sl-h' }, 'Rolagens'),
-        h('div', { class: 'sl-row sl-mb' }, dice, h('button', { class: 'sl-btn', onclick: roll }, 'Rolar'),
-          ['d4', 'd6', 'd8', 'd10', 'd12', 'd20'].map(d => h('button', { class: 'sl-btn', onclick: () => masterRoll('1' + d) }, d))),
-        h('div', { class: 'sl-row sl-mb' }, h('button', { class: 'sl-btn sl-danger', onclick: async () => {
-          if (confirm('Limpar o histórico de rolagens?')) { try { await remove(ref(db, `rooms/${state.code}/rolls`)); } catch (e) { toast(friendly(e)); } }
-        } }, 'Limpar histórico')),
-        rolls)));
+    h('div', { class: 'sala-topo' },
+      h('button', { class: 'sala-botao', onclick: masterHome }, '← Salas'),
+      h('div', {}, h('div', { class: 'sala-discreto' }, (state.meta && state.meta.name) || 'Mesa'), h('div', { class: 'sala-codigo' }, state.code)),
+      h('button', { class: 'sala-botao', onclick: () => navigator.clipboard && navigator.clipboard.writeText(state.code).then(() => toast('Código copiado')) }, 'Copiar código'),
+      h('div', { class: 'sala-expandir' }),
+      h('label', { class: 'sala-discreto' }, 'Passo dos botões − / + '), step,
+      h('button', { class: 'sala-botao', onclick: closeMaster }, 'Fechar')),
+    h('div', { class: 'sala-principal' },
+      h('div', {}, h('h3', { class: 'sala-titulo' }, 'Jogadores'), players, players._empty),
+      h('div', {}, submenu('mestre', [
+        ['iniciativa', 'Iniciativa', iniView(true)],
+        ['mesa', 'Mesa', mesaView(true)],
+        ['presets', 'Presets', presetsView()],
+        ['rolagens', 'Rolagens', h('div', {},
+          h('div', { class: 'sala-linha sala-margem-baixo' }, dice, h('button', { class: 'sala-botao', onclick: roll }, 'Rolar'),
+            ['d4', 'd6', 'd8', 'd10', 'd12', 'd20'].map(d => h('button', { class: 'sala-botao', onclick: () => masterRoll('1' + d) }, d))),
+          rolls)],
+        ['avancado', 'Avançado', salaAvancado()]]))));
   renderAll(); fillRolls(rolls);
 }
 
@@ -1298,23 +1440,23 @@ function boot() {
   const menu = document.getElementById('mt-menu');
   const area = document.querySelector('#multiTask > main');
   if (menu && area) {
-    salaContent = h('div', { class: 'mt-content', id: 'sala-content' });
+    salaContent = h('div', { class: 'aba-conteudo', id: 'sala-content' });
     area.append(salaContent);
-    const sep = h('div', { class: 'Sline' });
-    const tabBtn = h('button', { class: 'mTBtn', onclick: function () { window.gameHabaSel(7, this); } }, 'Sala');
+    const sep = h('div', { class: 'linha-curta' });
+    const tabBtn = h('button', { class: 'aba-botao', onclick: function () { window.gameHabaSel(7, this); } }, 'Sala');
     const diario = [...menu.querySelectorAll('button')].find(b => /gameHabaSel\(5/.test(b.getAttribute('onclick') || ''));
     if (diario) diario.after(sep, tabBtn); else menu.append(sep, tabBtn);
 
     const origHaba = window.gameHabaSel;
     window.gameHabaSel = function (id, btn) {
       if (id !== 7) return origHaba.apply(this, arguments);
-      const active = document.querySelector('.mTBtn.active');
+      const active = document.querySelector('.aba-botao.active');
       if (active) active.classList.remove('active');
       btn.classList.add('active');
-      document.querySelectorAll('.mt-content').forEach(c => { c.style.display = 'none'; });
+      document.querySelectorAll('.aba-conteudo').forEach(c => { c.style.display = 'none'; });
       salaContent.style.display = 'flex';
       const mob = document.getElementById('MobileMTBtn');
-      if (mob) mob.innerHTML = btn.innerHTML + '<img src="img/menu.svg" alt="" class="mMTImage">';
+      if (mob) mob.innerHTML = btn.innerHTML + '<img src="img/menu.svg" alt="" class="aba-icone-menu">';
       renderPlayerSala();
     };
   }
