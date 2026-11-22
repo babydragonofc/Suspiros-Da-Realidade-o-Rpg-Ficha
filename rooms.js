@@ -502,29 +502,63 @@ function fillRolls(box) {
 function renderRolls() { state.rollBoxes.forEach(fillRolls); }
 
 // ---------------------------------------------------------------- condições (envenenado, caído…)
-const CONDICOES = ['Envenenado', 'Caído', 'Amedrontado', 'Sangrando', 'Atordoado', 'Cego', 'Lento', 'Inspirado'];
+const CONDICOES = [
+  { nome: 'Queimando', descricao: 'Ao entrar em chamas, você recebe 1d6 por rodada, tendo alguém gastar uma ação para se apagar.' },
+  { nome: 'Frio', descricao: 'Em ambiente frio, você fica desconfortável: desvantagem em testes físicos, de armas e de mobilidade. Perde a condição com roupa que dê 2 de defesa ou proteção térmica.' },
+  { nome: 'Quente', descricao: 'Em ambiente quente, você fica desconfortável: desvantagem em testes físicos, de armas e de mobilidade. Perde a condição se conseguir se ventilar; tirar parte da roupa exige Constituição DT 8 + DA para resistir.' },
+  { nome: 'Congelando', descricao: 'Depois de 2 cenas completas, 6 ações ou um tempo definido pelo mestre com frio: desvantagem em todos os testes. Precisa rolar Constituição DT 10 + DA para se manter consciente.' },
+  { nome: 'Sangrando', turnos: 2, descricao: 'Ao receber um golpe cortante ou se machucar com algo que cause sangramento, teste de Constituição para resistir; se falhar, recebe 1d4 de dano por 2 rodadas. É possível estancar até 4 sangramentos.' },
+  { nome: 'Imóvel', descricao: 'Não consegue se mover.' },
+  { nome: 'Inconsciente', descricao: 'Perde a consciência durante 1d4 rodadas ou uma cena.' },
+  { nome: 'Fraco', descricao: 'Recebe uma penalidade em todo teste de Força, Constituição e Destreza.' },
+  { nome: 'Mobilidade debilitada', descricao: 'Ao se machucar nas pernas, ou quando a carga está maximizada, o deslocamento é reduzido à metade.' },
+  { nome: 'Caído', descricao: 'Quando algo te fizer cair, teste de Destreza; se falhar, fica com Mobilidade debilitada e penalidade em testes de Reação.' },
+  { nome: 'Cego', descricao: 'Recebe 3 desvantagens para Reagir e em testes relacionados à visão. Dura 1d4 rodadas ou uma cena.' },
+  { nome: 'Surdo', descricao: 'Não consegue realizar testes de audição, além de não conseguir escutar.' },
+  { nome: 'Desprevenido', descricao: 'Não pode Reagir a ataques.' },
+  { nome: 'Memento Mori', descricao: 'Com a vida entre 0 e -9, você cai e precisa ser salvo. Tem 3 rodadas para ser recuperado com Medicina DT 10 + sua vida negativa; se não for, morre permanentemente, narrando seu último pensamento e/ou últimas palavras. Se um teste te recuperar, você é estabilizado com 1 de PV e rola Constituição (sem a penalidade de Fraco); se falhar, fica desacordado até o fim da cena, podendo escolher quando acorda.' },
+  { nome: 'Traumatizado', descricao: 'Após um evento horrível (ver alguém que ama morrer, um massacre de perto), o mestre rola 2d10 para adicionar um trauma ao personagem, ou escolhe um. Pode ser temporário (dias ou cenas) ou permanente.' },
+  { nome: 'Delirando', descricao: 'O medo toma conta das suas ações, e você perde sua ação para o mestre. (O mestre não pode fazer o personagem realizar uma ação que ele não faria, embora possa sugerir ao jogador depois que ele reassumir o controle.)' }
+];
 const condicoesDe = alvo => Object.entries((state.condicoes && state.condicoes[alvo]) || {}).map(([cid, c]) => ({ cid, ...c }));
-async function addCondicao(alvo, nome, turnos) {
-  nome = String(nome || '').trim().slice(0, 30);
-  if (!nome) return toast('Digite o nome da condição.');
+async function addCondicao(alvo, nome, turnos, descricao) {
+  nome = String(nome || '').trim().slice(0, 40);
+  if (!nome) return toast('Escolha ou digite a condição.');
+  const padrao = CONDICOES.find(c => c.nome.toLowerCase() === nome.toLowerCase());
   const t = Math.max(0, Math.min(99, Math.floor(num(turnos))));
-  try { await push(ref(db, `rooms/${state.code}/condicoes/${alvo}`), { nome, turnos: t }); } catch (e) { toast(friendly(e)); }
+  const desc = String(descricao != null && descricao !== '' ? descricao : (padrao ? padrao.descricao : '')).slice(0, 700);
+  try { await push(ref(db, `rooms/${state.code}/condicoes/${alvo}`), { nome: padrao ? padrao.nome : nome, turnos: t, descricao: desc }); }
+  catch (e) { toast(friendly(e)); }
 }
 function delCondicao(alvo, cid) {
   remove(ref(db, `rooms/${state.code}/condicoes/${alvo}/${cid}`)).catch(e => toast(friendly(e)));
 }
-function emblemas(alvo, master) {
-  return condicoesDe(alvo).map(c => h('span', { class: 'sala-condicao', title: c.turnos ? `${c.turnos} turno(s) restante(s)` : 'Sem limite de turnos' },
+// Emblemas de condição; ✕ só aparece quando `editavel` (dentro da ficha do personagem). Toque/passe o mouse mostra a descrição.
+function emblemas(alvo, editavel) {
+  return condicoesDe(alvo).map(c => h('span', { class: 'sala-condicao', title: [c.descricao, c.turnos ? `${c.turnos} turno(s) restante(s)` : 'Sem limite de turnos'].filter(Boolean).join('\n') },
     c.nome + (c.turnos ? ` (${c.turnos})` : ''),
-    master ? h('button', { class: 'sala-condicao-x', title: 'Remover condição', onclick: () => delCondicao(alvo, c.cid) }, '✕') : null));
+    editavel ? h('button', { class: 'sala-condicao-x', title: 'Remover condição', onclick: () => delCondicao(alvo, c.cid) }, '✕') : null));
 }
+// Formulário de aplicar condição (só na ficha do personagem / card do NPC)
 function condicaoForm(alvo) {
-  const id = 'cond-' + rid().replace(/-/g, '').slice(0, 6);
-  const nome = h('input', { class: 'sala-campo sala-expandir', placeholder: 'Condição', list: id });
+  const lista = sel([['', 'Escolha a condição…'], ...CONDICOES.map(c => [c.nome, c.nome]), ['__outra', 'Outra (personalizada)…']], '', () => atualiza(), { commit() {} });
+  const nome = h('input', { class: 'sala-campo sala-expandir', placeholder: 'Nome da condição', hidden: true });
   const turnos = h('input', { class: 'sala-campo sala-largura-numero', type: 'number', min: 0, max: 99, placeholder: 'Turnos' });
-  return h('div', { class: 'sala-linha sala-condicao-form' }, nome,
-    h('datalist', { id }, CONDICOES.map(c => h('option', { value: c }))), turnos,
-    h('button', { class: 'sala-botao', onclick: () => { addCondicao(alvo, nome.value, turnos.value); nome.value = ''; turnos.value = ''; } }, '+ Condição'));
+  const desc = h('div', { class: 'sala-descricao' });
+  function atualiza() {
+    nome.hidden = lista.value !== '__outra';
+    const c = CONDICOES.find(x => x.nome === lista.value);
+    desc.textContent = c ? c.descricao : '';
+    if (c) turnos.value = c.turnos || '';
+  }
+  return h('div', { class: 'sala-condicao-form' },
+    h('div', { class: 'sala-linha' }, lista, nome, turnos,
+      h('button', { class: 'sala-botao', onclick: () => {
+        const n = lista.value === '__outra' ? nome.value : lista.value;
+        addCondicao(alvo, n, turnos.value);
+        lista.value = ''; nome.value = ''; turnos.value = ''; atualiza();
+      } }, '+ Aplicar')),
+    desc);
 }
 // a quem pertencem as condições de uma linha da iniciativa
 const alvoIni = e => e.uid || e.npc || e.id;
@@ -550,7 +584,6 @@ function buildCard(puid, master) {
     })),
     master ? (r.info = h('div', { class: 'sala-info sala-discreto' })) : null,
     (r.cond = h('div', { class: 'sala-condicoes' })),
-    master ? condicaoForm(puid) : null,
     master ? (r.body = Object.assign(h('div', { class: 'sala-corpo' }), { hidden: true })) : null);
   if (master) {
     r.body.addEventListener('focusout', () => {
@@ -577,7 +610,7 @@ function updateCard(card, puid, master) {
   // destaques: vida baixa e medo alto
   card.classList.toggle('critico', num(d.vidaMax) > 0 && num(d.vida) / num(d.vidaMax) <= 0.25);
   card.classList.toggle('assustado', num(d.medoMax) > 0 && num(d.medo) / num(d.medoMax) >= 0.75);
-  r.cond.replaceChildren(...emblemas(puid, master));
+  r.cond.replaceChildren(...emblemas(puid, false));
   if (r.info) r.info.textContent = e && e.ficha ? infoRapida(e.ficha) : '';
 }
 // arma equipada e perícias mais altas (linha extra no card do mestre)
@@ -611,7 +644,7 @@ function renderAll() { state.containers.forEach(c => syncCards(c.el, c.master));
 
 // ---------------------------------------------------------------- editor do mestre
 const TABS = [['dados', 'Dados'], ['status', 'Status'], ['pericias', 'Perícias'], ['inv', 'Inventário'], ['magias', 'Magias'],
-  ['hab', 'Habilidades'], ['traumas', 'Traumas'], ['bio', 'Biografia'], ['avancado', 'Avançado']];
+  ['hab', 'Habilidades'], ['traumas', 'Traumas'], ['cond', 'Condições'], ['bio', 'Biografia'], ['avancado', 'Avançado']];
 
 function masterCard(puid) {
   const c = state.containers.find(x => x.master);
@@ -889,6 +922,27 @@ function listTab(ctx, key) {
     } }, '+ Adicionar'));
 }
 
+// ---- aba Condições (única forma de aplicar/editar condições de um jogador)
+function tabCondicoes(ctx) {
+  const alvo = ctx.puid;
+  const lista = h('div', {});
+  const render = () => safeRender(lista, () => {
+    const cs = condicoesDe(alvo);
+    lista.replaceChildren(...(cs.length ? cs.map(c => {
+      const t = h('input', { class: 'sala-campo sala-largura-numero', type: 'number', min: 0, max: 99, value: num(c.turnos) });
+      t.addEventListener('change', () => update(ref(db), { [`rooms/${state.code}/condicoes/${alvo}/${c.cid}/turnos`]: Math.max(0, Math.min(99, num(t.value))) }).catch(e => toast(friendly(e))));
+      return h('div', { class: 'sala-item sala-condicao-linha' },
+        h('div', { class: 'sala-linha' }, h('b', { class: 'sala-expandir' }, c.nome), fld('Turnos (0 = sem limite)', t),
+          h('button', { class: 'sala-botao sala-perigo', onclick: () => delCondicao(alvo, c.cid) }, 'Remover')),
+        c.descricao ? h('div', { class: 'sala-descricao' }, c.descricao) : null);
+    }) : [h('p', { class: 'sala-discreto' }, 'Nenhuma condição aplicada.')]));
+  });
+  addView('condicoes', render);
+  render();
+  return h('div', {}, h('h4', { class: 'sala-subtitulo' }, 'Condições ativas'), lista,
+    h('h4', { class: 'sala-subtitulo sala-margem-topo' }, 'Aplicar condição'), condicaoForm(alvo));
+}
+
 // ---- aba Personagem
 function tabBio(ctx) {
   const f = ctx.f;
@@ -977,7 +1031,7 @@ function tabAvancado(ctx) {
 
 const TAB_FN = {
   dados: tabDados, avancado: tabAvancado, status: tabStatus, pericias: tabPericias, inv: tabInv, bio: tabBio,
-  magias: c => listTab(c, 'magias'), hab: c => listTab(c, 'habilidades'), traumas: c => listTab(c, 'traumas')
+  cond: tabCondicoes, magias: c => listTab(c, 'magias'), hab: c => listTab(c, 'habilidades'), traumas: c => listTab(c, 'traumas')
 };
 
 // ---------------------------------------------------------------- blocos de interface compartilhados
@@ -1582,7 +1636,7 @@ function iniRow(e, master, ini) {
   nm.addEventListener('change', () => { if (nm.value.trim()) iniUpdate({ [`entries/${e.id}/nome`]: nm.value.trim() }); });
   return h('div', { class: 'sala-iniciativa-linha' + (cur ? ' cur' : '') },
     h('span', { class: 'sala-iniciativa-valor' }, val), nm,
-    h('span', { class: 'sala-condicoes' }, emblemas(alvoIni(e), true)),
+    h('span', { class: 'sala-condicoes' }, emblemas(alvoIni(e), false)),
     h('button', { class: 'sala-botao', title: 'Dar o turno a este', onclick: () => iniUpdate({ atual: e.id, ativa: true }) }, '▶'),
     h('button', { class: 'sala-botao', title: 'Rolar d20', onclick: () => iniUpdate({ [`entries/${e.id}/valor`]: 1 + Math.floor(Math.random() * 20) }) }, 'd20'),
     h('button', { class: 'sala-botao sala-perigo', onclick: () => iniDel(e.id) }, '✕'));
