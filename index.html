@@ -13,8 +13,8 @@
 
 <div class="panel" id="main-panel">
     <div id="createItemTabs" style="display: none;">
-        <button class="btn" onclick="setPanelTab('itemCreateTab')">Criar</button>
-        <button class="btn" onclick="setPanelTab('itemLibTab')">Biblioteca</button>
+        <button class="btn-tab" data-tab="itemCreateTab" onclick="setPanelTab('itemCreateTab')">Criar</button>
+        <button class="btn-tab" data-tab="itemLibTab" onclick="setPanelTab('itemLibTab')">Biblioteca</button>
     </div>
     <div class="box">
         <p class="botao-sair" onclick="panelClose()">x</p>
@@ -227,9 +227,8 @@
         </div>
 
         <div id="itemLibTab">
-            <h1 class="title">Itens</h1>
-            <hr>
-            <div id="itemLibContent"></div>
+            <h1 class="title">Biblioteca de Itens</h1>
+            <div class="biblioteca-conteudo"></div>
         </div>
         <!-- ================= TRAUMA ================= -->
         <div class="content" id="TraumaCreate" style="display: none;">
