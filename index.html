@@ -12,6 +12,10 @@
 
 
 <div class="panel" id="main-panel">
+    <div id="createItemTabs" style="display: none;">
+        <button class="btn" onclick="setPanelTab('itemCreateTab')">Criar</button>
+        <button class="btn" onclick="setPanelTab('itemLibTab')">Biblioteca</button>
+    </div>
     <div class="box">
         <p class="botao-sair" onclick="panelClose()">x</p>
 
@@ -112,8 +116,9 @@
         </div>
         <!-- ================= ITEM ================= -->
         <div class="content" id="ItemCreate" style="display: none;">
+            <div id="itemCreateTab">
             <h1 class="title">Criar Item</h1>
-            <section >
+            <section>
                 <section id="infoGroup">
                     <section class="bloco-info">
                         <section class="info-adicionar-item">
@@ -180,8 +185,10 @@
                                     <option value="rifle">Rifle</option>
                                     <option value="longo_alcance">Longo Alcance</option>
                                 </select>
-                                <p class="text white" style="margin-top: 0;">Munição</p>
-                                <input class="input" type="number" id="weaponCreateMMO">
+                                <section id="createWeaponMMO">
+                                    <p class="text white" style="margin-top: 0;">Munição</p>
+                                    <input class="input" type="number" id="weaponCreateMMO">
+                                </section>
                             </section>
                             <section>
                                 <p class="text white">Dano</p>
@@ -214,10 +221,16 @@
                     <br>
                 </section>
             </section>
-            <br>
             <button class="btn" onclick="addItem()">Criar</button>
+            <br>
+            </div>
         </div>
 
+        <div id="itemLibTab">
+            <h1 class="title">Itens</h1>
+            <hr>
+            <div id="itemLibContent"></div>
+        </div>
         <!-- ================= TRAUMA ================= -->
         <div class="content" id="TraumaCreate" style="display: none;">
             <section>
@@ -953,15 +966,6 @@
             <p class="text" style="color: white;">Editar Peso Adicional</p>
             <input type="number" id="additionalWeightInput" class="input" placeholder="Novo peso">
             <button class="btn" onclick="renderMaxWeight()">Salvar</button>
-        </div>
-    </div>
-
-    <div id="happi" class="panel" style="display: none;">
-        <div class="box">
-            <h1 class="title">FELIZ ANIVERSÁRIO</h1>
-            <p class="text"> SALVE, acho que vc imaginava que eu faria algo assim (eu sou previsivel) mas eu n podia deixar isso pasar batido (igual eu fiz todos os outros anos :P) ENTÃO aqui vai meu presente, ele é o melhor do mundo? Não (mentira, é sim), mas é oq eu pensei e fiz com muito carinho <3</p> <br> <p>-Luis Inacio Bolsonaro da Silva</p>
-            <br>
-            <p>Vá no seu inventario O-O</p>
         </div>
     </div>
 

@@ -19,9 +19,27 @@ const weaponCreateMMO = document.getElementById('weaponCreateMMO')
 const weaponCreateDamage = document.getElementById('weaponCreateDamage')
 const weaponCreateCritical = document.getElementById('weaponCreateCritical')
 
+const createWeaponMMO = document.getElementById('createWeaponMMO')
 // Informações de Munição
 const mmoCreateWeapon = document.getElementById('mmoCreateWeapon')
 const mmoCreateType = document.getElementById('mmoCreateType')
+
+weaponCreateType.addEventListener('change', function(){
+    if(weaponCreateType.value == 'branca') {
+        createWeaponMMO.style.display = 'none'
+    } else {
+        createWeaponMMO.style.display = 'flex' 
+    }
+})
+
+function setPanelTab(tab) {
+    inLib = tab.includes('Lib') 
+
+    rad = tab.replace(`${inLib?"Lib":"Create"}Tab`, "")
+    
+    document.getElementById(`${rad}${inLib?"Create":"Lib"}Tab`).style.display = 'none'
+    document.getElementById(`${rad}${inLib?"Lib":"Create"}Tab`).style.display = 'flex'
+}
 
 function startItemCreation() {
     panelOpen("ItemCreate");

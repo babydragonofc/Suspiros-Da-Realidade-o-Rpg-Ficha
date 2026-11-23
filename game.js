@@ -17,11 +17,21 @@ const periciasDisplayer = document.getElementById('periciasDisplayer')
 
 const mainPanelDissolve = new PerlinDissolve( document.querySelector("#main-panel"), 1024)
 
+var inLib = false
+
 function panelOpen(id, title, content, sm = false) {
 
+    inLib = false
     if( id == "changeLog") {
         localStorage.setItem('versãoNaUltimaVezQueViuOChangeLog', siteVersion)
         document.getElementById('changeLogBtn').classList.remove('aviso-novidade')
+    }
+
+    if (id = "ItemCreate" ) {
+        document.getElementById('createItemTabs').style.display = "flex"
+        setPanelTab("itemCreateTab")
+    } else {
+        document.getElementById('createItemTabs').style.display = "none"   
     }
     const mainPanel = document.getElementById("main-panel");
     mainPanelDissolve.show()

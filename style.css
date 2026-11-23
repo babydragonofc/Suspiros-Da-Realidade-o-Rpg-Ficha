@@ -159,12 +159,24 @@ a {
     transition: 0.2s ease-in;
 }
 
-.btn.active {
+.btn.active, .tab-btn.active {
     box-shadow: 0 0 10px var(--botao-fundo);
 }
 
 .btn:hover {
     background-color: var(--botao-fundo-hover);
+}
+
+.tab-btn {
+    background: var(--cor-fundo-escuro);
+    border: 1px solid var(--cor-terciaria);
+    border-bottom: none;
+    color: var(--cor-terciaria);
+    min-height: 30px;
+    padding: 0 50px;
+    font-size: 12px;
+    font-weight: 550;
+    transition: 0.2s ease-in;
 }
 
 .hide {
@@ -3227,7 +3239,7 @@ fear {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     width: 281.587px;
     height: 150px;
@@ -3686,6 +3698,14 @@ fear {
     height: 90%;
 }
 
+.createItemTabs {
+    display: flex;
+    gap: 10px;
+}
+
+#itemCreateTab, #itemLibTab {
+    flex-direction: column;
+}
 /* ---------- Aviso de atualização ---------- */
 #update-notification {
     position: fixed;
@@ -4505,4 +4525,9 @@ details.sala-item > summary {
     margin: 0 0 6px;
     font-weight: 400;
     color: var(--cor-principal);
+}
+
+.sala-anonima {
+    margin-left: 8px;
+    white-space: nowrap;
 }

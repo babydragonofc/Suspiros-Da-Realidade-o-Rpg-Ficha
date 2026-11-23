@@ -1242,11 +1242,6 @@ function irParaJogo() {
 
     statusDef()
 
-    if (ficha.nome.toLowerCase().includes("roy")) {
-        happi()
-    }
-
-    
 }
 
 function renderPersonagem() {
