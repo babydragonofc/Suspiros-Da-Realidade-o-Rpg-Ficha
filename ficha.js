@@ -91,7 +91,7 @@ var ficha = {
 
 // PUTA QUE PARIU QUE NOTIFICAÇÃO ARROMBADA
 
-const notionText = "Seu save foi atualizado para a versão mais recente " + ficha.versão + "! Verifique a lista de updates";
+const notionText = "Seu save foi atualizado para a versão mais recente " + ficha.versão + "! Verifique a lista de atualizações.";
 
 const defaultFicha = JSON.parse(JSON.stringify(ficha));
 let saveUpdated = false;
@@ -204,7 +204,7 @@ if (inputArquivo) {
     if (arquivo) {
       carregarObjetoJSON(arquivo).then((dadosCarregados) => {
         if (!dadosCarregados.nome/* !dadosCarregados.assinatura == "FichaSuspirosDaRealidade"*/) {
-          alert("Insira um arquivo valido!")
+          alert("Insira um arquivo válido!")
           return;
         }
 
@@ -220,7 +220,7 @@ if (inputArquivo) {
             console.log('Dados carregados:', dadosCarregados, 'versão:', versãoDaFicha);
 
         if (!versãoDaFicha) {
-            panelOpen(false, 'ATUALIZAÇÃO', 'o sistema de pericias foi atualizados, vá em Personagem > Editar pericias para adicionar suas pericias')
+            panelOpen(false, 'ATUALIZAÇÃO', 'O sistema de perícias foi atualizado. Vá em Personagem > Editar perícias para adicionar suas perícias.')
             fichaComPericiasAntigas = true
         }
 

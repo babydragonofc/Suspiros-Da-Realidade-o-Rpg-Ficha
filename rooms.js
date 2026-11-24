@@ -80,7 +80,7 @@ const state = {
   iniSeen: false, mesaSeen: false,
   presence: null,
   lastApplied: null,
-  ui: { step: 1, tab: {}, sub: {}, secreta: false, npcAberto: {} }
+  ui: { step: 1, tab: {}, sub: {}, secreta: false, anonima: false, npcAberto: {} }
 };
 let app, auth, db, uid = null, ready = null;
 let lastPushed = null, applying = false, syncTimer = null;
@@ -438,6 +438,17 @@ async function logRoll(r) {
   } catch (e) { console.warn('[sala] rolagem não enviada', e); }
 }
 
+// Rolagem anônima: o jogador rola normalmente, mas o resultado não vai para o histórico da sala
+function anonimaCheckbox() {
+  const c = h('input', { type: 'checkbox', class: 'sala-anonima-chk' });
+  c.checked = !!state.ui.anonima;
+  c.addEventListener('change', () => {
+    state.ui.anonima = c.checked;
+    document.querySelectorAll('.sala-anonima-chk').forEach(o => { o.checked = c.checked; });
+  });
+  return h('label', { class: 'sala-opcao sala-anonima', title: 'Quando marcado, suas rolagens não aparecem no histórico da sala' }, c, ' Anônima');
+}
+
 function wrapRolls() {
   const origRoll = window.rollDice;
   if (typeof origRoll === 'function') {
@@ -446,7 +457,7 @@ function wrapRolls() {
       // o botão "Rolar Dado" chama rollDice() sem argumentos: usa o que está no campo
       if (value === undefined && input) value = input.value;
       const total = origRoll.call(this, value, type);
-      if (typeof total === 'number' && state.role === 'player' && state.code) {
+      if (typeof total === 'number' && state.role === 'player' && state.code && !state.ui.anonima) {
         const expr = input ? input.value : String(value);
         const d = document.getElementById('descriçãoDeRolagem');
         const detail = ((d && d.textContent) || '').replace(/^de Dano\s*/, '').trim();
@@ -456,11 +467,13 @@ function wrapRolls() {
       return total;
     };
   }
+  const btn = document.getElementById('diceBtnRoll');
+  if (btn && btn.after) btn.after(anonimaCheckbox());
   const origMult = window.rollMultiplierDice;
   if (typeof origMult === 'function') {
     window.rollMultiplierDice = function (quantity, sides) {
       const r = origMult.apply(this, arguments);
-      if (state.role === 'player' && state.code) {
+      if (state.role === 'player' && state.code && !state.ui.anonima) {
         const out = document.getElementById('resultadoFinalDeRolagem');
         logRoll({ label: 'Dado', expr: `${quantity}d${sides}`, total: out ? out.textContent : 0, detail: '' });
       }
@@ -1779,6 +1792,7 @@ function renderPlayerSala() {
     state.containers.push({ el: players, master: false });
     const rolls = h('div', { class: 'sala-rolagens' });
     state.rollBoxes.push(rolls);
+    const anon = anonimaCheckbox();
     salaContent.append(h('div', { class: 'sala-conteudo' },
       h('div', { class: 'sala-caixa sala-linha' },
         h('div', {}, h('div', { class: 'sala-discreto' }, 'Sala' + (state.meta && state.meta.name ? ' · ' + state.meta.name : '')),
@@ -1790,7 +1804,8 @@ function renderPlayerSala() {
         ['jogadores', 'Jogadores', h('div', {}, players, players._empty)],
         ['iniciativa', 'Iniciativa', iniView(false)],
         ['mesa', 'Mesa', mesaView(false)],
-        ['rolagens', 'Rolagens', rolls]]))));
+        ['rolagens', 'Rolagens', h('div', {}, h('div', { class: 'sala-margem-baixo' }, anon,
+          h('div', { class: 'sala-discreto' }, 'Com "Anônima" marcada, o que você rolar não aparece no histórico da sala.')), rolls)]]))));
     renderAll(); fillRolls(rolls);
     return;
   }

@@ -4,8 +4,43 @@ if (localStorage.getItem('versãoNaUltimaVezQueViuOChangeLog') != siteVersion) {
 
 let fichaComPericiasAntigas = false;
 
-//LEMBRAR DE TROCAR A VERÇÃO EM rules.js! Tapada
+//LEMBRAR DE TROCAR A VERSÃO EM rules.js! Tapada
 const changeLog = [
+    {
+        title: "Salas e Biblioteca de Itens",
+        version: "1.1.5.0",
+        release: "23/11/2026",
+        content: "Chegaram as Salas online, a Biblioteca de Itens e muitas melhorias para o mestre.",
+        changes: {
+            add: [
+                "Salas online: o mestre cria uma sala e os jogadores entram com um código",
+                "Cards rápidos dos jogadores com Nome, PV, PE e MD, com destaque para vida baixa e medo alto",
+                "O mestre pode abrir e editar toda a ficha do jogador (inventário, magias, habilidades, traumas e mais)",
+                "Histórico de rolagens da sala, rolagem secreta do mestre e rolagem anônima do jogador",
+                "Mesa de itens: o mestre coloca itens na mesa e os jogadores podem pegar e devolver",
+                "Entrega de itens direto de um jogador para outro",
+                "Iniciativa da sala, com turnos e rodadas",
+                "Condições (Queimando, Sangrando, Caído, Delirando e outras) com descrição e contagem de turnos",
+                "NPCs com PV, PE, MD e condições, que podem entrar na iniciativa",
+                "Presets de itens, rituais, habilidades e NPCs para o mestre",
+                "Código de mestre para mestrar a mesma sala em mais de um aparelho",
+                "Biblioteca de Itens: cards com todos os itens prontos, para adicionar direto ou ver mais informações antes",
+                "Presets de munição: bala e cartucho para pistola, rifle e longo alcance",
+                "Aba Criar e Biblioteca na criação de itens"
+            ],
+            remove: [
+                "Mensagem de aniversário removida"
+            ],
+            fixes: [
+                "Correção dos erros de ortografia e acentuação em vários textos do site",
+                "Correção do tipo das armas de longo alcance, que não aceitavam munição",
+                "Correção do painel de itens, que abria no lugar de outros painéis",
+                "Correção da lista de perícias Sociais no editor de perícias (Conversação)",
+                "Itens comuns da biblioteca não rolam mais um dado vazio ao serem usados"
+            ]
+        },
+        notes: "A sala depende do Firebase configurado; fichas e salas antigas continuam funcionando."
+    },
     {
         title: "PLAY TEST",
         version: "1.1.4.3",
@@ -13,7 +48,7 @@ const changeLog = [
         content: "Correções para o play test.",
         changes: {
             add: [
-                "Regras do Play test já disponiveis!",
+                "Regras do Play test já disponíveis!",
             ],
             remove: [
                 ""
@@ -21,7 +56,7 @@ const changeLog = [
             fixes: [
                 "Correção na descrição da Origem Abandonado",
                 "Correção na escolha de Origem.",
-                "Correção na haba Personagens"
+                "Correção na aba Personagens"
             ]
         },
         notes: ""
@@ -33,15 +68,15 @@ const changeLog = [
         content: "Pequenas correções e melhorias.",
         changes: {
             add: [
-                "Nova haba de Vantagens",
-                "Pericias com um novo visual"
+                "Nova aba de Vantagens",
+                "Perícias com um novo visual"
             ],
             remove: [
-                "Diario removido novamente"
+                "Diário removido novamente"
             ],
             fixes: [
-                "Agora as perícias mostram os dados do nivel",
-                "Outras pequenas correções do codigo."
+                "Agora as perícias mostram os dados do nível",
+                "Outras pequenas correções do código."
             ]
         },
         notes: "atualização de descrições e imagens em desenvolvimento"
@@ -59,7 +94,7 @@ const changeLog = [
 
             ],
             fixes: [
-                "Correção da troca de Labia para Conversação",                
+                "Correção da troca de Lábia para Conversação",                
             ]
         },
         notes: "atualização de descrições e imagens em desenvolvimento"
@@ -78,15 +113,15 @@ const changeLog = [
                 "Adicionados Valores: Defesa ativa, Reflexos e Deslocamento"
             ],
             remove: [
-                "Troca de perícias, Profição -> Burocracia, Labia -> Conversação, inteligência -> Pesquisar",
+                "Troca de perícias, Profissão -> Burocracia, Lábia -> Conversação, inteligência -> Pesquisar",
                 "Fim do multi-classe", 
-                "Adicionada escolha de péricia bônus em algumas Ocupações"
+                "Adicionada escolha de perícia bônus em algumas Ocupações"
             ],
             fixes: [
-                "Preview de Energia adicionado na edição de perícias",
+                "Prévia de Energia adicionada na edição de perícias",
                 "Correção na cor do status Energia",
                 "Volta das raças funcionais",
-                "Correção de formatação nos textos de péricias de Ocupações",
+                "Correção de formatação nos textos de perícias de Ocupações",
                 "Novas descrições às Ocupações",
                 
             ]
@@ -102,8 +137,8 @@ const changeLog = [
             add: [
                 "Sistema de Itens personalizados",
                 "Créditos. Veja as pessoas incríveis que ajudaram nesse projeto.",
-                "Mana substituida por Energia",
-                '"pericias Paranormais" renomeadas para "pericias Mentais"'
+                "Mana substituída por Energia",
+                '"perícias Paranormais" renomeadas para "perícias Mentais"'
             ],
             remove: [
                 "Remoção da opção de perícias para dados",
@@ -111,7 +146,7 @@ const changeLog = [
             fixes: [
                 "Nomes de opções de Dados corrigidos",
                 "Leitura do valor do status de Medo melhorada",
-                "Melhoria no codigo de criação de item",
+                "Melhoria no código de criação de item",
                 "Correção na edição de status"
             ]
         },
@@ -121,7 +156,7 @@ const changeLog = [
         title: "Pequenas correções",
         version: "1.1.3.1",
         release: "06/07/2026",
-        content: "Pequenas correções no codigo.",
+        content: "Pequenas correções no código.",
         changes: {
             add: [
 
@@ -130,7 +165,7 @@ const changeLog = [
 
             ],
             fixes: [
-                "Correção no bonus de pericias não treinadas",
+                "Correção no bônus de perícias não treinadas",
                 "Correção na bonificação de fichas antigas"
             ]
         },
@@ -151,7 +186,7 @@ const changeLog = [
                 "Novos estilos de texto",
                 "Novas animações nos itens",
                 "Novas animações nas abas",
-                "Nova opção de login rapido"
+                "Nova opção de login rápido"
             ],
             remove: [
                 "Remoção do antigo sistema de perícias",

@@ -353,12 +353,12 @@ function renderizarOcupações() {
 
             if (pericia == "PericiasDeConhecimento") {
                 const quantidadeDeOpções = o.pericias.findIndex(el => el == pericia)==0? 2: 1;
-                displayName = `${quantidadeDeOpções == 1? "( Uma": "( Duas"} das pericias de Conhecimento )`
+                displayName = `${quantidadeDeOpções == 1? "( Uma": "( Duas"} das perícias de Conhecimento )`
 
             }else if (Array.isArray(pericia)) {
 
                 const quantidadeDeOpções = o.pericias.findIndex(el => el == pericia)==0? 2: 1;
-                displayName = `${quantidadeDeOpções == 1? "( Uma": "( Duas"} das seguintes pericias : ` //inicio do texto
+                displayName = `${quantidadeDeOpções == 1? "( Uma": "( Duas"} das seguintes perícias: ` //inicio do texto
 
                 let text = ""
 
@@ -396,7 +396,7 @@ function renderizarOcupações() {
             <div class="detalhes-ocupacao">
                 <p class="text">${o.descricao}</p>
                 <hr>
-                <p class="text sm">Pericias: ${bonus} ; Habilidade: ${Habilidades}</p>
+                <p class="text sm">Perícias: ${bonus}; Habilidade: ${Habilidades}</p>
                 <button class="btn">Escolher</button>
             </div>
         `;
@@ -662,7 +662,7 @@ const origens = [
     {
         id: 8,
         nome: "Abandonado",
-        descricao: "Cresceu sem uma estrutura familiar instável e aprendeu desde cedo a depender de si mesmo. Possui contatos entre pessoas que vivem à margem da sociedade e experiência em encontrar recursos sem depender de outras pessoas.",
+        descricao: "Cresceu sem uma estrutura familiar estável e aprendeu desde cedo a depender de si mesmo. Possui contatos entre pessoas que vivem à margem da sociedade e experiência em encontrar recursos sem depender de outras pessoas.",
     },
 
     {
@@ -868,8 +868,8 @@ const typeConfirm = document.getElementById("typeConfirm");
 
 const types = [
     {nome:"Alma",descricao:"O conhecimento está em suas mãos.",info:"A alma representa sua capacidade de se conectar com o ser interior, +2 <short class='Pericia Aprendizado'>Aprendizado</short>, +2 <short class='MagiaFicha ConhecimentoMagico'>Pontos de Conhecimento</short>"},
-    {nome:"Energia",descricao:"A fonte da energia e habilidade.",info:"A energia é o nucleo da magia, necessario para conjurar e executar, representa a concentração e melhoria de suas capacidades de uso da magia, +3 <short class='Status PontosDeMagia'>Pontos de Magia</short>, +2 <short class='Pericia Magia'>Magia</short>"},
-    {nome:"Corpo",descricao:"A matéria física em seu pleno alcance",info:"O controle sob seu corpo e o ambiente a sua volta, o corpo representa a realidade material e fisica, +5 <short class='Status Vida'>Vida</short>, +2 <short class='Pericia Constituição'>Constituição</short>"}
+    {nome:"Energia",descricao:"A fonte da energia e habilidade.",info:"A energia é o núcleo da magia, necessária para conjurar e executar, representa a concentração e melhoria de suas capacidades de uso da magia, +3 <short class='Status PontosDeMagia'>Pontos de Magia</short>, +2 <short class='Pericia Magia'>Magia</short>"},
+    {nome:"Corpo",descricao:"A matéria física em seu pleno alcance",info:"O controle sobre seu corpo e o ambiente à sua volta; o corpo representa a realidade material e física, +5 <short class='Status Vida'>Vida</short>, +2 <short class='Pericia Constituição'>Constituição</short>"}
 ];
 
 var tipoSelecionado = null;
@@ -932,7 +932,7 @@ const Elemental = document.getElementById("Elemental");
 const Dinamico = document.getElementById("Dinamico");
 
 var focos = [
-    {name: "Suporte", descricao: "Magias que melhoram status de seus aliados e/ou prejudica os inimigos.", info: "Ex: Cura, Força, Veneno, etc.", value: 0},
+    {name: "Suporte", descricao: "Magias que melhoram o status de seus aliados e/ou prejudicam os inimigos.", info: "Ex: Cura, Força, Veneno, etc.", value: 0},
     {name: "Controle", descricao: "Magias que controlam o ambiente ao redor<br>", info: "Ex: Espinhos em área, acorrentar, visão, atribuir etc.", value: 0},
     {name: "Elemental", descricao: "Magias que utilizam <short class='MagiaFicha Elementos'>Elementos</short> da natureza.", info: "Ex: Fogo, Gelo, Água, Escuridão etc.", value: 0},
     {name: "Dinâmicos", descricao: "Magias gerais", info: "Ex: Levitação, Leitura, etc.", value: 1},

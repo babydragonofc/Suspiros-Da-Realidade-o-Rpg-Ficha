@@ -32,13 +32,194 @@ weaponCreateType.addEventListener('change', function(){
     }
 })
 
+// Abas do painel de itens: "itemCreateTab" (Criar) e "itemLibTab" (Biblioteca)
 function setPanelTab(tab) {
-    inLib = tab.includes('Lib') 
+    inLib = tab.includes('Lib')
 
-    rad = tab.replace(`${inLib?"Lib":"Create"}Tab`, "")
-    
-    document.getElementById(`${rad}${inLib?"Create":"Lib"}Tab`).style.display = 'none'
-    document.getElementById(`${rad}${inLib?"Lib":"Create"}Tab`).style.display = 'flex'
+    document.getElementById('itemCreateTab').style.display = inLib ? 'none' : 'flex'
+    document.getElementById('itemLibTab').style.display = inLib ? 'flex' : 'none'
+    document.querySelectorAll('#createItemTabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab))
+
+    if (inLib) {
+        biblioteca.aberto = null
+        renderBiblioteca()
+    }
+}
+
+// ================= BIBLIOTECA DE ITENS =================
+// Mostra os itens prontos (preset, em listas.js) como cards. O jogador pode
+// adicionar direto ao inventário ou clicar no card para ver mais e só então adicionar.
+const BIBLIOTECA_CATEGORIAS = [
+    ['todos', 'Todos'],
+    ['armas', 'Armas'],
+    ['municoes', 'Munições'],
+    ['vestimentas', 'Vestimentas'],
+    ['itens', 'Itens']
+]
+const biblioteca = { categoria: 'todos', busca: '', aberto: null, barra: null, area: null }
+
+const ROTULOS_BIBLIOTECA = {
+    branca: 'Arma branca', pistola: 'Pistola', rifle: 'Rifle', longo_alcance: 'Longo alcance',
+    pequena: 'Pequena', media: 'Média', grande: 'Grande',
+    corte: 'Corte', contusao: 'Contusão', perfuracao: 'Perfuração',
+    bala: 'Bala solta', cartucho: 'Cartucho',
+    arma: 'Arma', municao: 'Munição', vestimenta: 'Vestimenta', documento: 'Documento', item: 'Item', artefato: 'Artefato'
+}
+const rotuloBiblioteca = v => ROTULOS_BIBLIOTECA[v] || (String(v).charAt(0).toUpperCase() + String(v).slice(1).replaceAll('_', ' '))
+
+function itensDaBiblioteca() {
+    const lista = []
+    for (const [cat] of BIBLIOTECA_CATEGORIAS) {
+        if (cat == 'todos' || !preset[cat]) continue
+        preset[cat].forEach(p => lista.push({ cat, p }))
+    }
+    return lista
+}
+
+// Copia o item do preset já no formato do inventário (evita editar o preset sem querer)
+function itemDoPreset(p) {
+    const copia = JSON.parse(JSON.stringify(p))
+    if (copia.type == 'item') copia.data = { dice: '', type: 'objeto', ...copia.data }
+    return copia
+}
+
+// Texto curto que aparece no card
+function resumoBiblioteca(p) {
+    const d = p.data || {}
+    const partes = []
+    if (p.type == 'arma') {
+        partes.push(rotuloBiblioteca(d.type))
+        if (d.damage) partes.push('Dano ' + d.damage)
+    } else if (p.type == 'municao') {
+        partes.push(rotuloBiblioteca(d.type) + ' · ' + rotuloBiblioteca(d.weapon))
+    }
+    partes.push('Peso ' + (p.weight || 0))
+    return partes.join(' · ')
+}
+
+// Linhas "Rótulo: valor" do detalhe
+function detalhesBiblioteca(p) {
+    const d = p.data || {}
+    const l = [['Tipo', rotuloBiblioteca(p.type)], ['Peso', p.weight || 0]]
+    if (p.type == 'arma') {
+        l.push(['Modelo', rotuloBiblioteca(d.type)])
+        if (d.size) l.push(['Tamanho', rotuloBiblioteca(d.size)])
+        if (d.category) l.push(['Categoria', rotuloBiblioteca(d.category)])
+        if (d.damage) l.push(['Dano', d.damage])
+        if (d.critical) l.push(['Dano crítico', d.critical])
+        if (d.type != 'branca' && d.maxMmo) l.push(['Munição máxima', d.maxMmo])
+    } else if (p.type == 'municao') {
+        l.push(['Serve para', rotuloBiblioteca(d.weapon)], ['Modo', rotuloBiblioteca(d.type)])
+    }
+    return l
+}
+
+function adicionarDaBiblioteca(p, local = 'inventario', quantidade = 1) {
+    const n = Math.max(1, Math.min(20, parseInt(quantidade) || 1))
+    for (let i = 0; i < n; i++) createItem(itemDoPreset(p), local)
+}
+
+// Cria um elemento com classe e texto (sem innerHTML: os textos vêm de dados)
+function elBiblioteca(tag, classe, texto) {
+    const e = document.createElement(tag)
+    if (classe) e.className = classe
+    if (texto != null) e.textContent = texto
+    return e
+}
+
+function botaoAdicionar(p, rotulo, obterQuantidade, obterLocal) {
+    const b = elBiblioteca('button', 'btn', rotulo)
+    b.onclick = e => {
+        e.stopPropagation()
+        adicionarDaBiblioteca(p, obterLocal ? obterLocal() : 'inventario', obterQuantidade ? obterQuantidade() : 1)
+        b.textContent = '✓ Adicionado'
+        b.disabled = true
+        setTimeout(() => { b.textContent = rotulo; b.disabled = false }, 1200)
+    }
+    return b
+}
+
+function cardBiblioteca({ cat, p }) {
+    const card = elBiblioteca('div', 'biblioteca-card')
+    card.tabIndex = 0
+    card.title = 'Clique para ver mais informações'
+    card.append(
+        elBiblioteca('span', 'biblioteca-etiqueta', rotuloBiblioteca(p.type)),
+        elBiblioteca('h3', 'biblioteca-nome', p.name),
+        elBiblioteca('p', 'biblioteca-resumo', resumoBiblioteca(p)),
+        botaoAdicionar(p, '+ Adicionar')
+    )
+    const abrir = () => { biblioteca.aberto = { cat, p }; renderBiblioteca() }
+    card.addEventListener('click', abrir)
+    card.addEventListener('keydown', e => { if (e.key == 'Enter') abrir() })
+    return card
+}
+
+function detalheBiblioteca({ p }) {
+    const box = elBiblioteca('div', 'biblioteca-detalhe')
+    const voltar = elBiblioteca('button', 'btn', '← Voltar à biblioteca')
+    voltar.onclick = () => { biblioteca.aberto = null; renderBiblioteca() }
+
+    const tabela = elBiblioteca('div', 'biblioteca-dados')
+    detalhesBiblioteca(p).forEach(([r, v]) => {
+        tabela.append(elBiblioteca('span', 'biblioteca-rotulo', r), elBiblioteca('span', '', String(v)))
+    })
+
+    const qtd = elBiblioteca('input', 'input')
+    qtd.type = 'number'; qtd.min = 1; qtd.max = 20; qtd.value = 1
+    const local = elBiblioteca('select', 'input')
+    local.append(new Option('Inventário', 'inventario'), new Option('Guardados', 'guardados'))
+
+    const acoes = elBiblioteca('div', 'biblioteca-acoes')
+    const campoQtd = elBiblioteca('label', 'biblioteca-campo', 'Quantidade'); campoQtd.append(qtd)
+    const campoLocal = elBiblioteca('label', 'biblioteca-campo', 'Colocar em'); campoLocal.append(local)
+    acoes.append(campoQtd, campoLocal, botaoAdicionar(p, 'Adicionar', () => qtd.value, () => local.value))
+
+    box.append(voltar, elBiblioteca('h2', 'biblioteca-titulo', p.name), tabela,
+        elBiblioteca('p', 'biblioteca-descricao', p.description || 'Sem descrição.'), acoes)
+    return box
+}
+
+function renderBiblioteca() {
+    const raiz = document.querySelector('#itemLibTab .biblioteca-conteudo')
+    if (!raiz) return
+
+    // A barra (busca + categorias) é criada uma vez, para não perder o foco ao digitar
+    if (!biblioteca.barra || !raiz.contains(biblioteca.barra)) {
+        const barra = elBiblioteca('div', 'biblioteca-barra')
+        const busca = elBiblioteca('input', 'input')
+        busca.type = 'text'; busca.placeholder = 'Buscar item...'; busca.value = biblioteca.busca
+        busca.addEventListener('input', () => { biblioteca.busca = busca.value; renderBiblioteca() })
+        const cats = elBiblioteca('div', 'biblioteca-categorias')
+        BIBLIOTECA_CATEGORIAS.forEach(([id, rotulo]) => {
+            const b = elBiblioteca('button', 'btn', rotulo)
+            b.dataset.cat = id
+            b.onclick = () => { biblioteca.categoria = id; renderBiblioteca() }
+            cats.append(b)
+        })
+        barra.append(busca, cats)
+        biblioteca.barra = barra
+        biblioteca.area = elBiblioteca('div', 'biblioteca-area')
+        raiz.replaceChildren(barra, biblioteca.area)
+    }
+
+    biblioteca.barra.hidden = !!biblioteca.aberto
+    biblioteca.barra.querySelectorAll('[data-cat]').forEach(b => b.classList.toggle('active', b.dataset.cat == biblioteca.categoria))
+
+    if (biblioteca.aberto) {
+        biblioteca.area.replaceChildren(detalheBiblioteca(biblioteca.aberto))
+        return
+    }
+
+    const termo = biblioteca.busca.trim().toLowerCase()
+    const lista = itensDaBiblioteca().filter(({ cat, p }) =>
+        (biblioteca.categoria == 'todos' || cat == biblioteca.categoria) &&
+        (!termo || (p.name + ' ' + (p.description || '')).toLowerCase().includes(termo)))
+
+    const grade = elBiblioteca('div', 'biblioteca-grade')
+    if (lista.length) lista.forEach(x => grade.append(cardBiblioteca(x)))
+    else grade.append(elBiblioteca('p', 'biblioteca-vazio', 'Nenhum item encontrado.'))
+    biblioteca.area.replaceChildren(grade)
 }
 
 function startItemCreation() {
@@ -89,7 +270,7 @@ function addItem() {
         }
     } else {
         
-        alert("Erro ao criar item. Pagina sera reiniciada")
+        alert("Erro ao criar item. A página será reiniciada.")
         save()
         location.reload();
     }

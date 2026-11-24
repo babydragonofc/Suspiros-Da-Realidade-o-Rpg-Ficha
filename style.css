@@ -159,7 +159,7 @@ a {
     transition: 0.2s ease-in;
 }
 
-.btn.active, .tab-btn.active {
+.btn.active, .btn-tab.active {
     box-shadow: 0 0 10px var(--botao-fundo);
 }
 
@@ -167,7 +167,7 @@ a {
     background-color: var(--botao-fundo-hover);
 }
 
-.tab-btn {
+.btn-tab {
     background: var(--cor-fundo-escuro);
     border: 1px solid var(--cor-terciaria);
     border-bottom: none;
@@ -3698,7 +3698,7 @@ fear {
     height: 90%;
 }
 
-.createItemTabs {
+#createItemTabs {
     display: flex;
     gap: 10px;
 }
@@ -4530,4 +4530,150 @@ details.sala-item > summary {
 .sala-anonima {
     margin-left: 8px;
     white-space: nowrap;
+}
+
+/* ---------- Biblioteca de itens ---------- */
+.biblioteca-barra {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.biblioteca-categorias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.biblioteca-grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 10px;
+}
+
+.biblioteca-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+    background: var(--cor-fundo-escuro);
+    border: 1px solid var(--cor-terciaria);
+    cursor: pointer;
+    transition: 0.2s ease-in;
+}
+
+.biblioteca-card:hover,
+.biblioteca-card:focus-visible {
+    border-color: var(--cor-principal);
+    outline: none;
+}
+
+.biblioteca-etiqueta {
+    align-self: flex-start;
+    padding: 0 6px;
+    border: 1px solid var(--cor-terciaria);
+    color: var(--cor-terciaria);
+    font-size: 12px;
+}
+
+.biblioteca-nome {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--cor-principal);
+}
+
+.biblioteca-resumo {
+    flex: 1;
+    margin: 0;
+    font-size: 14px;
+    color: var(--cor-terciaria);
+}
+
+.biblioteca-detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.biblioteca-titulo {
+    margin: 0;
+    color: var(--cor-principal);
+}
+
+.biblioteca-dados {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 14px;
+}
+
+.biblioteca-rotulo {
+    color: var(--cor-terciaria);
+}
+
+.biblioteca-descricao {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.biblioteca-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.biblioteca-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.biblioteca-vazio {
+    color: var(--cor-terciaria);
+}
+
+.biblioteca-conteudo {
+    display: block;
+    width: 100%;
+}
+
+#itemLibTab {
+    width: 90%;
+    padding: 16px 0;
+}
+
+.biblioteca-area {
+    max-height: 52dvh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.biblioteca-dados span,
+.biblioteca-descricao,
+.biblioteca-campo,
+.biblioteca-vazio {
+    color: white;
+}
+
+.biblioteca-dados .biblioteca-rotulo {
+    color: var(--cor-terciaria);
+}
+
+@media (max-width: 500px) {
+    /* o painel vira uma gaveta embaixo; as abas ficam coladas no topo dela */
+    #createItemTabs {
+        position: absolute;
+        bottom: 70%;
+        left: 0;
+        right: 0;
+        justify-content: center;
+    }
+
+    .biblioteca-area {
+        max-height: 40dvh;
+    }
 }

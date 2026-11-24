@@ -65,10 +65,10 @@ const tooltipDictionary = {
         descricao: 'Com uma rodada de Mecânica, você pode desmontar um objeto e criar outro semelhante a partir de suas peças.'
     },
     Enganar: {
-        descricao: 'Gastando 5 de Medo, você pode substituir qualquer teste de Perícia por uma rolagem de Lábia ou Aparência.'
+        descricao: 'Gastando 5 de Medo, você pode substituir qualquer teste de Perícia por uma rolagem de Conversação.'
     },
     Blefe: {
-        descricao: 'Gastando 10 de Medo, você passa automaticamente em um teste de Lábia, sem necessidade de rolagem.'
+        descricao: 'Gastando 10 de Medo, você passa automaticamente em um teste de Conversação, sem necessidade de rolagem.'
     },
     SacrifícioProtetor: {
         descricao: 'Ao realizar um teste de Destreza antes que um aliado receba dano, você pode intervir e receber o dano em seu lugar.'
@@ -142,9 +142,9 @@ const tooltipDictionary = {
     },
     Origem: {
         Medico: { descricao: "Você era um profissional da saúde como um enfermeiro, farmacêutico, médico, psicólogo ou socorrista, treinado no atendimento e cuidado de pessoas. " },
-        TI: { descricao: "Programador, engenheiro de software ou simples-mente “o cara da T.I.”, você tem treinamento e ex-periência para lidar com sistemas informatizados." },
-        Mecânico: { descricao: "Enquanto os acadêmicos estão preocupados com teorias, você colocar a mão na massa, seja como en- genheiro proﬁssional, seja como inventor de garagem." },
-        Negociador: { descricao: "Você trabalhou em alguma posição de grande importância, a qual precissava negociar coisas importantes"},
+        TI: { descricao: "Programador, engenheiro de software ou simplesmente “o cara da T.I.”, você tem treinamento e experiência para lidar com sistemas informatizados." },
+        Mecânico: { descricao: "Enquanto os acadêmicos estão preocupados com teorias, você coloca a mão na massa, seja como engenheiro profissional, seja como inventor de garagem." },
+        Negociador: { descricao: "Você trabalhou em alguma posição de grande importância, a qual precisava negociar coisas importantes."},
         Combatente: { descricao: "Você sempre gostou de estar na frente das brigas e aprendeu a ser mais forte com elas"},
         Atirador: { descricao: "Você frequentava clubes de tiro e sabe manusear armas longas como parte do seu corpo."},
         Policial: { descricao: "Você fez parte de uma força de segurança pública, civil ou militar."},
@@ -154,18 +154,18 @@ const tooltipDictionary = {
         Artista: { descricao: "Você era um ator, músico, escritor, dançarino, influenciador. "},
         Atleta: { descricao: "Você competia em um esporte individual ou por equipe, como natação ou futebol."},
         Ocultista: { descricao: "Você de algum modo entrou em um grupo ocultista, porém hoje busca entender como pará-los de alguma forma usando suas habilidades ocultas."},
-        Jornalista: { descricao: "Você é um jornalista, tendo já escrito e participado de diversas matérias que te levaram a conhecer e vivenciar muitas das situações mais estranhas e inusitadas que alguém jamais imaginaria viver. Porém, nada disso te impediu se sempre ir atrás de mais uma aventura para consegui um furo de noticias."},
+        Jornalista: { descricao: "Você é um jornalista, tendo já escrito e participado de diversas matérias que te levaram a conhecer e vivenciar muitas das situações mais estranhas e inusitadas que alguém jamais imaginaria viver. Porém, nada disso te impediu de sempre ir atrás de mais uma aventura para conseguir um furo de notícias."},
         Mochileiro: { descricao: "Você viajou por todo o mundo, tendo tido inúmeras vivências incríveis, conhecendo povos por todo o globo e participando das mais imagináveis celebrações. Graças a isso, está pronto para participar de qualquer aventura ou loucura que te chamarem, afinal um dia ruim acaba sempre virando uma boa história."},
-        ExpecialistaEmExplosivos: { descricao: "Você viveu em meio a turbulencias e fez do fogo e do caus seu refugio."} 
+        ExpecialistaEmExplosivos: { descricao: "Você viveu em meio a turbulências e fez do fogo e do caos seu refúgio."} 
     },
     MagiaFicha: {
-        ConhecimentoMagico: { descricao: "Seu conhecimento sobre a performace de magias", descricaoExtra: "Serve para"},
-        Elementos : {descricao: "Os elementos são as forças matrizes do mundo, divididos em simples e avançados.", descricaoExtra: "Simples: Fogo, Água, Gelo, Terra, Eletricidade, Planta e Vento; Avançados: Escuridão, Luz e Hipnose,"}
+        ConhecimentoMagico: { descricao: "Seu conhecimento sobre a performance de magias.", descricaoExtra: "Serve para"},
+        Elementos : {descricao: "Os elementos são as forças matrizes do mundo, divididos em simples e avançados.", descricaoExtra: "Simples: Fogo, Água, Gelo, Terra, Eletricidade, Planta e Vento; Avançados: Escuridão, Luz e Hipnose."}
     },
         Status: {
         Vida: { descricao: "Sua força de vigor e vitalidade"},
         PontosDeMagia: {descricao: "A energia vital usada para conjurar magias de todos os tipos"},
-        Medo: { descricao: "Sua resistencia a pressão e medo"}
+        Medo: { descricao: "Sua resistência à pressão e ao medo."}
     }
 };
 

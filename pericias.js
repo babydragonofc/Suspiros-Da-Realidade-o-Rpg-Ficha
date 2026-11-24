@@ -401,7 +401,7 @@ function renderPerPlaces() {
 }
 
 const itensPlace = [
-    {name: "Fisicas", id: "perListFisicas"},
+    {name: "Físicas", id: "perListFisicas"},
     {name: "De Armas", id: "perListArmas"},
     {name: "De Mobilidade", id: "perListFisicas2"},
     {name: "Sociais", id:"perListSociais"},
@@ -570,7 +570,7 @@ function displayPericias() {
             console.log(ficha.pericias[i])
             if (ficha.pericias[i][0] == '' ) {
                 const msg = document.createElement('span')
-                msg.textContent = "Sem Pericias"
+                msg.textContent = "Sem Perícias"
                 msg.classList = "text sm" 
                 msg.style.textAlign = 'center'
 

@@ -143,7 +143,7 @@ function turnPerTranslucid() {
     document.getElementById('periciasDisplayer').classList.toggle('translucido')
     if (!ficha.options.translucidPer) periciasDisplayer.style.backgroundImage = "" ;
     const translucidPerOp = ficha.options.translucidPer? "(on)": "(off)"
-    document.getElementById('translucidPerBtn').innerHTML = "Pericias translucidas " + translucidPerOp;
+    document.getElementById('translucidPerBtn').innerHTML = "Perícias translúcidas " + translucidPerOp;
     verifyAutoSave()
 }
 
@@ -151,7 +151,7 @@ function turnPerBlur() {
     ficha.options.blurPer = !ficha.options.blurPer
     document.getElementById('periciasDisplayer').classList.toggle('blur')
     const blurPerOp = ficha.options.blurPer? "(on)": "(off)"
-    document.getElementById('blurPerBtn').innerHTML = "Blur nas pericias " + blurPerOp;
+    document.getElementById('blurPerBtn').innerHTML = "Blur nas perícias " + blurPerOp;
  
     verifyAutoSave()
 }
@@ -169,9 +169,9 @@ function changeAutoSave() {
     verifyAutoSave()
 
     if (ficha.options.autoSave) {
-        changeAutoSaveBtn.innerHTML = "Salvamento Automatico Ligado"
+        changeAutoSaveBtn.innerHTML = "Salvamento Automático Ligado"
     } else {
-        changeAutoSaveBtn.innerHTML = "Salvamento Automatico Desligado"
+        changeAutoSaveBtn.innerHTML = "Salvamento Automático Desligado"
     }
 }
 
@@ -194,9 +194,9 @@ function loadUserOptions() {
 
     document.getElementById('perBlurInput').value = ficha.options.blurPerValue;
     const blurPerOp = ficha.options.blurPer? "(on)": "(off)"
-    document.getElementById('blurPerBtn').innerHTML = "Blur nas pericias " + blurPerOp
+    document.getElementById('blurPerBtn').innerHTML = "Blur nas perícias " + blurPerOp
     const translucidPerOp = ficha.options.translucidPer? "(on)": "(off)"
-    document.getElementById('translucidPerBtn').innerHTML = "Pericias translucidas " + translucidPerOp;
+    document.getElementById('translucidPerBtn').innerHTML = "Perícias translúcidas " + translucidPerOp;
 
     const root = document.documentElement;
     root.style.setProperty ('--desfoque-pericias', ficha.options.blurPerValue + "px");
@@ -218,9 +218,9 @@ function loadUserOptions() {
     }
     const changeAutoSaveBtn = document.getElementById("changeAutoSaveBtn")
     if (ficha.options.autoSave) {
-        changeAutoSaveBtn.innerHTML = "Salvamento Automatico Ligado"
+        changeAutoSaveBtn.innerHTML = "Salvamento Automático Ligado"
     } else {
-        changeAutoSaveBtn.innerHTML = "Salvamento Automatico Desligado"
+        changeAutoSaveBtn.innerHTML = "Salvamento Automático Desligado"
     }
     
 

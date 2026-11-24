@@ -887,21 +887,65 @@ const preset = {
         description: "Rifle de precisão voltado para disparos à distância.",
         weight: 5,
         type: "arma",
-        data: { type: "longo alcance", damage: "1d12", critical: "2d10", mmo: 0, maxMmo: 8 }
+        data: { type: "longo_alcance", damage: "1d12", critical: "2d10", mmo: 0, maxMmo: 8 }
     },
     {
         name: "Sniper de Ação",
         description: "Rifle de precisão voltado para disparos rápidos durante o combate.",
         weight: 5,
         type: "arma",
-        data: { type: "longo alcance", damage: "2d8", critical: "2d12", mmo: 0, maxMmo: 10 }
+        data: { type: "longo_alcance", damage: "2d8", critical: "2d12", mmo: 0, maxMmo: 10 }
     },
     {
         name: "Espingarda",
         description: "Arma de longo alcance especializada em disparos de alta dispersão.",
         weight: 5,
         type: "arma",
-        data: { type: "longo alcance", damage: "2d10", critical: "3d10", mmo: 0, maxMmo: 2 }
+        data: { type: "longo_alcance", damage: "2d10", critical: "3d10", mmo: 0, maxMmo: 2 }
+    }
+    ],
+    "municoes": [
+    {
+        name: "Bala de pistola",
+        description: "Munição avulsa para pistola. Ao usar, recarrega 1 de munição da arma equipada.",
+        weight: 0,
+        type: "municao",
+        data: { type: "bala", weapon: "pistola" }
+    },
+    {
+        name: "Cartucho de pistola",
+        description: "Cartucho completo para pistola. Recarrega a arma por inteiro, mas só pode ser usado quando a munição dela estiver zerada.",
+        weight: 1,
+        type: "municao",
+        data: { type: "cartucho", weapon: "pistola" }
+    },
+    {
+        name: "Bala de rifle",
+        description: "Munição avulsa para rifle. Ao usar, recarrega 1 de munição da arma equipada.",
+        weight: 0,
+        type: "municao",
+        data: { type: "bala", weapon: "rifle" }
+    },
+    {
+        name: "Cartucho de rifle",
+        description: "Cartucho completo para rifle. Recarrega a arma por inteiro, mas só pode ser usado quando a munição dela estiver zerada.",
+        weight: 1,
+        type: "municao",
+        data: { type: "cartucho", weapon: "rifle" }
+    },
+    {
+        name: "Bala de longo alcance",
+        description: "Munição avulsa para arma de longo alcance. Ao usar, recarrega 1 de munição da arma equipada.",
+        weight: 0,
+        type: "municao",
+        data: { type: "bala", weapon: "longo_alcance" }
+    },
+    {
+        name: "Cartucho de longo alcance",
+        description: "Cartucho completo para arma de longo alcance. Recarrega a arma por inteiro, mas só pode ser usado quando a munição dela estiver zerada.",
+        weight: 1,
+        type: "municao",
+        data: { type: "cartucho", weapon: "longo_alcance" }
     }
     ],
     "vestimentas": [
@@ -942,7 +986,7 @@ const preset = {
         },
         {
             name: "Roupa apropriada",
-            description: "Não é uma roupa específica, mas roupas apropriadas em certas ocasiões, como fardas, ternos etc. Oferece vantagem em testes de Lábia.",
+            description: "Não é uma roupa específica, mas roupas apropriadas em certas ocasiões, como fardas, ternos etc. Oferece vantagem em testes de Conversação.",
             weight: 2,
             type: "vestimenta",
             data: {}
@@ -961,7 +1005,7 @@ const preset = {
     },
     {
         name: "Mapa",
-        description: "Um mapa da região, recebe vantagem em testes de jornada",
+        description: "Um mapa da região, recebe vantagem em testes de jornada.",
         weight: 0,
         type: "documento",
         data: {}
@@ -1012,7 +1056,7 @@ const preset = {
     },
     {
         name: "Binóculos",
-        description: "Um instrumento óptico utilizado para observar objetos distantes. Oferece vantagem a testes de perceção a distancia",
+        description: "Um instrumento óptico utilizado para observar objetos distantes. Oferece vantagem a testes de percepção à distância.",
         weight: 1,
         type: "item",
         data: {}
@@ -1033,7 +1077,7 @@ const preset = {
     },
     {
         name: "Bandagem",
-        description: "Um rolo de bandagens anestesicas. Cura 1d4 de vida, não cura lesão grave nem sangramento",
+        description: "Um rolo de bandagens anestésicas. Cura 1d4 de vida, não cura lesão grave nem sangramento",
         weight: 2,
         type: "item",
         data: {}
@@ -1163,7 +1207,7 @@ const preset = {
     },
     {
         name: "Energético",
-        description: "Uma bebida estimulante. Dá 1d4 de PE, role constituição dt 4, caso falhe perde 1d4 de medo",
+        description: "Uma bebida estimulante. Dá 1d4 de PE, role Constituição DT 4; caso falhe, perde 1d4 de medo.",
         weight: 1,
         type: "item",
         data: {}
@@ -1186,7 +1230,7 @@ const preset = {
     // ARTEFATOS
     {
         name: "Vela que nunca apaga",
-        description: "Uma vela roxa com o simbolo de energia cuja sua chama rosa permanece acesa mesmo diante de ventos ou tentativas de apagá-la.",
+        description: "Uma vela roxa com o símbolo de energia, cuja chama rosa permanece acesa mesmo diante de ventos ou tentativas de apagá-la.",
         weight: 0,
         type: "artefato",
         data: {}

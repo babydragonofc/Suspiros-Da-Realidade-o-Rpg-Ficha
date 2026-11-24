@@ -518,11 +518,11 @@ function downloadExampleMod() {
             {name:"Água", type: "item", type: "item", desc:'"Uma garrafa de água comum", Recupera 3 de energia', weight: "2", data: {dice: "", type: "item", }},
             {name:"Refrigerante (lata)", type: "item", type: "item", desc:'"Açúcar e cafeína, provavelmente não é bom para a saúde", Recupera 4 de Energia. Após uma hora: -1 de Energia', weight: "2", data: {dice: "", type: "item", }},
             {name:"Refrigerante (2L)", type: "item", type: "item", desc:'"Melhor em grupo", Recupera 10 de energia dividido entre cada pessoa.', weight: "4", data: {dice: "", type: "item", }},
-            {name:"Cerveja", type: "item", type: "item", desc:'"Beba com moderação", Recupera 4 de calma e 2 de energia. Após 2 unidades recebe desvantagem em testes fisicos até ter um descanço longo', weight: "2", data: {dice: "", type: "item", }},
-            {name:"Destilado barato", type: "item", type: "item", desc:'"Fede a álcool", Recupera 1d6+2 de energia e 3 de calma. Ápos uma cena perde 1d8 + 3 de energia e 5 de calma. ', weight: "2", data: {dice: "1d6+2", type: "item", }},
-            {name:"Energético", type: "item", type: "item", desc:'"não da assas", Recupera 10 de energia e perde 5 de calma. Após uma cena perde -5 de energia', weight: "2", data: {dice: "", type: "item", }},
+            {name:"Cerveja", type: "item", type: "item", desc:'"Beba com moderação", Recupera 4 de calma e 2 de energia. Após 2 unidades recebe desvantagem em testes físicos até ter um descanso longo.', weight: "2", data: {dice: "", type: "item", }},
+            {name:"Destilado barato", type: "item", type: "item", desc:'"Fede a álcool", Recupera 1d6+2 de energia e 3 de calma. Após uma cena perde 1d8 + 3 de energia e 5 de calma. ', weight: "2", data: {dice: "1d6+2", type: "item", }},
+            {name:"Energético", type: "item", type: "item", desc:'"não dá asas", Recupera 10 de energia e perde 5 de calma. Após uma cena perde -5 de energia', weight: "2", data: {dice: "", type: "item", }},
             {name:"Achocolatado", type: "item", type: "item", desc:'"Doce e reconfortante", Recupera 4 de energia e 10 de calma', weight: "3", data: {dice: "", type: "item", }},
-            {name:"Suco (1L)", type: "item", type: "item", desc:'"9 a cada 10 medicos recomendam", Recupera 5 de energia', weight: "3", data: {dice: "", type: "item", }},
+            {name:"Suco (1L)", type: "item", type: "item", desc:'"9 a cada 10 médicos recomendam", Recupera 5 de energia', weight: "3", data: {dice: "", type: "item", }},
             // === ACAMPAMENTO ===
 
             {name:"Cobertor", type:"item", desc:'"Protege do frio", Durante descanso: +3 de Calma.', weight:"3", data:{dice:"", type:"item", }},

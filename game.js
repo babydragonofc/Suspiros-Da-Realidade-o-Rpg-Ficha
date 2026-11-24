@@ -27,12 +27,8 @@ function panelOpen(id, title, content, sm = false) {
         document.getElementById('changeLogBtn').classList.remove('aviso-novidade')
     }
 
-    if (id = "ItemCreate" ) {
-        document.getElementById('createItemTabs').style.display = "flex"
-        setPanelTab("itemCreateTab")
-    } else {
-        document.getElementById('createItemTabs').style.display = "none"   
-    }
+    // As abas Criar / Biblioteca só existem no painel de itens
+    document.getElementById('createItemTabs').style.display = (id == "ItemCreate") ? "flex" : "none"
     const mainPanel = document.getElementById("main-panel");
     mainPanelDissolve.show()
     const box = mainPanel.querySelector(".box");
@@ -69,6 +65,7 @@ function panelOpen(id, title, content, sm = false) {
     const targetDiv = box.querySelector("#" + id);
     if (targetDiv) {
         targetDiv.style.display = "flex";
+        if (id == "ItemCreate") setPanelTab("itemCreateTab")
     } else if (title && content) {
         const newContentDiv = document.createElement("div");
         newContentDiv.classList = "content"
@@ -347,7 +344,7 @@ function renderPericiasEditor() {
 
     const title = document.createElement('h3');
     title.className = 'title';
-    title.textContent = 'Nivel';
+    title.textContent = 'Nível';
 
     const levelControls = document.createElement('div');
     levelControls.className = 'editor-pericias-nivel';
@@ -392,7 +389,7 @@ function renderPericiasEditor() {
 
 function salvarPericiasEditadas() {
     if (!periciasEditorEstaValido()) {
-        alert('A piramide de pericias ainda nao esta valida para o nivel selecionado.');
+        alert('A pirâmide de perícias ainda não está válida para o nível selecionado.');
         return;
     }
 
@@ -425,7 +422,7 @@ function salvarPericiasEditadas() {
     displayPericias();
     if (typeof save === 'function' && ficha.options?.autoSave) save(false);
 
-    alert('Pericias atualizadas!');
+    alert('Perícias atualizadas!');
     periciasEditorDissove.hide(2000);
 }
 
@@ -492,12 +489,12 @@ function criarEditorListas() {
     eyebrow.className = 'text';
     eyebrow.style.position = 'absolute';
     eyebrow.style.top = '-4px';
-    eyebrow.textContent = 'Pericias';
+    eyebrow.textContent = 'Perícias';
 
     const title = document.createElement('h2');
     title.className = 'title';
     title.id = 'periciasEditorCategoryTitle';
-    title.textContent = categorias[selectedPericiasEditorCategory]?.name || 'Pericias';
+    title.textContent = categorias[selectedPericiasEditorCategory]?.name || 'Perícias';
 
     titleBox.appendChild(eyebrow);
     titleBox.appendChild(title);
@@ -775,7 +772,7 @@ function renderPericiasEditorPlaces() {
 
     `
     if (itensCount < min || itensCount > max || !validPyramid) {
-        feedback.innerHTML = `Piramide fora da regra do nivel ${editorLevel}: use entre ${min} e ${max} pericias nas casas marcadas.<br>
+        feedback.innerHTML = `Pirâmide fora da regra do nível ${editorLevel}: use entre ${min} e ${max} perícias nas casas marcadas.<br>
         ${statusText}
         `;
         feedback.style.color = '#ff7373';
@@ -835,10 +832,10 @@ function getCategoriasPericias() {
 
 function getCategoriasPericiasBase() {
     return [
-        { name: 'Fisicas', id: 'perListFisicas', pericias: ['força', 'constituição', 'luta', 'pontaria'] },
+        { name: 'Físicas', id: 'perListFisicas', pericias: ['força', 'constituição', 'luta', 'pontaria'] },
         { name: 'De Armas', id: 'perListArmas', pericias: ['armas_brancas', 'pistolas', 'rifle', 'longo_alcance'] },
         { name: 'De Mobilidade', id: 'perListFisicas2', pericias: [ 'acrobacia', 'furtividade', 'pilotagem'] },
-        { name: 'Sociais', id: 'perListSociais', pericias: ['destreza', 'conversasão', 'intimidação', 'psicologia'] },
+        { name: 'Sociais', id: 'perListSociais', pericias: ['destreza', 'conversação', 'intimidação', 'psicologia'] },
         { name: 'Investigativas', id: 'perListInvestigacao', pericias: ['percepção', 'crime', 'tecnologia', 'mecanica', 'pesquisar', 'sobrevivencia'] },
         { name: 'De Conhecimento', id: 'perListConhecimento', pericias: ['artes', 'atualidades', 'ciencia', 'humanas', 'burocracia', 'medicina'] },
         { name: 'Mentais', id: 'perListMentais', pericias: ['vontade', 'ocultismo', 'magia', 'sorte'] }
