@@ -87,6 +87,8 @@ var ficha = {
     mods :[],
     customStatus: [],
     customWallpaper: {},
+    condicoes: {},
+    fundosPersonalizados: [],
 };
 
 // PUTA QUE PARIU QUE NOTIFICAÇÃO ARROMBADA
@@ -336,7 +338,9 @@ function CarregarFicha() {
         renderWeaponArea()
         renderGuardados()
         renderInventory()
+        renderBotoesFundos()
         setWallpaper(ficha.options.wallpaper)
+        renderCondicoes()
         loadUserOptions()
         //ficha.biografia.comportamento = ficha.biografia.contatos
     

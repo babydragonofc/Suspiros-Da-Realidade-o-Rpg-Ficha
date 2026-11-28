@@ -19,6 +19,20 @@
     <div class="box">
         <p class="botao-sair" onclick="panelClose()">x</p>
 
+        <div class="content" id="painel-fundos">
+            <h3 class="title">Criar fundo</h3>
+            <p class="text sm">Escolha a imagem e as cores: o site muda ao vivo. Só vale depois de salvar.</p>
+            <div class="fundos-editor"></div>
+        </div>
+
+        <div class="content" id="painel-condicoes">
+            <h3 class="title">Condições</h3>
+            <p class="text sm">Condições que afetam o seu personagem. Se você estiver em uma sala, o mestre também vê e pode editar.</p>
+            <div class="condicoes-lista"></div>
+            <h4 class="title" style="font-size: 28px;">Adicionar condição</h4>
+            <div class="condicoes-form"></div>
+        </div>
+
         <div class="content" id="agradecimentos">
             <h3 class="title" >Agradecimentos</h3>
             <span class="text">Muito obrigado às pessoas incríveis que tornaram esse sonho realidade:<br>
@@ -831,12 +845,7 @@
             <h3 class="title">Opções</h3>
             <div id="options-container">
                 <p>Papel de Parede</p>
-                <div class="flex">
-                    <button class="btn" onclick="setWallpaper(0)">Medo</button>
-                    <button class="btn" onclick="setWallpaper(1)">Realidade</button>
-                    <button class="btn" onclick="setWallpaper(2)">Energia</button>
-                    <button class="btn" onclick="setWallpaper(3)">Sangue</button>
-                </div>
+                <div class="flex" id="fundos-botoes"></div>
                 <p>Interface</p>
                 <div class="flex">
                     <button class="btn" onclick="turnStatusMod()">Modificador Status</button>
@@ -920,6 +929,13 @@
             </div>
         </div>
         <div id="custom-status-container" style="width: 100%;"></div>
+
+        <div id="condicoes-status">
+            <button id="condicoes-botao" class="botao-condicoes" onclick="abrirCondicoes()" title="Ver e editar condições (queimando, caído, cego…)">
+                <span class="condicoes-icone">☠</span> Condições <span id="condicoes-contagem"></span>
+            </button>
+            <div id="condicoes-emblemas"></div>
+        </div>
 
         <div id="modificadores">
         </div>

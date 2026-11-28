@@ -109,16 +109,16 @@ function init() {
 function friendly(e) {
   const m = String((e && (e.code || e.message)) || e);
   if (m.includes('operation-not-allowed')) return 'Ative o login "Anônimo" em Authentication → Sign-in method, no console do Firebase.';
-  if (/permission[_ ]denied/i.test(m)) return 'Permissão negada pelo banco. Confira se as regras de database.rules.json foram publicadas.';
+  if (/permission[_ ]denied/i.test(m)) return 'Permissão negada pelo banco. Se a sala é antiga, este navegador pode não ser mais o mestre dela (use "Entrar com código de mestre"); senão, confira se as regras de database.rules.json foram publicadas.';
   return (e && e.message) || String(e);
 }
 
 // ---------------------------------------------------------------- ficha <-> nuvem
-const SKIP = new Set(['mods', 'customStatus', 'options', 'customWallpaper', 'assinatura', 'versão']);
+const SKIP = new Set(['mods', 'customStatus', 'options', 'customWallpaper', 'fundosPersonalizados', 'assinatura', 'versão']);
 const BIO_FIELDS = ['familia', 'gostos', 'desgostos', 'medos', 'contatos', 'historia', 'comportamento', 'dinheiro'];
 const STATS = [['vida', 'vidaMax', 'PV', 'pv'], ['energia', 'energiaMax', 'PE', 'pe'], ['medo', 'medoMax', 'MD', 'md']];
 
-const SKIP_PUSH = new Set(['mods', 'customStatus', 'options', 'customWallpaper']);
+const SKIP_PUSH = new Set(['mods', 'customStatus', 'options', 'customWallpaper', 'fundosPersonalizados']);
 function snapshotFicha() {
   const o = {};
   for (const k of Object.keys(ficha)) if (!SKIP_PUSH.has(k)) o[k] = ficha[k];
@@ -132,7 +132,8 @@ function summaryOf(f) {
     nome: f.nome || '', raca: (r && typeof r === 'object' ? r.nome : '') || '',
     vida: num(st.vida), vidaMax: num(st.vidaMax),
     energia: num(st.energia), energiaMax: num(st.energiaMax),
-    medo: num(st.medo), medoMax: num(st.medoMax)
+    medo: num(st.medo), medoMax: num(st.medoMax),
+    cond: f.condicoes && typeof f.condicoes === 'object' && Object.keys(f.condicoes).length ? f.condicoes : null
   };
 }
 function summaryPaths(prefix, f) {
@@ -231,7 +232,7 @@ function atualizarInterface() {
     const us = document.getElementById('useInput');
     if (us) us.value = (ficha.inventario && ficha.inventario.usando) || '';
     for (const fn of ['renderInventory', 'renderGuardados', 'renderTotalWeight', 'renderWeaponArea',
-      'renderMagias', 'renderHabilidades', 'renderTraumas', 'displayPericias', 'statusAtu']) {
+      'renderMagias', 'renderHabilidades', 'renderTraumas', 'displayPericias', 'statusAtu', 'renderCondicoes']) {
       try { if (typeof window[fn] === 'function') window[fn](); } catch (e) { console.warn('[sala] refresh', fn, e); }
     }
     const mod = document.getElementById('modificadores');
@@ -295,7 +296,7 @@ function disconnectRoom() {
   Object.assign(state, {
     unsub: [], role: null, code: null, meta: null, players: {}, fichas: {}, rolls: [],
     containers: [], rollBoxes: [], presence: null, lastApplied: null,
-    mesa: {}, ini: {}, presets: {}, condicoes: {}, npcs: {}, segredo: null, views: [], iniSeen: false, mesaSeen: false
+    mesa: {}, ini: {}, presets: {}, condicoes: {}, npcs: {}, segredo: null, views: [], iniSeen: false, mesaSeen: false, migradas: null
   });
 }
 
@@ -317,7 +318,7 @@ function attachCommon(code) {
   state.unsub.push(onChildRemoved(q, s => { state.rolls = state.rolls.filter(r => r.id !== s.key); renderRolls(); }, err));
 
   // condições (envenenado, caído…)
-  state.unsub.push(onValue(ref(db, `${base}/condicoes`), s => { state.condicoes = s.val() || {}; renderAll(); renderKind('condicoes'); }, err));
+  state.unsub.push(onValue(ref(db, `${base}/condicoes`), s => { state.condicoes = s.val() || {}; renderAll(); renderKind('condicoes'); migrarCondicoesAntigas(); }, err));
 
   // mesa de itens
   state.unsub.push(onValue(ref(db, `${base}/mesa`), s => {
@@ -464,7 +465,7 @@ async function openMasterRoom(code) {
     lsSet(LS_MASTER, lsGet(LS_MASTER, []).filter(r => r.code !== code));
     throw new Error('Essa sala não existe mais.');
   }
-  if (!(await souMestreDa(code, meta))) throw new Error('Você não é o mestre desta sala neste aparelho. Use "Entrar com código de mestre".');
+  if (!(await souMestreDa(code, meta))) throw new Error('Este navegador não é mais reconhecido como mestre desta sala (acontece quando os dados do navegador são apagados ou ao trocar de aparelho). Use "Entrar com código de mestre", com o código gerado quando a sala foi criada. Salas criadas antes do código de mestre: no Firebase, em rooms/' + code + ', crie o campo "segredo" com 8 a 16 letras e números e use esse valor como código.');
   disconnectRoom();
   Object.assign(state, { role: 'master', code, meta });
   attachCommon(code);
@@ -479,6 +480,8 @@ async function openMasterRoom(code) {
     state.fichas[s.key] = { ficha: nf, json: v.fichaJson, rev: v.rev, editedBy: v.editedBy };
     renderAll();
     rebuildEditorIfOpen(s.key);
+    renderKind('condicoes');
+    migrarCondicoesAntigas();
   };
   const err = e => toast(friendly(e));
   state.unsub.push(onChildAdded(fr, upsert, err));
@@ -514,12 +517,14 @@ async function masterMutar(puid, mudar) {
       nova = rf;
       return { fichaJson: JSON.stringify(rf), rev: Date.now(), editedBy: 'master' };
     });
-    if (!nova) return toast('A ficha desse jogador ainda está carregando.');
+    if (!nova) { toast('A ficha desse jogador ainda está carregando.'); return false; }
     state.fichas[puid] = { ficha: nova, json: JSON.stringify(nova), rev: Date.now(), editedBy: 'master' };
     await update(ref(db), summaryPaths(`${base}/players/${puid}`, nova));
-  } catch (e) { return toast('Erro ao salvar: ' + friendly(e)); }
+  } catch (e) { toast('Erro ao salvar: ' + friendly(e)); return false; }
   renderAll();
   rebuildEditorIfOpen(puid);
+  renderKind('condicoes');
+  return true;
 }
 
 function adjust(puid, key, dir) {
@@ -628,36 +633,53 @@ function fillRolls(box) {
 function renderRolls() { state.rollBoxes.forEach(fillRolls); }
 
 // ---------------------------------------------------------------- condições (envenenado, caído…)
-const CONDICOES = [
-  { nome: 'Queimando', descricao: 'Ao entrar em chamas, você recebe 1d6 por rodada, tendo alguém gastar uma ação para se apagar.' },
-  { nome: 'Frio', descricao: 'Em ambiente frio, você fica desconfortável: desvantagem em testes físicos, de armas e de mobilidade. Perde a condição com roupa que dê 2 de defesa ou proteção térmica.' },
-  { nome: 'Quente', descricao: 'Em ambiente quente, você fica desconfortável: desvantagem em testes físicos, de armas e de mobilidade. Perde a condição se conseguir se ventilar; tirar parte da roupa exige Constituição DT 8 + DA para resistir.' },
-  { nome: 'Congelando', descricao: 'Depois de 2 cenas completas, 6 ações ou um tempo definido pelo mestre com frio: desvantagem em todos os testes. Precisa rolar Constituição DT 10 + DA para se manter consciente.' },
-  { nome: 'Sangrando', turnos: 2, descricao: 'Ao receber um golpe cortante ou se machucar com algo que cause sangramento, teste de Constituição para resistir; se falhar, recebe 1d4 de dano por 2 rodadas. É possível estancar até 4 sangramentos.' },
-  { nome: 'Imóvel', descricao: 'Não consegue se mover.' },
-  { nome: 'Inconsciente', descricao: 'Perde a consciência durante 1d4 rodadas ou uma cena.' },
-  { nome: 'Fraco', descricao: 'Recebe uma penalidade em todo teste de Força, Constituição e Destreza.' },
-  { nome: 'Mobilidade debilitada', descricao: 'Ao se machucar nas pernas, ou quando a carga está maximizada, o deslocamento é reduzido à metade.' },
-  { nome: 'Caído', descricao: 'Quando algo te fizer cair, teste de Destreza; se falhar, fica com Mobilidade debilitada e penalidade em testes de Reação.' },
-  { nome: 'Cego', descricao: 'Recebe 3 desvantagens para Reagir e em testes relacionados à visão. Dura 1d4 rodadas ou uma cena.' },
-  { nome: 'Surdo', descricao: 'Não consegue realizar testes de audição, além de não conseguir escutar.' },
-  { nome: 'Desprevenido', descricao: 'Não pode Reagir a ataques.' },
-  { nome: 'Memento Mori', descricao: 'Com a vida entre 0 e -9, você cai e precisa ser salvo. Tem 3 rodadas para ser recuperado com Medicina DT 10 + sua vida negativa; se não for, morre permanentemente, narrando seu último pensamento e/ou últimas palavras. Se um teste te recuperar, você é estabilizado com 1 de PV e rola Constituição (sem a penalidade de Fraco); se falhar, fica desacordado até o fim da cena, podendo escolher quando acorda.' },
-  { nome: 'Traumatizado', descricao: 'Após um evento horrível (ver alguém que ama morrer, um massacre de perto), o mestre rola 2d10 para adicionar um trauma ao personagem, ou escolhe um. Pode ser temporário (dias ou cenas) ou permanente.' },
-  { nome: 'Delirando', descricao: 'O medo toma conta das suas ações, e você perde sua ação para o mestre. (O mestre não pode fazer o personagem realizar uma ação que ele não faria, embora possa sugerir ao jogador depois que ele reassumir o controle.)' }
-];
-const condicoesDe = alvo => Object.entries((state.condicoes && state.condicoes[alvo]) || {}).map(([cid, c]) => ({ cid, ...c }));
+// CONDICOES (lista oficial) vem de listas.js, junto com a lógica das condições da ficha.
+// Jogadores: as condições ficam na ficha (ficha.condicoes). NPCs: no banco da sala (state.condicoes).
+const ehJogador = a => a === uid || !!(state.players && state.players[a]);
+function condicoesDe(alvo) {
+  let mapa;
+  if (alvo === uid && state.role === 'player') mapa = condicoesDaFicha();
+  else if (ehJogador(alvo)) mapa = state.fichas[alvo] ? state.fichas[alvo].ficha.condicoes : (state.players[alvo] || {}).cond;
+  else mapa = state.condicoes && state.condicoes[alvo];
+  return Object.entries(mapa || {}).map(([cid, c]) => ({ cid, ...c }));
+}
+// Altera as condições de um jogador: a própria ficha (jogador) ou a ficha mais recente da nuvem (mestre)
+async function mudarCondicoes(alvo, mudar) {
+  if (alvo === uid && state.role === 'player') { mudar(condicoesDaFicha()); condicoesMudaram(); return true; }
+  return masterMutar(alvo, rf => { if (!ehObj(rf.condicoes)) rf.condicoes = {}; mudar(rf.condicoes); });
+}
 async function addCondicao(alvo, nome, turnos, descricao) {
   nome = String(nome || '').trim().slice(0, 40);
   if (!nome) return toast('Escolha ou digite a condição.');
   const padrao = CONDICOES.find(c => c.nome.toLowerCase() === nome.toLowerCase());
   const t = Math.max(0, Math.min(99, Math.floor(num(turnos))));
   const desc = String(descricao != null && descricao !== '' ? descricao : (padrao ? padrao.descricao : '')).slice(0, 700);
-  try { await push(ref(db, `rooms/${state.code}/condicoes/${alvo}`), { nome: padrao ? padrao.nome : nome, turnos: t, descricao: desc }); }
+  const cond = { nome: padrao ? padrao.nome : nome, turnos: t, descricao: desc };
+  if (ehJogador(alvo)) return mudarCondicoes(alvo, m => { m[novoIdCondicao()] = cond; });
+  try { await push(ref(db, `rooms/${state.code}/condicoes/${alvo}`), cond); }
   catch (e) { toast(friendly(e)); }
 }
 function delCondicao(alvo, cid) {
+  if (ehJogador(alvo)) return mudarCondicoes(alvo, m => { delete m[cid]; });
   remove(ref(db, `rooms/${state.code}/condicoes/${alvo}/${cid}`)).catch(e => toast(friendly(e)));
+}
+function turnosCondicao(alvo, cid, valor) {
+  const v = Math.max(0, Math.min(99, num(valor)));
+  if (ehJogador(alvo)) return mudarCondicoes(alvo, m => { if (m[cid]) m[cid].turnos = v; });
+  update(ref(db), { [`rooms/${state.code}/condicoes/${alvo}/${cid}/turnos`]: v }).catch(e => toast(friendly(e)));
+}
+// Condições antigas (guardadas no banco da sala) passam para a ficha do jogador, uma única vez
+function migrarCondicoesAntigas() {
+  if (state.role !== 'master') return;
+  const feitas = state.migradas || (state.migradas = new Set());
+  for (const [alvo, mapa] of Object.entries(state.condicoes || {})) {
+    if (!mapa || !state.players[alvo] || !state.fichas[alvo] || feitas.has(alvo)) continue;
+    feitas.add(alvo);
+    masterMutar(alvo, rf => {
+      if (!ehObj(rf.condicoes)) rf.condicoes = {};
+      for (const [cid, c] of Object.entries(mapa)) if (!rf.condicoes[cid]) rf.condicoes[cid] = { nome: c.nome, turnos: num(c.turnos), descricao: c.descricao || '' };
+    }).then(ok => { if (ok) remove(ref(db, `rooms/${state.code}/condicoes/${alvo}`)).catch(() => {}); else feitas.delete(alvo); });
+  }
 }
 // Emblemas de condição; ✕ só aparece quando `editavel` (dentro da ficha do personagem). Toque/passe o mouse mostra a descrição.
 function emblemas(alvo, editavel) {
@@ -1056,7 +1078,7 @@ function tabCondicoes(ctx) {
     const cs = condicoesDe(alvo);
     lista.replaceChildren(...(cs.length ? cs.map(c => {
       const t = h('input', { class: 'sala-campo sala-largura-numero', type: 'number', min: 0, max: 99, value: num(c.turnos) });
-      t.addEventListener('change', () => update(ref(db), { [`rooms/${state.code}/condicoes/${alvo}/${c.cid}/turnos`]: Math.max(0, Math.min(99, num(t.value))) }).catch(e => toast(friendly(e))));
+      t.addEventListener('change', () => turnosCondicao(alvo, c.cid, t.value));
       return h('div', { class: 'sala-item sala-condicao-linha' },
         h('div', { class: 'sala-linha' }, h('b', { class: 'sala-expandir' }, c.nome), fld('Turnos (0 = sem limite)', t),
           h('button', { class: 'sala-botao sala-perigo', onclick: () => delCondicao(alvo, c.cid) }, 'Remover')),
@@ -1701,10 +1723,17 @@ function iniNext() {
   const extra = {}, acabou = [];
   if (idx >= 0) {
     const alvo = alvoIni(list[idx]);
-    for (const c of condicoesDe(alvo)) {
-      if (!(num(c.turnos) > 0)) continue;
-      const caminho = `rooms/${state.code}/condicoes/${alvo}/${c.cid}`;
-      if (c.turnos <= 1) { extra[caminho] = null; acabou.push(c.nome); } else extra[`${caminho}/turnos`] = c.turnos - 1;
+    const ativas = condicoesDe(alvo).filter(c => num(c.turnos) > 0);
+    for (const c of ativas) if (c.turnos <= 1) acabou.push(c.nome);
+    if (ehJogador(alvo)) {
+      if (ativas.length) mudarCondicoes(alvo, m => {
+        for (const c of ativas) { const x = m[c.cid]; if (!x) continue; if (x.turnos <= 1) delete m[c.cid]; else x.turnos -= 1; }
+      });
+    } else {
+      for (const c of ativas) {
+        const caminho = `rooms/${state.code}/condicoes/${alvo}/${c.cid}`;
+        if (c.turnos <= 1) extra[caminho] = null; else extra[`${caminho}/turnos`] = c.turnos - 1;
+      }
     }
     if (acabou.length) toast(`${list[idx].nome}: ${acabou.join(', ')} terminou`);
   }
@@ -1920,7 +1949,6 @@ function renderPlayerSala() {
         ['jogadores', 'Jogadores', h('div', {}, players, players._empty)],
         ['iniciativa', 'Iniciativa', iniView(false)],
         ['mesa', 'Mesa', mesaView(false)],
-        ['condicoes', 'Minhas condições', tabCondicoes({ puid: uid })],
         ['rolagens', 'Rolagens', h('div', {}, h('div', { class: 'sala-margem-baixo' }, anon,
           h('div', { class: 'sala-discreto' }, 'Com "Anônima" marcada, o que você rolar não aparece no histórico da sala.')), rolls)]]))));
     renderAll(); fillRolls(rolls);

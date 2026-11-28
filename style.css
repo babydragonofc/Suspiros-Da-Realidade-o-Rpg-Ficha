@@ -4440,6 +4440,226 @@ details.sala-item > summary {
     min-width: 80px;
 }
 
+/* ---------- Condições da ficha (listas.js) ---------- */
+#condicoes-status {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin: 6px 0;
+}
+
+.botao-condicoes {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: transparent;
+    color: var(--cor-principal);
+    border: 1px solid var(--cor-terciaria);
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.botao-condicoes:hover {
+    background: var(--cor-fundo-claro);
+}
+
+.botao-condicoes.com-condicoes {
+    border-color: var(--cor-erro);
+}
+
+#condicoes-contagem:not(:empty) {
+    min-width: 1.4em;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--cor-erro);
+    color: white;
+    font-size: 13px;
+    text-align: center;
+}
+
+#condicoes-emblemas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.condicao-emblema {
+    padding: 1px 8px;
+    border: 1px solid var(--cor-erro);
+    border-radius: 999px;
+    color: var(--cor-principal);
+    font-size: 13px;
+    cursor: help;
+}
+
+#painel-condicoes {
+    flex-direction: column;
+    gap: 8px;
+    color: white;
+}
+
+.condicoes-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 40dvh;
+    overflow-y: auto;
+}
+
+.condicao-linha {
+    padding: 8px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    background: var(--cor-fundo);
+}
+
+.condicao-topo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.condicao-topo b {
+    flex: 1;
+}
+
+.condicao-topo input {
+    width: 4em;
+}
+
+.condicao-descricao {
+    margin: 4px 0 0;
+    color: var(--cor-cinza-claro);
+    white-space: pre-wrap;
+}
+
+.condicao-form-linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.condicao-form-linha select,
+.condicao-form-linha input {
+    min-width: 0;
+}
+
+.condicao-form-linha input[type="number"] {
+    width: 5em;
+}
+
+/* ---------- Fundos: botões em Opções e criador (options.js) ---------- */
+#fundos-botoes {
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.fundo-botao {
+    display: inline-flex;
+}
+
+.fundo-botao.ativo > .btn:first-child {
+    outline: 2px solid var(--cor-controle);
+    outline-offset: 1px;
+}
+
+.fundo-botao-extra {
+    padding: 2px 6px;
+    margin-left: -1px;
+}
+
+#painel-fundos {
+    flex-direction: column;
+    gap: 8px;
+    color: white;
+}
+
+.fundos-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 62dvh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.fundo-campo-cor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    background: var(--cor-fundo);
+}
+
+.fundo-campo-textos {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.fundo-campo-cor input[type="color"] {
+    width: 3em;
+    height: 2em;
+    padding: 0;
+    border: 1px solid var(--cor-borda);
+    background: none;
+    cursor: pointer;
+}
+
+.fundo-avancado {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fundo-avancado summary {
+    cursor: pointer;
+    margin-bottom: 6px;
+}
+
+.fundo-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.fundo-amostra {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--cor-terciaria);
+    border-radius: 4px;
+    background-color: #000;
+    background-size: cover;
+    background-position: center;
+}
+
+.fundo-amostra-texto {
+    color: var(--cor-principal);
+}
+
+.fundo-amostra-aba {
+    padding: 2px 10px;
+    border: 1px solid var(--cor-terciaria);
+    color: var(--cor-principal);
+    background-color: var(--cor-aba-inativa);
+}
+
+.fundo-codigo {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: monospace;
+    font-size: 12px;
+    user-select: text;
+}
+
 /* ---------- Notificações (notificar() em tooltip.js) ---------- */
 #avisos {
     position: fixed;

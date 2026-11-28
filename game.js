@@ -90,6 +90,7 @@ function panelClose() {
         return;
     }
     cancelarSeleçãoConhecimentoAtual()
+    if (typeof fecharEditorDeFundo == 'function') fecharEditorDeFundo()
     mainPanelDissolve.hide(1400)
     const box = document.querySelector("#main-panel .box");
     const divs = box.querySelectorAll("div[id]");

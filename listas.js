@@ -1252,3 +1252,172 @@ const preset = {
 ]
 
 }
+
+// ====================== CONDIÇÕES ======================
+// Ficam na própria ficha (ficha.condicoes), então funcionam com ou sem sala.
+// Formato: { <id>: { nome, descricao, turnos } }  (turnos 0 = sem limite)
+const CONDICOES = [
+  { nome: 'Queimando', descricao: 'Ao entrar em chamas, você recebe 1d6 por rodada, tendo alguém gastar uma ação para se apagar.' },
+  { nome: 'Frio', descricao: 'Em ambiente frio, você fica desconfortável: desvantagem em testes físicos, de armas e de mobilidade. Perde a condição com roupa que dê 2 de defesa ou proteção térmica.' },
+  { nome: 'Quente', descricao: 'Em ambiente quente, você fica desconfortável: desvantagem em testes físicos, de armas e de mobilidade. Perde a condição se conseguir se ventilar; tirar parte da roupa exige Constituição DT 8 + DA para resistir.' },
+  { nome: 'Congelando', descricao: 'Depois de 2 cenas completas, 6 ações ou um tempo definido pelo mestre com frio: desvantagem em todos os testes. Precisa rolar Constituição DT 10 + DA para se manter consciente.' },
+  { nome: 'Sangrando', turnos: 2, descricao: 'Ao receber um golpe cortante ou se machucar com algo que cause sangramento, teste de Constituição para resistir; se falhar, recebe 1d4 de dano por 2 rodadas. É possível estancar até 4 sangramentos.' },
+  { nome: 'Imóvel', descricao: 'Não consegue se mover.' },
+  { nome: 'Inconsciente', descricao: 'Perde a consciência durante 1d4 rodadas ou uma cena.' },
+  { nome: 'Fraco', descricao: 'Recebe uma penalidade em todo teste de Força, Constituição e Destreza.' },
+  { nome: 'Mobilidade debilitada', descricao: 'Ao se machucar nas pernas, ou quando a carga está maximizada, o deslocamento é reduzido à metade.' },
+  { nome: 'Caído', descricao: 'Quando algo te fizer cair, teste de Destreza; se falhar, fica com Mobilidade debilitada e penalidade em testes de Reação.' },
+  { nome: 'Cego', descricao: 'Recebe 3 desvantagens para Reagir e em testes relacionados à visão. Dura 1d4 rodadas ou uma cena.' },
+  { nome: 'Surdo', descricao: 'Não consegue realizar testes de audição, além de não conseguir escutar.' },
+  { nome: 'Desprevenido', descricao: 'Não pode Reagir a ataques.' },
+  { nome: 'Memento Mori', descricao: 'Com a vida entre 0 e -9, você cai e precisa ser salvo. Tem 3 rodadas para ser recuperado com Medicina DT 10 + sua vida negativa; se não for, morre permanentemente, narrando seu último pensamento e/ou últimas palavras. Se um teste te recuperar, você é estabilizado com 1 de PV e rola Constituição (sem a penalidade de Fraco); se falhar, fica desacordado até o fim da cena, podendo escolher quando acorda.' },
+  { nome: 'Traumatizado', descricao: 'Após um evento horrível (ver alguém que ama morrer, um massacre de perto), o mestre rola 2d10 para adicionar um trauma ao personagem, ou escolhe um. Pode ser temporário (dias ou cenas) ou permanente.' },
+  { nome: 'Delirando', descricao: 'O medo toma conta das suas ações, e você perde sua ação para o mestre. (O mestre não pode fazer o personagem realizar uma ação que ele não faria, embora possa sugerir ao jogador depois que ele reassumir o controle.)' }
+];
+
+
+function novoIdCondicao() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
+}
+
+function condicoesDaFicha() {
+    if (!ficha.condicoes || typeof ficha.condicoes !== 'object' || Array.isArray(ficha.condicoes)) ficha.condicoes = {}
+    return ficha.condicoes
+}
+
+function adicionarCondicaoFicha(nome, turnos, descricao) {
+    nome = String(nome || '').trim().slice(0, 40)
+    if (!nome) { notificar('Escolha ou digite a condição.', 'aviso'); return false }
+    const padrao = CONDICOES.find(c => c.nome.toLowerCase() === nome.toLowerCase())
+    const t = Math.max(0, Math.min(99, Math.floor(Number(turnos) || 0)))
+    const desc = String(descricao != null && descricao !== '' ? descricao : (padrao ? padrao.descricao : '')).slice(0, 700)
+    condicoesDaFicha()[novoIdCondicao()] = { nome: padrao ? padrao.nome : nome, turnos: t, descricao: desc }
+    condicoesMudaram()
+    return true
+}
+
+function removerCondicaoFicha(id) {
+    delete condicoesDaFicha()[id]
+    condicoesMudaram()
+}
+
+function alterarTurnosCondicaoFicha(id, turnos) {
+    const c = condicoesDaFicha()[id]
+    if (!c) return
+    c.turnos = Math.max(0, Math.min(99, Math.floor(Number(turnos) || 0)))
+    condicoesMudaram()
+}
+
+function condicoesMudaram() {
+    renderCondicoes()
+    verifyAutoSave() // salva e, se estiver numa sala, envia ao mestre
+}
+
+function textoDaCondicao(c) {
+    return [c.descricao, c.turnos ? c.turnos + ' turno(s) restante(s)' : 'Sem limite de turnos'].filter(Boolean).join('\n')
+}
+
+// Redesenha os emblemas perto dos status e o painel de condições (se existir na tela)
+function renderCondicoes() {
+    const lista = Object.entries(condicoesDaFicha())
+    const emblemas = document.getElementById('condicoes-emblemas')
+    if (emblemas) {
+        emblemas.replaceChildren(...lista.map(([id, c]) => {
+            const e = document.createElement('span')
+            e.className = 'condicao-emblema'
+            e.title = textoDaCondicao(c)
+            e.textContent = c.nome + (c.turnos ? ' (' + c.turnos + ')' : '')
+            return e
+        }))
+    }
+    const contagem = document.getElementById('condicoes-contagem')
+    if (contagem) contagem.textContent = lista.length ? lista.length : ''
+    const botao = document.getElementById('condicoes-botao')
+    if (botao) botao.classList.toggle('com-condicoes', lista.length > 0)
+
+    const painel = document.querySelector('.condicoes-lista')
+    if (!painel) return
+    if (!lista.length) {
+        const vazio = document.createElement('p')
+        vazio.className = 'text sm'
+        vazio.textContent = 'Nenhuma condição ativa.'
+        painel.replaceChildren(vazio)
+        return
+    }
+    painel.replaceChildren(...lista.map(([id, c]) => {
+        const linha = document.createElement('div')
+        linha.className = 'condicao-linha'
+        const topo = document.createElement('div')
+        topo.className = 'condicao-topo'
+        const nome = document.createElement('b')
+        nome.textContent = c.nome
+        const rotulo = document.createElement('label')
+        rotulo.className = 'text sm'
+        rotulo.textContent = 'Turnos '
+        const turnos = document.createElement('input')
+        turnos.type = 'number'; turnos.min = 0; turnos.max = 99
+        turnos.value = c.turnos || 0
+        turnos.title = '0 = sem limite'
+        turnos.addEventListener('change', () => alterarTurnosCondicaoFicha(id, turnos.value))
+        rotulo.appendChild(turnos)
+        const remover = document.createElement('button')
+        remover.className = 'btn'
+        remover.textContent = 'Remover'
+        remover.addEventListener('click', () => removerCondicaoFicha(id))
+        topo.append(nome, rotulo, remover)
+        linha.appendChild(topo)
+        if (c.descricao) {
+            const d = document.createElement('p')
+            d.className = 'text sm condicao-descricao'
+            d.textContent = c.descricao
+            linha.appendChild(d)
+        }
+        return linha
+    }))
+}
+
+function abrirCondicoes() {
+    montarFormularioCondicoes()
+    renderCondicoes()
+    panelOpen('painel-condicoes', null, null, true)
+}
+
+// Monta (uma vez) o formulário de adicionar condição
+function montarFormularioCondicoes() {
+    const form = document.querySelector('.condicoes-form')
+    if (!form || form.dataset.pronto) return
+    form.dataset.pronto = '1'
+    const escolha = document.createElement('select')
+    escolha.className = 'campo'
+    escolha.innerHTML = '<option value="">Escolha a condição…</option>' +
+        CONDICOES.map(c => '<option value="' + c.nome + '">' + c.nome + '</option>').join('') +
+        '<option value="__outra">Outra (personalizada)…</option>'
+    const nomeLivre = document.createElement('input')
+    nomeLivre.placeholder = 'Nome da condição'
+    nomeLivre.hidden = true
+    nomeLivre.maxLength = 40
+    const turnos = document.createElement('input')
+    turnos.type = 'number'; turnos.min = 0; turnos.max = 99
+    turnos.placeholder = 'Turnos'
+    const descricao = document.createElement('p')
+    descricao.className = 'text sm condicao-descricao'
+    const adicionar = document.createElement('button')
+    adicionar.className = 'btn'
+    adicionar.textContent = '+ Adicionar'
+    escolha.addEventListener('change', () => {
+        nomeLivre.hidden = escolha.value !== '__outra'
+        const c = CONDICOES.find(x => x.nome === escolha.value)
+        descricao.textContent = c ? c.descricao : ''
+        if (c) turnos.value = c.turnos || ''
+    })
+    adicionar.addEventListener('click', () => {
+        const nome = escolha.value === '__outra' ? nomeLivre.value : escolha.value
+        if (adicionarCondicaoFicha(nome, turnos.value)) {
+            escolha.value = ''; nomeLivre.value = ''; turnos.value = ''; nomeLivre.hidden = true; descricao.textContent = ''
+        }
+    })
+    const linha = document.createElement('div')
+    linha.className = 'condicao-form-linha'
+    linha.append(escolha, nomeLivre, turnos, adicionar)
+    form.append(linha, descricao)
+}

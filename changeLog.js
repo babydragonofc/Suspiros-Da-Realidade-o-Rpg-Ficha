@@ -7,6 +7,33 @@ let fichaComPericiasAntigas = false;
 //LEMBRAR DE TROCAR A VERSÃO EM rules.js! Tapada
 const changeLog = [
     {
+        title: "Condições na ficha e criador de fundos",
+        version: "1.1.5.2",
+        release: "28/11/2026",
+        content: "As condições agora ficam na ficha, com ou sem sala, e ficou fácil criar novos fundos com as suas cores.",
+        changes: {
+            add: [
+                "Botão Condições perto dos status: ver, adicionar e remover condições do personagem, com descrição e turnos, mesmo sem estar em uma sala",
+                "As condições aparecem como etiquetas embaixo dos status, com a descrição ao passar o mouse",
+                "Em uma sala, o mestre vê e edita as condições pela ficha do jogador, e o jogador vê as mudanças na hora",
+                "Criador de fundos (Opções → Papel de Parede → + Criar fundo): escolha a imagem (endereço ou arquivo), ajuste as cores com seletores e veja a prévia ao vivo",
+                "Sugerir cores pela imagem: o site propõe cor principal, de detalhes e de destaque a partir do fundo",
+                "As cores dos botões são calculadas sozinhas a partir da cor principal, com opção de ajuste manual",
+                "Fundos criados ficam salvos na ficha, podem ser editados e excluídos, e têm código para copiar e importar",
+                "Os botões de fundo de Opções são gerados pela lista `fundos` em options.js: para um fundo fixo novo, basta acrescentar um item lá"
+            ],
+            remove: [
+                "A aba Minhas condições da Sala, trocada pelo botão Condições perto dos status"
+            ],
+            fixes: [
+                "As condições de salas antigas são movidas automaticamente para a ficha do jogador quando o mestre abre a sala",
+                "Mensagens mais claras quando o navegador não é mais reconhecido como mestre de uma sala antiga",
+                "Mod com fundo personalizado não gera mais erro no celular com perícias translúcidas"
+            ]
+        },
+        notes: "Salas criadas antes do código de mestre: se o navegador perder o acesso, crie o campo \"segredo\" (8 a 16 letras e números) em rooms/CÓDIGO no Firebase e use-o em \"Entrar com código de mestre\"."
+    },
+    {
         title: "Sincronização, avisos e condições",
         version: "1.1.5.1",
         release: "28/11/2026",
