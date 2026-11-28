@@ -204,7 +204,7 @@ if (inputArquivo) {
     if (arquivo) {
       carregarObjetoJSON(arquivo).then((dadosCarregados) => {
         if (!dadosCarregados.nome/* !dadosCarregados.assinatura == "FichaSuspirosDaRealidade"*/) {
-          alert("Insira um arquivo válido!")
+          notificar("Insira um arquivo válido!", "aviso")
           return;
         }
 
@@ -234,20 +234,14 @@ if (inputArquivo) {
 
             if (!saveUpdated) {
 
-              setTimeout(() => {
-                  document.getElementById("update-notification-text").innerHTML = notionText
-                  const notification = document.getElementById('update-notification');
-                  if (notification) {
-                    notification.style.display = 'block';
-                  }
-              }, 2000);
+              setTimeout(() => notificar(notionText, "info", { duracao: 0 }), 2000);
             }
 
             CarregarFicha()
         })
         .catch((erro) => {
           console.error('Erro ao carregar o arquivo:', erro);
-          alert('Erro ao carregar o arquivo: ' + erro.message); // Exibe uma mensagem de erro ao usuário
+          notificar('Erro ao carregar o arquivo: ' + erro.message, 'erro')
         });
     }
   });
@@ -274,13 +268,13 @@ function save(ask = true) {
             const hour = new Date();
             localStorage.setItem('hour', JSON.stringify(hour));
             localStorage.setItem('hasFichaSave', true)
-            if (ask) alert("Ficha salva!");
+            if (ask) notificar("Ficha salva!", "sucesso");
             ("save")
             return;
         }
         else
         {
-            if (ask) alert('Ficha não salva!');
+            if (ask) notificar('Ficha não salva!', 'aviso');
             return;
         }
 
@@ -291,7 +285,7 @@ function save(ask = true) {
     const hour = new Date();
     localStorage.setItem('hour', JSON.stringify(hour));
     localStorage.setItem('hasFichaSave', true)
-    alert("Ficha salva!")
+    notificar("Ficha salva!", "sucesso")
     return;
     
 }
@@ -299,7 +293,7 @@ function save(ask = true) {
 function load() {
 
     if (!localStorage.getItem('hasFichaSave')) {
-        alert("Nenhum save encontrado!");
+        notificar("Nenhum save encontrado!", "aviso");
         return;
     }
 
@@ -307,23 +301,18 @@ function load() {
     try {
         loadedFicha = JSON.parse(localStorage.getItem('ficha'));
     } catch (e) {
-        alert("Erro ao carregar o save. O arquivo pode estar corrompido.");
+        notificar("Erro ao carregar o save. O arquivo pode estar corrompido.", "erro");
         console.error("Erro ao parsear JSON do localStorage:", e);
         return;
     }
 
     if (!loadedFicha) {
-        alert("Save corrompido ou vazio.");
+        notificar("Save corrompido ou vazio.", "erro");
         return;
     }
 
     if (!loadedFicha.versão == ficha.versão) {
-        setTimeout(() => {
-            const notification = document.getElementById('update-notification');
-            if (notification) {
-                notification.style.display = 'block';
-            }
-        }, 2000);
+        setTimeout(() => notificar(notionText, "info", { duracao: 0 }), 2000);
     }
     
     ficha = mergeFicha(loadedFicha);

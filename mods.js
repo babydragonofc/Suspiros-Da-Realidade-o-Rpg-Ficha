@@ -15,7 +15,7 @@ function importMod() {
     const file = input.files[0];
 
     if (!file) {
-        alert("Selecione um arquivo JSON.");
+        notificar("Selecione um arquivo JSON.", "aviso");
         return;
     }
 
@@ -35,7 +35,7 @@ function importMod() {
             );
 
             if (alreadyExists) {
-                alert("Esse mod já está carregado.");
+                notificar("Esse mod já está carregado.", "aviso");
                 return;
             }
 
@@ -47,13 +47,13 @@ function importMod() {
 
             verifyAutoSave();
 
-            alert("Mod carregado com sucesso.");
+            notificar("Mod carregado com sucesso.", "sucesso");
 
         } catch(err) {
 
             console.error(err);
 
-            alert("Erro ao carregar mod.");
+            notificar("Erro ao carregar mod.", "erro");
 
         }
 

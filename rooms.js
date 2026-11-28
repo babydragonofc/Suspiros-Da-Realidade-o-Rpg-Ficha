@@ -52,11 +52,16 @@ function h(tag, props, ...kids) {
   return e;
 }
 
-function toast(msg) {
-  document.querySelectorAll('.sala-aviso').forEach(t => t.remove());
-  const t = h('div', { class: 'sala-aviso' }, msg);
-  document.body.append(t);
-  setTimeout(() => t.remove(), 4000);
+// Avisos da sala usam o mesmo sistema do resto do site (notificar, em tooltip.js).
+// O tipo é deduzido pela mensagem: erros e permissões em vermelho, confirmações em verde.
+function toast(msg, tipo) {
+  if (!tipo) {
+    const m = String(msg);
+    tipo = /^erro|permiss|formato inv|arquivo inv|incorret|negada|ative o login|removido|encerrada|desconectad/i.test(m) ? 'erro'
+      : /^(escolha|digite|adicione|nenhum|n[ãa]o h[áa]|todos os|esse arquivo|algu[ée]m j[áa]|este jogador j[áa]|esse jogador j[áa]|a ficha desse|o jogador alterou)/i.test(m) ? 'aviso'
+      : /(salv|criad|gerad|substitu|copiad|atualiz|entrou|no máximo|enviad|adicionad|reconectado|baixad|entregue|pegou|colocou|pronto|alterado)/i.test(m) ? 'sucesso' : 'info';
+  }
+  notificar(msg, tipo);
 }
 
 // ---------------------------------------------------------------- estado
@@ -136,23 +141,71 @@ function summaryPaths(prefix, f) {
   return out;
 }
 
+// ---- mesclagem por campo
+// Em vez de um lado sobrescrever a ficha inteira do outro, cada gravação envia só os campos que
+// aquele lado mudou e os aplica sobre a versão mais recente da nuvem (dentro de uma transação).
+const ehObj = v => v && typeof v === 'object' && !Array.isArray(v);
+const igual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const copia = v => (v === undefined ? undefined : JSON.parse(JSON.stringify(v)));
+function diffCampos(base, atual, caminho = [], saida = []) {
+  const chaves = new Set([...Object.keys(base || {}), ...Object.keys(atual || {})]);
+  for (const k of chaves) {
+    const a = base ? base[k] : undefined, b = atual ? atual[k] : undefined;
+    if (ehObj(a) && ehObj(b)) diffCampos(a, b, [...caminho, k], saida);
+    else if (!igual(a, b)) saida.push({ caminho: [...caminho, k], valor: copia(b) });
+  }
+  return saida;
+}
+function lerCaminho(o, caminho) {
+  let c = o;
+  for (const k of caminho) { if (c == null || typeof c !== 'object') return undefined; c = c[k]; }
+  return c;
+}
+function gravarCaminho(o, caminho, valor) {
+  let c = o;
+  for (const k of caminho.slice(0, -1)) { if (!ehObj(c[k])) c[k] = {}; c = c[k]; }
+  const ultimo = caminho[caminho.length - 1];
+  if (valor === undefined) delete c[ultimo]; else c[ultimo] = copia(valor);
+}
+
+// Grava na nuvem só o que mudou desde `baseJson` e devolve a ficha mesclada (ou null se nada mudou).
+// Sem `baseJson` a ficha da nuvem é substituída pela ficha enviada.
+async function gravarFichaNuvem(puid, atual, baseJson, editadoPor, forcar = false) {
+  const base = baseJson ? JSON.parse(baseJson) : null;
+  const mudancas = base ? diffCampos(base, atual) : null;
+  if (mudancas && !mudancas.length && !forcar) return null;
+  let mesclada = atual;
+  await runTransaction(ref(db, `rooms/${state.code}/fichas/${puid}`), cur => {
+    let rf = null;
+    if (mudancas && cur && typeof cur.fichaJson === 'string') { try { rf = JSON.parse(cur.fichaJson); } catch { rf = null; } }
+    if (rf) mudancas.forEach(m => gravarCaminho(rf, m.caminho, m.valor));
+    else rf = copia(atual);
+    mesclada = rf;
+    return { fichaJson: JSON.stringify(rf), rev: Date.now(), editedBy: editadoPor };
+  });
+  return mesclada;
+}
+
 // Envia a ficha do jogador para a sala (só se mudou)
+let enviando = false, enviarDeNovo = false;
 async function pushPlayer(force = false, strict = false) {
   if (state.role !== 'player' || !state.code || !db || applying) return;
   const json = snapshotFicha();
   if (!force && json === lastPushed) return;
-  const before = lastPushed;
-  lastPushed = json;
-  const base = `rooms/${state.code}`;
+  if (enviando) { enviarDeNovo = true; return; }
+  enviando = true;
   try {
-    await update(ref(db), {
-      [`${base}/fichas/${uid}`]: { fichaJson: json, rev: Date.now(), editedBy: 'player' },
-      ...summaryPaths(`${base}/players/${uid}`, ficha)
-    });
+    const mesclada = await gravarFichaNuvem(uid, JSON.parse(json), lastPushed, 'player', force);
+    if (mesclada) {
+      lastPushed = json;
+      await update(ref(db), summaryPaths(`rooms/${state.code}/players/${uid}`, mesclada));
+    }
   } catch (e) {
-    lastPushed = before;
     if (strict) throw e;
     console.warn('[sala] erro ao sincronizar', e);
+  } finally {
+    enviando = false;
+    if (enviarDeNovo) { enviarDeNovo = false; scheduleSync(); }
   }
 }
 function scheduleSync() {
@@ -161,13 +214,11 @@ function scheduleSync() {
   syncTimer = setTimeout(() => pushPlayer(), 500);
 }
 
-// Aplica uma ficha editada pelo mestre na ficha local e redesenha a interface
-function applyRemoteFicha(rf) {
-  applying = true;
-  const realAlert = window.alert;
-  window.alert = () => {};
+// Redesenha a interface a partir da ficha local
+function atualizarInterface() {
+  const silenciadoAntes = window.avisosSilenciados;
+  window.avisosSilenciados = true;
   try {
-    for (const k of Object.keys(rf)) if (!SKIP.has(k)) ficha[k] = rf[k];
     // campos de texto primeiro: save() relê personagem-contatos
     for (const f of BIO_FIELDS) {
       const el = document.getElementById('personagem-' + f);
@@ -190,10 +241,52 @@ function applyRemoteFicha(rf) {
         <span class="text sm">Reflexos: ${num(ficha.modificadores.reflexos)}</span>`;
     }
   } finally {
-    window.alert = realAlert;
+    window.avisosSilenciados = silenciadoAntes;
+  }
+}
+
+// Mantém a cópia salva no navegador igual à da sala (para a ficha antiga não voltar ao reabrir o site)
+function salvarCopiaLocal() {
+  try {
+    if (!localStorage.getItem('hasFichaSave')) return;
+    localStorage.setItem('ficha', JSON.stringify(ficha));
+    localStorage.setItem('hour', JSON.stringify(new Date()));
+  } catch (e) { console.warn('[sala] cópia local', e); }
+}
+
+// Substitui a ficha local inteira pela da sala (usado ao entrar)
+function applyRemoteFicha(rf) {
+  applying = true;
+  try {
+    for (const k of Object.keys(rf)) if (!SKIP.has(k)) ficha[k] = rf[k];
+    atualizarInterface();
+  } finally {
     applying = false;
   }
   lastPushed = snapshotFicha();
+}
+
+// Traz para a ficha local só o que mudou na nuvem (ex.: edição do mestre), sem apagar o que o jogador
+// alterou e ainda não enviou. Devolve quantos campos mudaram.
+function mesclarDaNuvem(v) {
+  if (!lastPushed || typeof v.fichaJson !== 'string') return 0;
+  let rf;
+  try { rf = JSON.parse(v.fichaJson); } catch { return 0; }
+  for (const k of SKIP_PUSH) delete rf[k];
+  const base = JSON.parse(lastPushed);
+  const mudancas = diffCampos(base, rf).filter(m => !SKIP.has(m.caminho[0]));
+  if (!mudancas.length) return 0;
+  const local = JSON.parse(snapshotFicha());
+  const aplicar = mudancas.filter(m => igual(lerCaminho(local, m.caminho), lerCaminho(base, m.caminho)));
+  lastPushed = JSON.stringify(rf);   // a nuvem passa a ser a base; o que ficou pendente aqui será enviado depois
+  if (!aplicar.length) return 0;
+  applying = true;
+  try {
+    aplicar.forEach(m => gravarCaminho(ficha, m.caminho, m.valor));
+    atualizarInterface();
+  } finally { applying = false; }
+  salvarCopiaLocal();
+  return aplicar.length;
 }
 
 // ---------------------------------------------------------------- conexão com a sala
@@ -270,21 +363,23 @@ async function joinAsPlayer(codeRaw) {
   if (!meta) throw new Error('Sala não encontrada. Confira o código.');
   if (await souMestreDa(code, meta)) throw new Error('Você é o mestre desta sala. Abra-a por "Sala do Mestre" no menu inicial.');
 
-  // Se o mestre editou a ficha enquanto o jogador estava fora, a versão da sala vence
+  // A ficha da sala vence: ela já traz as edições do mestre e o que o jogador fez na última sessão.
+  // (Usar a cópia salva no navegador, que pode estar velha, fazia PV, PE e outros campos voltarem.)
   const remote = (await get(ref(db, `rooms/${code}/fichas/${uid}`))).val();
-  if (remote && remote.editedBy === 'master') {
+  let usouNuvem = false;
+  if (remote && typeof remote.fichaJson === 'string') {
     try {
       const rf = JSON.parse(remote.fichaJson);
-      const use = rf.nome === ficha.nome ||
-        confirm(`Esta sala já tem uma ficha sua chamada "${rf.nome}" (editada pelo mestre).\nOK = usar a ficha da sala · Cancelar = substituir pela ficha atual ("${ficha.nome}")`);
-      if (use) { state.lastApplied = remote.rev; applyRemoteFicha(rf); }
+      const use = rf.nome === ficha.nome || (remote.editedBy === 'master' &&
+        confirm(`Esta sala já tem uma ficha sua chamada "${rf.nome}" (editada pelo mestre).\nOK = usar a ficha da sala · Cancelar = substituir pela ficha atual ("${ficha.nome}")`));
+      if (use) { state.lastApplied = remote.rev; applyRemoteFicha(rf); salvarCopiaLocal(); usouNuvem = true; }
     } catch (e) { console.warn(e); }
   }
 
   disconnectRoom();
   Object.assign(state, { role: 'player', code, meta });
   lsSet(LS_PLAYER, { code });
-  lastPushed = null;
+  if (!usouNuvem) lastPushed = null;   // ficha nova na sala: grava a ficha local inteira
   try { await pushPlayer(true, true); } catch (e) { disconnectRoom(); throw e; }
 
   attachCommon(code);
@@ -301,10 +396,10 @@ async function joinAsPlayer(codeRaw) {
   state.unsub.push(onValue(ref(db, `rooms/${code}/fichas/${uid}`), s => {
     const v = s.val();
     if (!v) { if (state.role === 'player') { toast('Você foi removido da sala.'); forceLeave(); } return; }
-    if (v.editedBy === 'master' && v.rev !== state.lastApplied) {
-      try { const rf = JSON.parse(v.fichaJson); state.lastApplied = v.rev; applyRemoteFicha(rf); toast('O mestre atualizou a sua ficha.'); }
-      catch (e) { console.warn(e); }
-    }
+    try {
+      const n = mesclarDaNuvem(v);
+      if (n && v.editedBy === 'master' && v.rev !== state.lastApplied) { state.lastApplied = v.rev; toast('O mestre atualizou a sua ficha.'); }
+    } catch (e) { console.warn('[sala] mesclagem', e); }
   }, e => toast(friendly(e))));
 }
 
@@ -396,26 +491,44 @@ async function openMasterRoom(code) {
 
 async function masterCommit(puid, f) {
   const base = `rooms/${state.code}`;
-  const json = JSON.stringify(f);
   const entry = state.fichas[puid] || (state.fichas[puid] = {});
-  entry.ficha = f; entry.json = json;
+  const baseJson = entry.json;          // última versão da ficha vista na nuvem
+  entry.ficha = f; entry.json = JSON.stringify(f);
   try {
-    await update(ref(db), {
-      [`${base}/fichas/${puid}`]: { fichaJson: json, rev: Date.now(), editedBy: 'master' },
-      ...summaryPaths(`${base}/players/${puid}`, f)
-    });
+    const mesclada = await gravarFichaNuvem(puid, f, baseJson, 'master', true);
+    if (mesclada) await update(ref(db), summaryPaths(`${base}/players/${puid}`, mesclada));
   } catch (e) { toast('Erro ao salvar: ' + friendly(e)); }
   renderAll();
 }
 
-function adjust(puid, key, dir) {
-  const e = state.fichas[puid];
-  if (!e) return toast('A ficha desse jogador ainda está carregando.');
-  const f = e.ficha;
-  f.status = f.status || {};
-  f.status[key] = Math.max(0, num(f.status[key]) + dir * state.ui.step);
-  masterCommit(puid, f);
+// Aplica uma mudança sobre a ficha mais recente da nuvem (não sobre a cópia do mestre, que pode estar
+// um pouco atrás): assim ajustes de PV/PE nunca desfazem o que o jogador acabou de fazer.
+async function masterMutar(puid, mudar) {
+  const base = `rooms/${state.code}`;
+  let nova = null;
+  try {
+    await runTransaction(ref(db, `${base}/fichas/${puid}`), cur => {
+      if (!cur || typeof cur.fichaJson !== 'string') return;   // ficha ainda não carregada: cancela
+      const rf = JSON.parse(cur.fichaJson);
+      mudar(rf);
+      nova = rf;
+      return { fichaJson: JSON.stringify(rf), rev: Date.now(), editedBy: 'master' };
+    });
+    if (!nova) return toast('A ficha desse jogador ainda está carregando.');
+    state.fichas[puid] = { ficha: nova, json: JSON.stringify(nova), rev: Date.now(), editedBy: 'master' };
+    await update(ref(db), summaryPaths(`${base}/players/${puid}`, nova));
+  } catch (e) { return toast('Erro ao salvar: ' + friendly(e)); }
+  renderAll();
   rebuildEditorIfOpen(puid);
+}
+
+function adjust(puid, key, dir) {
+  if (!state.fichas[puid]) return toast('A ficha desse jogador ainda está carregando.');
+  const passo = state.ui.step;
+  masterMutar(puid, f => {
+    f.status = f.status || {};
+    f.status[key] = Math.max(0, num(f.status[key]) + dir * passo);
+  });
 }
 
 async function kick(puid) {
@@ -952,8 +1065,11 @@ function tabCondicoes(ctx) {
   });
   addView('condicoes', render);
   render();
-  return h('div', {}, h('h4', { class: 'sala-subtitulo' }, 'Condições ativas'), lista,
-    h('h4', { class: 'sala-subtitulo sala-margem-topo' }, 'Aplicar condição'), condicaoForm(alvo));
+  const propria = alvo === uid;
+  return h('div', {},
+    propria ? h('p', { class: 'sala-discreto' }, 'Condições que afetam o seu personagem. O mestre e os outros jogadores também veem as suas condições.') : null,
+    h('h4', { class: 'sala-subtitulo' }, 'Condições ativas'), lista,
+    h('h4', { class: 'sala-subtitulo sala-margem-topo' }, propria ? 'Adicionar condição' : 'Aplicar condição'), condicaoForm(alvo));
 }
 
 // ---- aba Personagem
@@ -1804,6 +1920,7 @@ function renderPlayerSala() {
         ['jogadores', 'Jogadores', h('div', {}, players, players._empty)],
         ['iniciativa', 'Iniciativa', iniView(false)],
         ['mesa', 'Mesa', mesaView(false)],
+        ['condicoes', 'Minhas condições', tabCondicoes({ puid: uid })],
         ['rolagens', 'Rolagens', h('div', {}, h('div', { class: 'sala-margem-baixo' }, anon,
           h('div', { class: 'sala-discreto' }, 'Com "Anônima" marcada, o que você rolar não aparece no histórico da sala.')), rolls)]]))));
     renderAll(); fillRolls(rolls);

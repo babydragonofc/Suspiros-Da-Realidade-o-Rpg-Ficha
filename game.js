@@ -389,7 +389,7 @@ function renderPericiasEditor() {
 
 function salvarPericiasEditadas() {
     if (!periciasEditorEstaValido()) {
-        alert('A pirâmide de perícias ainda não está válida para o nível selecionado.');
+        notificar('A pirâmide de perícias ainda não está válida para o nível selecionado.', 'aviso');
         return;
     }
 
@@ -422,7 +422,7 @@ function salvarPericiasEditadas() {
     displayPericias();
     if (typeof save === 'function' && ficha.options?.autoSave) save(false);
 
-    alert('Perícias atualizadas!');
+    notificar('Perícias atualizadas!', 'sucesso');
     periciasEditorDissove.hide(2000);
 }
 

@@ -466,7 +466,7 @@ function createTrauma() {
     var tipoT
 
     if (!name) {
-        alert("O nome do trauma é obrigatório.");
+        notificar("O nome do trauma é obrigatório.", "aviso");
         return;
     }
 
@@ -478,7 +478,7 @@ function createTrauma() {
     } else {
         const match = time.match(/^(\d+)([a-zA-Z]+)$/);
         if (!match) {
-            alert("Formato de tempo inválido. Use algo como '1D', '2H', '12M' ou 'PER'.");
+            notificar("Formato de tempo inválido. Use algo como '1D', '2H', '12M' ou 'PER'.", "aviso");
             return;
         }
         numero = parseInt(match[1], 10);

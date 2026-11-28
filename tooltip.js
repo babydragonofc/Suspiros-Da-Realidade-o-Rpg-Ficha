@@ -1,3 +1,74 @@
+// ====================== NOTIFICAÇÕES ======================
+// Único jeito de avisar o usuário no site (substitui alert e os avisos soltos).
+// notificar(mensagem, tipo = 'info', opcoes)  ·  tipos: 'info', 'sucesso', 'aviso', 'erro'
+// opcoes: { duracao: milissegundos (0 = fica até fechar) }
+// Para atualizar a tela sem avisos (ex.: ficha vinda do mestre), ligue window.avisosSilenciados.
+const duracaoDosAvisos = { info: 4000, sucesso: 3000, aviso: 5000, erro: 8000 }
+const iconesDosAvisos = { info: 'ℹ', sucesso: '✓', aviso: '!', erro: '✕' }
+
+function notificar(mensagem, tipo = 'info', opcoes = {}) {
+    if (window.avisosSilenciados || mensagem == null || mensagem === '') return null
+    if (!duracaoDosAvisos[tipo]) tipo = 'info'
+    mensagem = String(mensagem)
+
+    let pilha = document.getElementById('avisos')
+    if (!pilha) {
+        pilha = document.createElement('div')
+        pilha.id = 'avisos'
+        pilha.setAttribute('aria-live', 'polite')
+        document.body.appendChild(pilha)
+    }
+
+    // Mensagem repetida: reinicia o tempo do aviso que já está na tela em vez de empilhar outro
+    for (const existente of pilha.querySelectorAll('.aviso')) {
+        if (existente.dataset.mensagem === mensagem && existente.dataset.tipo === tipo) {
+            existente.classList.remove('saindo')
+            existente._reiniciar()
+            return existente
+        }
+    }
+
+    const aviso = document.createElement('div')
+    aviso.className = 'aviso aviso-' + tipo
+    aviso.dataset.mensagem = mensagem
+    aviso.dataset.tipo = tipo
+    aviso.setAttribute('role', tipo == 'erro' ? 'alert' : 'status')
+
+    const icone = document.createElement('span')
+    icone.className = 'aviso-icone'
+    icone.textContent = iconesDosAvisos[tipo]
+    const texto = document.createElement('span')
+    texto.className = 'aviso-texto'
+    texto.textContent = mensagem
+    const fechar = document.createElement('button')
+    fechar.className = 'aviso-fechar'
+    fechar.type = 'button'
+    fechar.setAttribute('aria-label', 'Fechar aviso')
+    fechar.textContent = '×'
+    aviso.append(icone, texto, fechar)
+
+    let temporizador = null
+    const remover = () => {
+        clearTimeout(temporizador)
+        aviso.classList.add('saindo')
+        setTimeout(() => aviso.remove(), 200)
+    }
+    aviso._reiniciar = () => {
+        clearTimeout(temporizador)
+        const duracao = opcoes.duracao ?? duracaoDosAvisos[tipo]
+        if (duracao > 0) temporizador = setTimeout(remover, duracao)
+    }
+    fechar.addEventListener('click', remover)
+    aviso.addEventListener('click', remover)
+
+    pilha.appendChild(aviso)
+    // No máximo 4 avisos ao mesmo tempo: o mais antigo sai
+    while (pilha.children.length > 4) pilha.firstElementChild.remove()
+    aviso._reiniciar()
+    return aviso
+}
+window.notificar = notificar
+
 // ====================== TOOLTIP ======================
 
 const tooltipDictionary = { 

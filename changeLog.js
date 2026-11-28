@@ -7,6 +7,31 @@ let fichaComPericiasAntigas = false;
 //LEMBRAR DE TROCAR A VERSÃO EM rules.js! Tapada
 const changeLog = [
     {
+        title: "Sincronização, avisos e condições",
+        version: "1.1.5.1",
+        release: "28/11/2026",
+        content: "PV e PE param de voltar sozinhos, os avisos ficaram iguais em todo o site e o jogador pode cuidar das próprias condições.",
+        changes: {
+            add: [
+                "Aba \"Minhas condições\" na Sala: o jogador vê, adiciona e remove as próprias condições, com descrição e contagem de turnos",
+                "Itens do inventário abrem em um painel destacado por cima dos outros, sem mexer na grade",
+                "Peso, tipo, dano e descrição aparecem direto no item aberto",
+                "Sistema único de notificações, com cores por tipo (sucesso, aviso, erro e informação), botão de fechar e empilhamento"
+            ],
+            remove: [
+                "Caixas de alerta do navegador (alert) e o aviso antigo de atualização do save, substituídos pelas novas notificações"
+            ],
+            fixes: [
+                "PV, PE e outros campos não voltam mais ao valor antigo quando o mestre e o jogador mexem na ficha ao mesmo tempo",
+                "Ajustes de PV, PE e MD feitos pelo mestre agora são aplicados sobre a ficha mais recente do jogador",
+                "Ao reabrir o site, a ficha da sala vence a cópia velha salva no navegador, e a cópia local é atualizada quando o mestre edita",
+                "Inventário e Guardados respeitam a altura da área principal e rolam por dentro, sem crescer sem limite",
+                "Avisos repetidos deixam de se acumular na tela"
+            ]
+        },
+        notes: "Para as condições do jogador funcionarem, publique o database.rules.json atualizado no Firebase (Realtime Database → Regras)."
+    },
+    {
         title: "Salas e Biblioteca de Itens",
         version: "1.1.5.0",
         release: "23/11/2026",
