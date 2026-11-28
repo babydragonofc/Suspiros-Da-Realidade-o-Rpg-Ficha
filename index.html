@@ -23,7 +23,7 @@
             <h3 class="title" >Agradecimentos</h3>
             <span class="text">Muito obrigado às pessoas incríveis que tornaram esse sonho realidade:<br>
                 <h2 style="margin: 0; margin-top: 0.5em;">Jogadores</h2><br>
-                Allícia Fleishman - Allícia Fleishman <fear></fear><br>
+                Allícia Fleischman - Allícia Fleischman <fear></fear><br>
                 Heitor - Anthony, Astre, Roy Hummer<br>
                 Sara Yasmin - Evany Vicent<br>
                 Mauro Araujo - Dante Miralh, Guto Silva<br>
@@ -164,8 +164,10 @@
         
                     <section id="addItemDefinitions">
                         <section id="addItemMenu">
-                            <p class="text white">Dado</p>
-                            <input type="text" id="itemCreateDice" class="input dice">
+                            <section>
+                                <p class="text white">Dado</p>
+                                <input type="text" id="itemCreateDice" class="input dice">
+                            </section>
                             <section>
                                 <p class="text white">Tipo</p>
                                 <select class="input" style="width:100%;" name="tipo" id="itemCreateType">
@@ -178,7 +180,7 @@
                         </section>
                         <section id="createWeaponMenu">
                             <section>
-                                <p class="text white" style="margin-top: 0;">Tipo</p>
+                                <p class="text white" style="margin-top: 0.5em;">Tipo</p>
                                 <select class="input" style="width:100%;" name="tipo" id="weaponCreateType">
                                     <option value="branca">Branca</option>
                                     <option value="pistola">Pistola</option>
@@ -186,7 +188,7 @@
                                     <option value="longo_alcance">Longo Alcance</option>
                                 </select>
                                 <section id="createWeaponMMO">
-                                    <p class="text white" style="margin-top: 0;">Munição</p>
+                                    <p class="text white" style="margin-top: 0.5em;">Munição</p>
                                     <input class="input" type="number" id="weaponCreateMMO">
                                 </section>
                             </section>
@@ -195,7 +197,7 @@
                                 <input class="input" type="text" id="weaponCreateDamage">
                                 <p class="text white">Dano Crítico</p>
                                 <input class="input" type="text" id="weaponCreateCritical">
-                            </p>
+                            
                             </section>
                         </section>
                         <section id="createMunitionMenu">
@@ -719,8 +721,12 @@
       <div class="aba-conteudo" id="inventario-content" style="display: none; overflow-y: auto;">
         <div class="lado-inventario">
           <div style="display: flex; height: 100%; flex-direction: column;">
-            <p class="text" style="margin-left: 1em;">Inventário</p>
+            <div id="inventory-tabs">
+                <button class="btn-tab" onclick="inventoryTab('inv')">Inventário</button>
+                <button class="btn-tab" onclick="inventoryTab('gua')">Guardados</button>
+            </div>
             <div id="inventory"></div>
+            <div id="guardados" style="display: none;"></div>
             <button onclick="startItemCreation()">+</button>
           </div>
 
@@ -740,11 +746,6 @@
               <h2 class="title" id="pesoDisplay">0</h2>
             </div>
           </div>
-        </div>
-
-        <div class="lado-inventario d">
-          <p class="text">Guardados</p>
-          <div id="guardados"></div>
         </div>
       </div>
 
